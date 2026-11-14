@@ -1,6 +1,5 @@
 # Aether
 
-**Dual-use engineering platform for emerging aerostructures — a project funded under the [European Innovation Council (EIC) Pathfinder](https://eic.ec.europa.eu/eic-funding-opportunities/eic-pathfinder_en) programme within Horizon Europe.**
 
 ![Aether architecture: 17 platform layers (CLI, microkernel, graph, contracts, plugins, scheduler, provenance, policy, security, packaging, etc.) wrapping a single Engineering Graph — an append-only hash-chained event log feeding the closed loop from Requirement through Geometry, Mesh, Simulation, Result, Optimization, Manufacture, and Test, with measured-data evidence flowing back as model updates. EIC Pathfinder / Horizon Europe. Aether-VPSL-1.0 — vetted partners only.](./Diagram.png)
 
