@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/physics.solver/schema/result-bundle.schema.json",
+  "title": "Aether Physics Solver Result Bundle",
+  "description": "Typed result bundle returned by the 'collect' method. Carries fields, scalars, logs, and the metadata required by I-7 (fidelity honesty).",
+  "type": "object",
+  "required": ["run_id", "produced_at", "fidelity_class", "validation_status", "uncertainty", "outputs", "provenance_ref"],
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {"type": "string", "description": "UUIDv7 of the SimulationRun that produced this bundle."},
+    "produced_at": {"type": "string", "format": "date-time"},
+    "fidelity_class": {
+      "type": "string",
+      "enum": ["measurement", "high_fidelity", "medium_fidelity", "low_fidelity", "surrogate", "rom", "heuristic"],
+      "description": "I-7: required. The 'verify' method gates high_fidelity on residual/convergence checks."
+    },
+    "validation_status": {
+      "type": "string",
+      "enum": ["unvalidated", "checked", "verified", "invalidated"],
+      "description": "I-7: required. 'verified' means verify() passed; 'invalidated' means a check failed and the bundle is informational only."
+    },
+    "uncertainty": {
+      "type": "object",
+      "required": ["method", "bands"],
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["none", "convergence_residual", "deep_ensemble", "gp_residual", "polynomial_chaos", "monte_carlo", "sparse_grid", "sobol_indices", "vendor_native"]
+        },
+        "bands": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Per-quantity uncertainty bands; keys are quantity names, values are {lower, upper, confidence}."
+        },
+        "calibration": {
+          "type": "object",
+          "properties": {
+            "slope": {"type": "number"},
+            "intercept": {"type": "number"},
+            "r_squared": {"type": "number"}
+          }
+        }
+      }
+    },
+    "envelope": {
+      "type": "object",
+      "description": "Declared region of validity. Required for surrogate/rom fidelity classes.",
+      "additionalProperties": true
+    },
+    "outputs": {
+      "type": "object",
+      "required": ["scalars", "fields"],
+      "properties": {
+        "scalars": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "value", "units"],
+            "properties": {
+              "name": {"type": "string"},
+              "value": {"type": ["number", "string", "boolean"]},
+              "units": {"type": "string"}
+            }
+          }
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "cas_hash", "format", "units", "locations"],
+            "properties": {
+              "name": {"type": "string"},
+              "cas_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "format": {"type": "string", "enum": ["cgns", "vtk", "hdf5", "xdmf", "zarr", "native"]},
+              "units": {"type": "string"},
+              "locations": {"type": "string", "enum": ["node", "element", "face", "edge", "volume"]}
+            }
+          }
+        },
+        "logs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["cas_hash", "kind"],
+            "properties": {
+              "cas_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "kind": {"type": "string", "enum": ["stdout", "stderr", "solver_native", "residual_history", "convergence_trace"]}
+            }
+          }
+        }
+      }
+    },
+    "provenance_ref": {
+      "type": "string",
+      "description": "Reference to the provenance record (CAS hash)."
+    }
+  }
+}

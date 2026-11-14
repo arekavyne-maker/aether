@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/field.model/schema/dataset.schema.json",
+  "title": "Aether FieldDataset",
+  "description": "Mesh + fields + metadata; the in-platform representation of a CAE field. (SDP §10.3)",
+  "type": "object",
+  "required": ["name", "mesh", "fields", "metadata"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {"type": "string"},
+    "mesh": {
+      "type": "object",
+      "description": "Topology: points, cells, blocks.",
+      "required": ["points"],
+      "additionalProperties": false,
+      "properties": {
+        "points": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {"type": "number"}
+          }
+        },
+        "cells": {
+          "type": "array",
+          "description": "Cell connectivity: (n0, n1, ...) per cell.",
+          "items": {
+            "type": "array",
+            "items": {"type": "integer", "minimum": 0}
+          }
+        },
+        "blocks": {
+          "type": "array",
+          "description": "Cell-block partitioning (CGNS-like).",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "element_kind": {"type": "string"},
+              "range": {"type": "array", "items": {"type": "integer", "minimum": 0}, "minItems": 2, "maxItems": 2}
+            }
+          }
+        }
+      }
+    },
+    "fields": {
+      "type": "array",
+      "description": "Per-node or per-cell fields; ordering matches mesh indexing.",
+      "items": {
+        "type": "object",
+        "required": ["name", "values", "locations", "units"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "values": {
+            "type": "array",
+            "items": {"type": ["number", "string", "array"]}
+          },
+          "locations": {"type": "string", "enum": ["node", "cell"]},
+          "units": {"type": "string"},
+          "time_index": {"type": "integer", "minimum": 0},
+          "fidelity_class": {
+            "type": "string",
+            "enum": ["measurement", "high_fidelity", "medium_fidelity", "low_fidelity", "surrogate", "rom", "heuristic"]
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Provenance + units + frame (mirrors I-7 and the result.bundle schema).",
+      "properties": {
+        "frame": {"type": "string"},
+        "units": {"type": "object", "additionalProperties": true},
+        "provenance_ref": {"type": "string"}
+      }
+    }
+  }
+}

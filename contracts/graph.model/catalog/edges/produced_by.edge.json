@@ -1,0 +1,7 @@
+{
+  "type_id": "produced_by",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": ["Result", "Field", "Evidence", "Dataset", "Decision"],
+  "target_types": ["SimulationRun", "TestRun", "InspectionRecord", "MeasurementDataset"]
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/geometry.recipe/schema/recipe.schema.json",
+  "title": "Aether Parametric Recipe",
+  "description": "A versioned, tool-agnostic feature history. Each feature has a `kind` (sketch, extrude, fillet, boolean) and a dict of parameters. The interpreter is in `python/aether_geometry/recipe.py`; the executor is the geometry.kernel contract. (SDP §11.1)",
+  "type": "object",
+  "required": ["recipe_id", "version", "frame", "units", "parameters", "features"],
+  "additionalProperties": false,
+  "properties": {
+    "recipe_id": {"type": "string"},
+    "version": {"type": "string"},
+    "frame": {"type": "string", "description": "Coordinate frame URN."},
+    "units": {
+      "type": "object",
+      "required": ["length"],
+      "additionalProperties": false,
+      "properties": {
+        "length": {"type": "string", "enum": ["m", "cm", "mm"]},
+        "angle": {"type": "string", "enum": ["rad", "deg"]},
+        "mass": {"type": "string", "enum": ["kg", "g"]}
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Bound parameters: name -> typed value.",
+      "additionalProperties": {"type": ["number", "string", "boolean"]}
+    },
+    "features": {
+      "type": "array",
+      "description": "Ordered list of features (sketch, extrude, fillet, etc.).",
+      "items": {
+        "type": "object",
+        "required": ["kind", "id"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string"},
+          "kind": {
+            "type": "string",
+            "enum": ["sketch", "extrude", "revolve", "fillet", "boolean", "transform", "mirror"]
+          },
+          "params": {"type": "object", "additionalProperties": true},
+          "depends_on": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}

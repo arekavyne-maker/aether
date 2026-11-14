@@ -1,0 +1,7 @@
+{
+  "type_id": "measured_by",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": ["PhysicalPart", "Assembly", "System"],
+  "target_types": ["InspectionRecord", "TestRun"]
+}

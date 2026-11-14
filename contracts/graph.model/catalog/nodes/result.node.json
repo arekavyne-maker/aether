@@ -1,0 +1,37 @@
+{
+  "type_id": "Result",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": true,
+  "allowed_states": ["released", "invalidated"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["quantity", "fidelity_class", "validation_status", "uncertainty", "produced_by"],
+    "additionalProperties": false,
+    "properties": {
+      "quantity": {"type": "string"},
+      "units": {"type": "string"},
+      "fidelity_class": {
+        "type": "string",
+        "enum": ["measurement", "high_fidelity", "medium_fidelity", "low_fidelity", "surrogate", "rom", "heuristic"],
+        "description": "I-7: required. The kernel rejects results missing this field (CI fidelity gate)."
+      },
+      "validation_status": {
+        "type": "string",
+        "enum": ["unvalidated", "checked", "verified", "invalidated"]
+      },
+      "uncertainty": {
+        "type": "object",
+        "properties": {
+          "method": {"type": "string"},
+          "bands": {"type": "object", "additionalProperties": true}
+        }
+      },
+      "envelope": {"type": "object", "additionalProperties": true},
+      "produced_by": {
+        "type": "string",
+        "description": "Reference to the SimulationRun that produced this Result."
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: inspection.device acquire (SDP §12.4)
+_schema_id: "https://aether.local/contracts/inspection.device/schema/problem.schema.json"
+operation: "acquire"
+geometry_ref:
+  cas_hash: "0000000000000000000000000000000000000000000000000000000000000000"
+device:
+  id: "CMM-001"
+  kind: "cmm"
+  calibration_status: "current"
+alignment:
+  initial_translation_mm: [0.0, 0.0, 0.0]
+  initial_rotation_deg: [0.0, 0.0, 0.0]
+  convergence_threshold_mm: 0.01

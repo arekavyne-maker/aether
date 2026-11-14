@@ -1,0 +1,36 @@
+{
+  "type_id": "Requirement",
+  "version": "1.0.0",
+  "revisioned": true,
+  "allowed_states": ["draft", "released", "superseded", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["text", "criticality", "verification_method", "status"],
+    "additionalProperties": false,
+    "properties": {
+      "text": {"type": "string", "minLength": 1},
+      "rationale": {"type": "string"},
+      "verification_method": {
+        "type": "string",
+        "enum": ["analysis", "test", "inspection", "demonstration", "similarity"]
+      },
+      "criticality": {
+        "type": "string",
+        "enum": ["catastrophic", "hazardous", "major", "minor", "no_effect"]
+      },
+      "status": {
+        "type": "string",
+        "enum": ["open", "allocated", "verified", "invalidated", "waived"]
+      },
+      "acceptance_criteria": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  },
+  "initial_edges": {
+    "decomposes_from": ["Requirement"],
+    "satisfies": ["Component", "Part", "Assembly", "System"],
+    "verifies": ["Evidence", "TestRun", "InspectionRecord"]
+  }
+}

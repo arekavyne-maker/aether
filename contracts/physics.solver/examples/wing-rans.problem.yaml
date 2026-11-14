@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: a physics problem specification (SDP §5.5).
+# `physics_class` must be one of the closed enum; `fidelity_target`
+# is the I-7 contract that the result bundle must match or exceed.
+
+_schema_id: "https://aether.local/contracts/physics.solver/schema/problem.schema.json"
+problem_id: "01900000-0000-0000-0000-000000000000"
+physics_class: "fluid"
+geometry:
+  cas_hash: "0000000000000000000000000000000000000000000000000000000000000000"
+  format: "native"
+boundary_conditions:
+  - type: "dirichlet"
+    region: "inlet"
+    values:
+      velocity: 30.0
+  - type: "free"
+    region: "outlet"
+load_cases:
+  - id: "LC-04"
+    kind: "static"
+solver_settings:
+  solver: "SIMPLE"
+  turbulence_model: "k-omega-SST"
+fidelity_target: "high_fidelity"
+determinism_class: "bit-reproducible"

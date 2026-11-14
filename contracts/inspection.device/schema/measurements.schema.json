@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/inspection.device/schema/measurements.schema.json",
+  "title": "Aether Inspection Measurements",
+  "description": "A typed inspection result: measured points, deviation map, coverage statistics, and pass/fail against the part's acceptance criteria. (SDP §12.4)",
+  "type": "object",
+  "required": ["device_kind", "geometry_ref", "points", "summary"],
+  "additionalProperties": false,
+  "properties": {
+    "device_kind": {"type": "string"},
+    "geometry_ref": {
+      "type": "object",
+      "properties": {
+        "cas_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "cas_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Content hash of the measurement set + alignment + acceptance criteria."
+    },
+    "points": {
+      "type": "array",
+      "description": "Measured points (x, y, z) plus optional normal-distance deviation from nominal.",
+      "items": {
+        "type": "object",
+        "required": ["x", "y", "z"],
+        "properties": {
+          "x": {"type": "number"},
+          "y": {"type": "number"},
+          "z": {"type": "number"},
+          "deviation_mm": {"type": "number"}
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "n_points": {"type": "integer", "minimum": 0},
+        "max_deviation_mm": {"type": "number"},
+        "mean_deviation_mm": {"type": "number"},
+        "rms_deviation_mm": {"type": "number"},
+        "coverage_pct": {"type": "number", "minimum": 0, "maximum": 1},
+        "passed": {"type": "boolean"}
+      }
+    },
+    "alignment": {
+      "type": "object",
+      "description": "Final ICP alignment (rotation + translation matrix).",
+      "additionalProperties": true
+    }
+  }
+}

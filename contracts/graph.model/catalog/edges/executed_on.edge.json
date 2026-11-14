@@ -1,0 +1,7 @@
+{
+  "type_id": "executed_on",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": ["ProcessStep", "InspectionRecord", "TestRun"],
+  "target_types": ["Machine", "Tooling"]
+}

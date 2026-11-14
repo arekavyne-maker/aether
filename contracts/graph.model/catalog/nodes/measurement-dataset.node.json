@@ -1,0 +1,18 @@
+{
+  "type_id": "MeasurementDataset",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": true,
+  "allowed_states": ["released", "invalidated"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["cas_hash"],
+    "additionalProperties": false,
+    "properties": {
+      "cas_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+      "channels": {"type": "array", "items": {"type": "string"}},
+      "samples": {"type": "integer", "minimum": 0},
+      "sampling_rate": {"type": "number", "minimum": 0}
+    }
+  }
+}

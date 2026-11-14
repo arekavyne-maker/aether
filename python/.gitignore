@@ -1,0 +1,12 @@
+# Generated/test caches
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# Workspace
+.venv/
+venv/

@@ -1,0 +1,33 @@
+{
+  "contract_id": "aether.physics.composable",
+  "version": "0.1.0",
+  "title": "Aether Physics Composable",
+  "description": "Contract for coupling-participating physics plugins and the composition engine. (SDP §10.1)",
+  "methods": [
+    "discover",
+    "initialize_coupling",
+    "exchange_fields",
+    "step",
+    "finalize_coupling"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/physics.composable/schema/coupling.schema.json",
+      "path": "schema/coupling.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/physics.composable/schema/result.schema.json",
+      "path": "schema/result.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "coupling_scheme", "version": "0.1.0", "closed": true },
+    { "namespace": "conservation_law", "version": "0.1.0", "closed": true }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

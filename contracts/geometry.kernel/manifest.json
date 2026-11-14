@@ -1,0 +1,37 @@
+{
+  "contract_id": "aether.geometry.kernel",
+  "version": "0.1.0",
+  "title": "Aether Geometry Kernel",
+  "description": "Contract for CAD-like geometry services: B-rep tessellation, parameter evaluation, boolean ops, filleting, validation. (SDP §11.1)",
+  "methods": [
+    "discover",
+    "import",
+    "export",
+    "evaluate",
+    "parameterize",
+    "tessellate",
+    "boolean",
+    "fillet",
+    "check"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/geometry.kernel/schema/problem.schema.json",
+      "path": "schema/problem.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/geometry.kernel/schema/tessellation.schema.json",
+      "path": "schema/tessellation.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "boolean_op", "version": "0.1.0", "closed": true },
+    { "namespace": "fillet_kind", "version": "0.1.0", "closed": true }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

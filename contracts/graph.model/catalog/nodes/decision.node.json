@@ -1,0 +1,70 @@
+{
+  "type_id": "Decision",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": true,
+  "allowed_states": ["proposed", "accepted", "superseded", "reversed"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["question", "options", "selection", "autonomy_class", "provenance"],
+    "additionalProperties": false,
+    "properties": {
+      "question": {"type": "string"},
+      "options": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["choice"],
+          "properties": {
+            "choice": {"type": "string"},
+            "expected_gain": {"type": "number"},
+            "cost_h": {"type": "number"}
+          }
+        }
+      },
+      "selection": {"type": "string"},
+      "rationale": {"type": "string"},
+      "uncertainty": {
+        "type": "object",
+        "properties": {
+          "method": {"type": "string"},
+          "predictive_band": {
+            "type": "array",
+            "items": {"type": "number"},
+            "minItems": 2,
+            "maxItems": 2
+          }
+        }
+      },
+      "reversal_conditions": {
+        "type": "array",
+        "items": {"type": "string"}
+      },
+      "autonomy_class": {
+        "type": "string",
+        "enum": ["A0", "A1", "A2", "A3", "A4"],
+        "description": "ADR-0024. A4 is forbidden. A3 requires human sign-off."
+      },
+      "review_required": {"type": "boolean"},
+      "review_signoff": {
+        "type": "object",
+        "properties": {
+          "actor_id": {"type": "string"},
+          "actor_role": {"type": "string"},
+          "signed_at": {"type": "string", "format": "date-time"},
+          "policy_ref": {"type": "string"}
+        }
+      },
+      "provenance": {
+        "type": "object",
+        "properties": {
+          "governor_id": {"type": "string"},
+          "governor_version": {"type": "string"},
+          "inputs": {"type": "array", "items": {"type": "string"}},
+          "code": {"type": "string"},
+          "env": {"type": "string"}
+        }
+      }
+    }
+  }
+}

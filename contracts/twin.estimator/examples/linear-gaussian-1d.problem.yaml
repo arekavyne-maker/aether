@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: a digital-twin estimator problem (SDP §13)
+# A 1-state linear-Gaussian model: x_t = x_{t-1} + w_t; y_t = x_t + v_t.
+# The reference EKF/UKF/particle filter estimates x from y. The
+# conformance test asserts that the RMSE of the estimate on synthetic
+# data is below a declared threshold.
+_schema_id: "https://aether.local/contracts/twin.estimator/schema/problem.schema.json"
+estimator: "ekf"
+state:
+  x:
+    mean: 0.0
+    variance: 1.0
+process_noise:
+  x: 0.01
+measurement_noise:
+  y: 0.1
+measurements:
+  - { t: 0.0, values: { y: 0.05 } }
+  - { t: 1.0, values: { y: 0.12 } }
+  - { t: 2.0, values: { y: 0.18 } }
+  - { t: 3.0, values: { y: 0.21 } }
+  - { t: 4.0, values: { y: 0.27 } }

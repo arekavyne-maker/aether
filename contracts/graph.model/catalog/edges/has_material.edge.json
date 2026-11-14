@@ -1,0 +1,7 @@
+{
+  "type_id": "has_material",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": ["Part", "Component", "Assembly"],
+  "target_types": ["Material"]
+}

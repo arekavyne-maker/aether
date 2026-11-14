@@ -1,0 +1,66 @@
+# Paper Run: AWL Workflow — Wing Screening
+#
+# AWL v1 (Phase 0 declarative; not yet executable).
+# The first AWL execution lands at G2 (Phase 2). This document is the
+# declarative form that future workflows will mirror.
+#
+# The structure follows SDP Appendix C; the syntax here is what the
+# Phase 1 WorkflowEngine will accept.
+
+awl: "1.0"
+study: SS-112-aeroelastic
+description: |
+  Composite UAV wing rib aeroelastic screening study. Executes the
+  closed-loop chain from the paper run: requirement -> design ->
+  simulation -> optimization -> result -> evidence.
+
+inputs:
+  geometry:
+    node: "aether://uav-wing/rib-014"
+    revision: current
+  material: M21E-tape
+  load_cases: [LC-04]
+  parameters:
+    mach:
+      linspace: [0.15, 0.30, 8]
+    qbar:
+      linspace: [500, 4000, 10]
+    ply_thickness:
+      linspace: [0.10, 0.40, 5]  # mm
+
+ladder:
+  - tier: surrogate
+    model: rom_krylov_pod
+    si: {trust: required}
+  - tier: medium
+    plugin: com.acme.cfd.opensfoam@2.4
+  - tier: high
+    plugin: com.acme.cfd.opensfoam@2.4
+    refinement: goal_based
+
+si_hooks:
+  fidelity_governor: on
+  surrogate_trust: on
+  data_value: on
+  autonomy_max: A2
+
+optimize:
+  algorithm: NSGA-II
+  objectives: [mass_kg, margin_of_safety]
+  constraints: [tip_deflection_max_mm <= 12.0]
+  budget:
+    surrogate_evals: 200
+    high_fidelity_evals: 40
+
+outputs:
+  - tip_deflection_field
+  - margin_of_safety
+  - pareto_front
+
+evidence:
+  attach: true
+  verification_relevant: false
+
+reproducibility:
+  mode: strict  # strict | equivalence
+  env_manifest: env/wing-screening.lock

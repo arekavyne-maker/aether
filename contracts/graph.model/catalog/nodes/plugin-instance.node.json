@@ -1,0 +1,17 @@
+{
+  "type_id": "PluginInstance",
+  "version": "1.0.0",
+  "revisioned": false,
+  "allowed_states": ["released", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["plugin_id", "plugin_version"],
+    "additionalProperties": false,
+    "properties": {
+      "plugin_id": {"type": "string"},
+      "plugin_version": {"type": "string"},
+      "contract_versions": {"type": "object", "additionalProperties": {"type": "string"}},
+      "signature": {"type": "object", "additionalProperties": true}
+    }
+  }
+}

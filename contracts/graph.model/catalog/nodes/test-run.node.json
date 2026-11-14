@@ -1,0 +1,18 @@
+{
+  "type_id": "TestRun",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": true,
+  "allowed_states": ["released", "invalidated"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["method"],
+    "additionalProperties": false,
+    "properties": {
+      "method": {"type": "string"},
+      "configuration": {"type": "object", "additionalProperties": true},
+      "channels": {"type": "array", "items": {"type": "string"}},
+      "raw_data_refs": {"type": "array", "items": {"type": "string"}}
+    }
+  }
+}

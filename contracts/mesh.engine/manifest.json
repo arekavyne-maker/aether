@@ -1,0 +1,33 @@
+{
+  "contract_id": "aether.mesh.engine",
+  "version": "0.1.0",
+  "title": "Aether Mesh Engine",
+  "description": "Contract for mesh generation and adaptation: tet, surface, hex, with quality metrics. (SDP §9.2, §10.3)",
+  "methods": [
+    "discover",
+    "generate",
+    "adapt",
+    "quality_metrics",
+    "refine"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/mesh.engine/schema/problem.schema.json",
+      "path": "schema/problem.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/mesh.engine/schema/result.schema.json",
+      "path": "schema/result.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "element_kind", "version": "0.1.0", "closed": true },
+    { "namespace": "adaptation_strategy", "version": "0.1.0", "closed": true }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

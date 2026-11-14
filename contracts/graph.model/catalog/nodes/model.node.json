@@ -1,0 +1,17 @@
+{
+  "type_id": "Model",
+  "version": "1.0.0",
+  "revisioned": true,
+  "allowed_states": ["draft", "released", "superseded", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["name"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string"},
+      "parameters": {"type": "object", "additionalProperties": true},
+      "prior_ref": {"type": "string"},
+      "posterior_ref": {"type": "string"}
+    }
+  }
+}

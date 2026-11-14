@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: GP surrogate training (SDP §8.4)
+# Train a Gaussian-process surrogate on a (X, Y) pair, then export
+# the trust metrics. The conformance test asserts that the content
+# hash is stable across re-runs (the MVR-13 substrate) and that
+# the held-out RMSE is below a declared threshold.
+_schema_id: "https://aether.local/contracts/surrogate/schema/problem.schema.json"
+kind: "gp"
+kernel: "rbf"
+validation_split: 0.2
+X:
+  - [0.0, 0.0]
+  - [0.1, 0.0]
+  - [0.0, 0.1]
+  - [0.1, 0.1]
+  - [0.05, 0.05]
+Y:
+  - [0.000]
+  - [0.001]
+  - [0.001]
+  - [0.004]
+  - [0.0025]

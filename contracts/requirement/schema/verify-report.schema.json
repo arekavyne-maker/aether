@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/requirement/schema/verify-report.schema.json",
+  "title": "Aether Verification Report",
+  "description": "A rollup of verification coverage for a requirements package: which requirements have a `verifies` path, which don't, and the gaps. (SDP §11.3, §3.6 invariant 7)",
+  "type": "object",
+  "required": ["requirements_total", "requirements_verified", "gaps"],
+  "additionalProperties": false,
+  "properties": {
+    "requirements_total": {"type": "integer", "minimum": 0},
+    "requirements_verified": {"type": "integer", "minimum": 0},
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["requirement_id", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "requirement_id": {"type": "string"},
+          "reason": {"type": "string"},
+          "verification_method": {"type": "string"}
+        }
+      }
+    }
+  }
+}

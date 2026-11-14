@@ -1,0 +1,31 @@
+{
+  "contract_id": "aether.si.governor",
+  "version": "0.1.0",
+  "title": "Aether Scientific Intelligence Governor",
+  "description": "Contract for SI governors (decision-support services) (SDP §8).",
+  "methods": [
+    "discover",
+    "recommend",
+    "justify",
+    "evidence"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/si.governor/schema/evidence.schema.json",
+      "path": "schema/evidence.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/si.governor/schema/recommendation.schema.json",
+      "path": "schema/recommendation.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "autonomy_class", "version": "0.1.0", "closed": true, "values": ["A0", "A1", "A2", "A3", "A4"] }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

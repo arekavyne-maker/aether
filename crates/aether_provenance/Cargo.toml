@@ -1,0 +1,22 @@
+[package]
+name = "aether_provenance"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Aether provenance records, hash chains, audit (G1 deliverable: per-artifact provenance record + Merkle chain)."
+
+[lib]
+name = "aether_provenance"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+uuid = { workspace = true }
+chrono = { version = "0.4", default-features = false, features = ["serde", "clock"] }
+thiserror = { workspace = true }
+aether_graph = { path = "../aether_graph" }

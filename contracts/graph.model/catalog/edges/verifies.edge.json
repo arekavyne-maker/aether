@@ -1,0 +1,7 @@
+{
+  "type_id": "verifies",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": ["TestRun", "InspectionRecord", "Evidence", "SimulationRun", "Requirement"],
+  "target_types": ["Requirement", "PhysicsModel", "Model", "Evidence"]
+}

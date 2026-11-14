@@ -1,0 +1,168 @@
+# Paper Run: UAV Wing Rib — Node + Edge Document
+#
+# This is the typed, schema-validatable form of the SDP §3.7 narrative.
+# It is what the Engineering Graph will hold once the kernel is built;
+# in Phase 0, it is a fixture that proves the contracts are sufficient.
+#
+# To validate against the contracts in Phase 0:
+#
+#   python3 -c "
+#   from aether_sdk.validation import ContractValidator
+#   v = ContractValidator('aether.graph.model')
+#   schema_id = '.../graph.model/schema/node-type.schema.json'
+#   import yaml
+#   for n in yaml.safe_load(open('chain.yaml'))['nodes']:
+#       r = v.validate(n, schema_id=schema_id)
+#       print(n['type_id'], r.valid, r.errors)
+#   "
+
+# Each node mirrors one of the catalog schemas in
+# contracts/graph.model/catalog/nodes/. The chain has 14 nodes.
+nodes:
+  - &req_R-STR-011
+    type_id: "Requirement"
+    version: "1.0.0"
+    revisioned: true
+    allowed_states: ["draft", "released", "superseded", "archived"]
+    properties_schema:
+      text: "The wing rib shall sustain the limit load factor of 1.5 with no failure, across the maneuver spectrum −1g to +4g."
+      criticality: "catastrophic"
+      verification_method: "test"
+      status: "verified"
+
+  - &sys_uav_wing
+    type_id: "System"
+    version: "1.0.0"
+    revisioned: true
+    allowed_states: ["draft", "released", "superseded", "archived"]
+    properties_schema:
+      name: "UAV-WING"
+
+  - &part_assembly
+    type_id: "Part"
+    version: "1.0.0"
+    revisioned: true
+    allowed_states: ["draft", "released", "superseded", "archived"]
+    properties_schema:
+      name: "WING-ASSEMBLY"
+      kind: "Assembly"
+      mass_target_kg: 4.2
+
+  - &part_rib
+    type_id: "Part"
+    version: "1.0.0"
+    revisioned: true
+    allowed_states: ["draft", "released", "superseded", "archived"]
+    properties_schema:
+      name: "WING-RIB-014"
+      kind: "Part"
+      mass_target_kg: 0.21
+      zone: "W-04"
+
+  - &geom_rev_7
+    type_id: "GeometryRevision"
+    version: "1.0.0"
+    revisioned: true
+    immutable: true
+    allowed_states: ["released", "superseded"]
+    properties_schema:
+      cas_hash: "9f3a000000000000000000000000000000000000000000000000000000000000"  # placeholder
+      format: "step-ap242"
+      parametric_recipe_ref: "aether://proj/recipes/rib-014.py"
+      frame: "aether://proj/frames/wing-root"
+      units: {length: "mm", angle: "rad", mass: "kg"}
+
+  - &mat_m21e
+    type_id: "Material"  # implicit; not in Phase 0 catalog but referenced for completeness
+    version: "1.0.0"
+    revisioned: true
+    allowed_states: ["draft", "released", "superseded", "archived"]
+    properties_schema:
+      name: "CFRP unidirectional tape M21E"
+      class: "composite.cfrp.ud_tape"
+
+  - &lc_04
+    type_id: "LoadCase"  # implicit
+    version: "1.0.0"
+    revisioned: true
+    allowed_states: ["draft", "released", "superseded", "archived"]
+    properties_schema:
+      name: "LC-04 maneuver"
+      kind: "maneuver"
+
+  - &sim_study_112
+    type_id: "SimulationStudy"  # implicit
+    version: "1.0.0"
+    revisioned: true
+    allowed_states: ["draft", "released", "superseded", "archived"]
+    properties_schema:
+      name: "SS-112"
+      physics_class: "coupled"
+
+  - &sim_run_2031
+    type_id: "SimulationRun"
+    version: "1.0.0"
+    revisioned: true
+    immutable: true
+    allowed_states: ["running", "succeeded", "failed", "preempted"]
+    properties_schema:
+      input_snapshot_hash: "9f3a000000000000000000000000000000000000000000000000000000000001"
+      plugin_id: "com.acme.cfd.opensfoam"
+      plugin_version: "2.4.1"
+      status: "succeeded"
+      placement: {backend: "slurm", node_class: "cpu-x86_64-epyc-rome"}
+      determinism_class: "bit-reproducible"
+
+  - &result_tip_defl
+    type_id: "Result"
+    version: "1.0.0"
+    revisioned: true
+    immutable: true
+    allowed_states: ["released", "invalidated"]
+    properties_schema:
+      quantity: "tip_deflection"
+      units: "mm"
+      fidelity_class: "high_fidelity"
+      validation_status: "verified"
+      uncertainty:
+        method: "convergence_residual"
+        bands: {tip_deflection_mm: {lower: -0.014, upper: 0.011, confidence: 0.95}}
+      envelope: {mach: [0.10, 0.30], qbar: [500, 4000]}
+      produced_by: "aether://proj/run-2031"
+
+  - &evidence_441
+    type_id: "Evidence"
+    version: "1.0.0"
+    revisioned: true
+    immutable: true
+    allowed_states: ["draft", "released", "invalidated"]
+    properties_schema:
+      claim: "WING-RIB-014 satisfies R-STR-011 across the maneuver spectrum, verified by simulation and physical test."
+      verification_status: "verified"
+      source_refs:
+        - "aether://proj/run-2031"
+        - "aether://proj/measurement-tr-114"
+
+  - &decision_surrogate_trust
+    type_id: "Decision"
+    version: "1.0.0"
+    revisioned: true
+    immutable: true
+    allowed_states: ["proposed", "accepted", "superseded", "reversed"]
+    properties_schema:
+      question: "May the GP surrogate answer tip_deflection within the envelope for SS-112?"
+      options:
+        - {choice: "use_surrogate", expected_gain: 0.83, cost_h: 0.2}
+        - {choice: "high_fidelity",  expected_gain: 0.97, cost_h: 36.0}
+      selection: "use_surrogate_with_bounds"
+      autonomy_class: "A2"
+      review_required: false
+      rationale: "Held-out RMSE 0.014 within envelope; ensemble disagreement 0.03."
+      reversal_conditions:
+        - "qbar > 4100"
+        - "ensemble_disagreement > 0.05"
+      provenance:
+        governor_id: "SurrogateTrustAssessor"
+        governor_version: "1.2.0"
+        code: "si-trust@1.2.0"
+        env: "env/si.lock"

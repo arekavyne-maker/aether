@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/si.governor/schema/evidence.schema.json",
+  "title": "Aether SI Evidence (Decision record)",
+  "description": "A typed SI evidence record (Decision node content) (SDP §8.4).",
+  "type": "object",
+  "required": ["decision_id", "governor", "question", "options", "selection", "autonomy_class", "provenance"],
+  "additionalProperties": false,
+  "properties": {
+    "decision_id": {"type": "string"},
+    "governor": {"type": "string", "description": "Governor id, e.g. 'SurrogateTrustAssessor@1.2.0'."},
+    "question": {"type": "string"},
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["choice"],
+        "additionalProperties": false,
+        "properties": {
+          "choice": {"type": "string"},
+          "expected_gain": {"type": "number", "minimum": 0, "maximum": 1},
+          "cost_h": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    "selection": {"type": "string"},
+    "justification": {
+      "type": "object",
+      "properties": {
+        "validation_runs": {"type": "array", "items": {"type": "string"}},
+        "held_out_rmse": {"type": "number", "minimum": 0},
+        "calibration": {"type": "object", "additionalProperties": true},
+        "envelope": {"type": "object", "additionalProperties": true}
+      }
+    },
+    "uncertainty": {
+      "type": "object",
+      "properties": {
+        "method": {"type": "string"},
+        "predictive_band": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}
+      }
+    },
+    "reversal_conditions": {"type": "array", "items": {"type": "string"}},
+    "autonomy_class": {
+      "type": "string",
+      "enum": ["A0", "A1", "A2", "A3", "A4"]
+    },
+    "review_signoff": {
+      "type": "object",
+      "properties": {
+        "actor_id": {"type": "string"},
+        "signed_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["inputs", "code", "env"],
+      "properties": {
+        "governor_id": {"type": "string"},
+        "governor_version": {"type": "string"},
+        "inputs": {"type": "array", "items": {"type": "string"}},
+        "code": {"type": "string"},
+        "env": {"type": "string"}
+      }
+    }
+  }
+}

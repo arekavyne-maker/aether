@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: test.rig run (SDP §12.5)
+# A wing-rib buckling test on a servo-hydraulic rig, sine-sweep from
+# 1 Hz to 20 Hz at 0.5g amplitude.
+_schema_id: "https://aether.local/contracts/test.rig/schema/problem.schema.json"
+operation: "run"
+rig:
+  id: "SH-001"
+  kind: "servo_hydraulic"
+  channels: 64
+  max_sampling_rate_hz: 10000.0
+  safety_envelope: { max_force_kn: 50.0, max_displacement_mm: 25.0 }
+test_article:
+  physical_part_cas_hash: "0000000000000000000000000000000000000000000000000000000000000000"
+load_profile:
+  type: "sine_sweep"
+  amplitude: 0.5
+  frequency_hz_min: 1.0
+  frequency_hz_max: 20.0
+  duration_s: 60.0
+  cycles: 0

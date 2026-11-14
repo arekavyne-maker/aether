@@ -1,0 +1,25 @@
+{
+  "contract_id": "aether.io.format",
+  "version": "0.1.0",
+  "title": "Aether IO Format",
+  "description": "Top-level package metadata for the aether.io.format contract package.",
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/io.format/schema/format-descriptor.schema.json",
+      "path": "schema/format-descriptor.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    {
+      "namespace": "format_id",
+      "version": "0.1.0",
+      "closed": false
+    }
+  ],
+  "methods": ["read", "write", "schema_of"],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

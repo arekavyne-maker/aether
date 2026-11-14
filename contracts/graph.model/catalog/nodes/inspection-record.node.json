@@ -1,0 +1,18 @@
+{
+  "type_id": "InspectionRecord",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": true,
+  "allowed_states": ["released", "invalidated"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["method", "instrument"],
+    "additionalProperties": false,
+    "properties": {
+      "method": {"type": "string"},
+      "instrument": {"type": "string"},
+      "coverage": {"type": "number", "minimum": 0, "maximum": 1},
+      "findings": {"type": "array", "items": {"type": "object"}}
+    }
+  }
+}

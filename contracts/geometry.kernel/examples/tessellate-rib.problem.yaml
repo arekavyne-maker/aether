@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: geometry.kernel problem (SDP §11.1)
+# Tessellate a geometry that is already in the CAS.
+_schema_id: "https://aether.local/contracts/geometry.kernel/schema/problem.schema.json"
+operation: "tessellate"
+geometry_ref:
+  cas_hash: "0000000000000000000000000000000000000000000000000000000000000000"
+  format: "step-ap242"
+  frame: "aether://proj/frames/wing-root"
+  units: { length: "mm", angle: "rad" }
+tessellation:
+  max_chord_mm: 1.0
+  max_angle_deg: 30.0

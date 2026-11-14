@@ -1,0 +1,12 @@
+[package]
+name = "aether_sdk_ffi"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Aether C-ABI + PyO3 bindings (Phase 2+; placeholder)."
+
+[dependencies]
+serde = { workspace = true }

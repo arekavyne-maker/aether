@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: a vendor-neutral resource requirement (SDP §6.1, ADR-0006).
+# I-6 forbids `gpu_model`, `queue_name`, `hostname`, `cpu_vendor`.
+
+_schema_id: "https://aether.local/contracts/compute.backend/schema/resource-requirement.schema.json"
+memory_gb: 64
+disk_gb: 500
+cores: 32
+parallelism: "distributed"
+accelerator: "optional"
+accelerator_class: "any"
+architecture:
+  - "x86_64"
+  - "aarch64"
+license_slots:
+  cfd_fine: 1
+max_runtime_h: 48.0

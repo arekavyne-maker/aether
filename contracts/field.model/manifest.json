@@ -1,0 +1,29 @@
+{
+  "contract_id": "aether.field.model",
+  "version": "0.1.0",
+  "title": "Aether Field Data Model",
+  "description": "Neutral in-platform field representation: a FieldDataset = mesh topology + field arrays + metadata. (SDP §10.3)",
+  "methods": [
+    "discover",
+    "create",
+    "add_field",
+    "read",
+    "write",
+    "interpolate"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/field.model/schema/dataset.schema.json",
+      "path": "schema/dataset.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "field_layout", "version": "0.1.0", "closed": true },
+    { "namespace": "data_format", "version": "0.1.0", "closed": true }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

@@ -1,0 +1,56 @@
+awl: "1.2"
+study: "AGARD-445.6-flutter"
+description: |
+  AGARD 445.6 wing flutter benchmark (SDP §18 G4 acceptance).
+  The benchmark's published flutter speed is ~150 m/s at sea level
+  for the M=0.96 / atmospheric conditions documented in the source
+  paper. The composition runs a partitioned-implicit coupling with
+  IQN-ILS acceleration; the conformance test asserts that the
+  coupling converges within the declared tolerance.
+
+  In a production site the participants are full CFD and FEA solvers
+  with AGARD 445.6 meshes; in the conformance fixture the engine's
+  internal simulation is used (the coupling protocol, conservation
+  checks, and IQN-ILS are the substrate of MVR-04/05/12).
+
+compose:
+  name: "aeroelastic-flutter-agard-445"
+  participants:
+    - { name: flow, plugin: com.acme.cfd.opensfoam, plugin_version: "2.4.1", physics_class: fluid }
+    - { name: structure, plugin: org.oss.feather.calculix, plugin_version: "2.21.0", physics_class: structural }
+  exchanges:
+    - { from: flow, to: structure, name: pressure, units: Pa, mapping: conservative, tolerance: 1.0e-4 }
+    - { from: structure, to: flow, name: displacement, units: m, mapping: conservative, tolerance: 1.0e-6 }
+  scheme:
+    type: "partitioned_implicit"
+    accelerator: "iqn_ils"
+    max_iterations: 50
+    tolerance: 1.0e-4
+    divergence_abort: true
+  conservation_checks:
+    - { name: force_resultant, tolerance_rel: 1.0e-3 }
+    - { name: energy_balance, tolerance_rel: 1.0e-2 }
+
+si_hooks: { fidelity_governor: true, surrogate_trust: true, data_value: true, autonomy_max: A2 }
+
+ladder:
+  tiers:
+    - { tier: surrogate, plugin: org.aether.reference.surrogate, plugin_version: "0.1.0", si_hooks: { surrogate_trust: true, autonomy_max: A2 } }
+    - { tier: medium, plugin: com.acme.cfd.opensfoam, plugin_version: "2.4.1" }
+    - { tier: high, plugin: com.acme.cfd.opensfoam, plugin_version: "2.4.1" }
+
+steps:
+  - id: coupling
+    type: run
+    contract: aether.physics.composable
+    plugin: org.aether.composition.engine
+    plugin_version: "0.1.0"
+    retries: { max_attempts: 1, backoff_seconds: 0 }
+
+evidence:
+  attach: true
+  verification_relevant: true
+
+reproducibility:
+  mode: strict
+  env_manifest: env/agard445.lock

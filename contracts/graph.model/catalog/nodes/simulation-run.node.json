@@ -1,0 +1,42 @@
+{
+  "type_id": "SimulationRun",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": true,
+  "allowed_states": ["running", "succeeded", "failed", "preempted"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["input_snapshot_hash", "plugin_id", "plugin_version", "status"],
+    "additionalProperties": false,
+    "properties": {
+      "input_snapshot_hash": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$",
+        "description": "Frozen CAS hash of all inputs (geometry, mesh, model, parameters, plugin versions, environment) — I-8 / SDP §3.6."
+      },
+      "plugin_id": {"type": "string"},
+      "plugin_version": {"type": "string"},
+      "contract_versions": {
+        "type": "object",
+        "additionalProperties": {"type": "string"}
+      },
+      "status": {
+        "type": "string",
+        "enum": ["running", "succeeded", "failed", "preempted"]
+      },
+      "started_at": {"type": "string", "format": "date-time"},
+      "ended_at": {"type": "string", "format": "date-time"},
+      "placement": {
+        "type": "object",
+        "properties": {
+          "backend": {"type": "string"},
+          "node_class": {"type": "string"}
+        }
+      },
+      "determinism_class": {
+        "type": "string",
+        "enum": ["bit-reproducible", "statistically-reproducible", "documented-equivalent"]
+      }
+    }
+  }
+}

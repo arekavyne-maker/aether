@@ -1,0 +1,16 @@
+{
+  "type_id": "Workflow",
+  "version": "1.0.0",
+  "revisioned": true,
+  "allowed_states": ["draft", "released", "superseded", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["name"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string"},
+      "awl_version": {"type": "string"},
+      "awl_hash": {"type": "string"}
+    }
+  }
+}

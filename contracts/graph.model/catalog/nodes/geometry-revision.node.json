@@ -1,0 +1,45 @@
+{
+  "type_id": "GeometryRevision",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": true,
+  "allowed_states": ["released", "superseded"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["cas_hash", "format", "frame", "units"],
+    "additionalProperties": false,
+    "properties": {
+      "cas_hash": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$",
+        "description": "SHA-256 of the geometry artifact in the content-addressed store."
+      },
+      "format": {
+        "type": "string",
+        "enum": ["step-ap242", "iges", "cgns", "stl", "native"]
+      },
+      "parametric_recipe_ref": {
+        "type": "string",
+        "description": "CAS reference to the parametric recipe (SDP §11.1)."
+      },
+      "frame": {"type": "string"},
+      "units": {
+        "type": "object",
+        "properties": {
+          "length": {"type": "string"},
+          "angle": {"type": "string"},
+          "mass": {"type": "string"}
+        }
+      },
+      "tolerance_baseline": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "pmi_refs": {
+        "type": "array",
+        "items": {"type": "string"},
+        "description": "References to PMI artifacts (SDP §11.2)."
+      }
+    }
+  }
+}

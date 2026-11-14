@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/geometry.kernel/schema/problem.schema.json",
+  "title": "Aether Geometry Kernel Problem",
+  "description": "A typed input to a geometry.kernel method: import, export, parameterize, tessellate, boolean, fillet, check. (SDP §11.1)",
+  "type": "object",
+  "required": ["operation", "geometry_ref"],
+  "additionalProperties": false,
+  "properties": {
+    "operation": {
+      "type": "string",
+      "enum": ["import", "export", "parameterize", "tessellate", "boolean", "fillet", "check"]
+    },
+    "geometry_ref": {
+      "type": "object",
+      "description": "Reference to the geometry artifact (CAS hash, frame, units).",
+      "required": ["cas_hash", "format"],
+      "additionalProperties": false,
+      "properties": {
+        "cas_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "format": {"type": "string", "enum": ["step-ap242", "iges", "cgns", "stl", "native"]},
+        "frame": {"type": "string"},
+        "units": {
+          "type": "object",
+          "properties": {
+            "length": {"type": "string"},
+            "angle": {"type": "string"}
+          }
+        }
+      }
+    },
+    "target_format": {
+      "type": "string",
+      "description": "Required for export: the destination format.",
+      "enum": ["step-ap242", "iges", "stl", "native"]
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Required for parameterize: name -> value.",
+      "additionalProperties": true
+    },
+    "boolean": {
+      "type": "object",
+      "description": "Required for boolean: the second operand.",
+      "properties": {
+        "geometry_ref": {"type": "object"},
+        "op": {"type": "string", "enum": ["union", "intersect", "subtract", "xor"]}
+      }
+    },
+    "fillet": {
+      "type": "object",
+      "description": "Required for fillet: edges and radius.",
+      "properties": {
+        "edge_ids": {"type": "array", "items": {"type": "string"}},
+        "radius_mm": {"type": "number", "minimum": 0}
+      }
+    },
+    "tessellation": {
+      "type": "object",
+      "description": "Required for tessellate: mesh quality parameters.",
+      "properties": {
+        "max_chord_mm": {"type": "number", "minimum": 0},
+        "max_angle_deg": {"type": "number", "minimum": 0, "maximum": 180}
+      }
+    }
+  }
+}

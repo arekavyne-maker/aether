@@ -1,0 +1,34 @@
+{
+  "contract_id": "aether.manufacturing.process",
+  "version": "0.1.0",
+  "title": "Aether Manufacturing Process",
+  "description": "Contract for manufacturing process plugins: CNC, AM (L-PBF, DED), AFP/ATL composites, autoclave cure, trim. (SDP §12)",
+  "methods": [
+    "discover",
+    "capabilities",
+    "plan",
+    "simulate",
+    "export_program",
+    "record_as_run"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/manufacturing.process/schema/problem.schema.json",
+      "path": "schema/problem.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/manufacturing.process/schema/program.schema.json",
+      "path": "schema/program.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "process_class", "version": "0.1.0", "closed": true },
+    { "namespace": "machine_kind", "version": "0.1.0", "closed": true }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

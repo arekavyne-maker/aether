@@ -1,0 +1,34 @@
+{
+  "contract_id": "aether.test.rig",
+  "version": "0.1.0",
+  "title": "Aether Test Rig",
+  "description": "Contract for physical test rig plugins: DAQ, channel mapping, telemetry streaming, run records. (SDP §12.5)",
+  "methods": [
+    "discover",
+    "capabilities",
+    "rig_profile",
+    "configure",
+    "run",
+    "stream_telemetry",
+    "collect"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/test.rig/schema/problem.schema.json",
+      "path": "schema/problem.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/test.rig/schema/run.schema.json",
+      "path": "schema/run.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "rig_kind", "version": "0.1.0", "closed": true }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

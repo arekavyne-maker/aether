@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: manufacturing.process plan (SDP §12.2)
+# A wing-rib AFP layup + autoclave cure + trim plan. The
+# reference plugin returns a content-hashed program artifact.
+_schema_id: "https://aether.local/contracts/manufacturing.process/schema/problem.schema.json"
+operation: "plan"
+geometry_ref:
+  cas_hash: "0000000000000000000000000000000000000000000000000000000000000000"
+  format: "step-ap242"
+machine:
+  id: "AFP-CELL-2"
+  kind: "afp"
+parameters:
+  layup_speed_mm_s: 100
+  consolidation_pressure_kpa: 100
+  tow_width_mm: 6.35
+acceptance_criteria:
+  fiber_volume_fraction_min: 0.58
+  void_content_max: 0.02

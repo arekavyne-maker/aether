@@ -1,0 +1,29 @@
+experiment:
+  name: wing-study-aerospace-template
+  id: wing-study-experiment
+  status: TEMPLATE
+
+hypothesis:
+  id: H1
+  statement: >
+    Adaptive fidelity can achieve comparable decision quality at lower
+    computational cost than fixed high-fidelity workflows for wing
+    structural sizing. (Placeholder for the Phase 4/5 adaptive-fidelity
+    engine; edit this file to declare your own experiment.)
+
+baseline:
+  workflow: workflows/wing-baseline.awl.yaml
+  note: Point `baseline.workflow` and `treatment.workflow` at AWL files
+    in this project; run `aether experiment run` (Phase 6) to execute
+    the comparison.
+
+treatment:
+  workflow: workflows/wing-treatment.awl.yaml
+
+metrics:
+  - name: compute_cost
+  - name: objective_quality
+  - name: constraint_violation
+  - name: prediction_error
+
+seed: 42

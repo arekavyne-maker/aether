@@ -1,0 +1,25 @@
+{
+  "type_id": "Mesh",
+  "version": "1.0.0",
+  "revisioned": true,
+  "allowed_states": ["draft", "released", "superseded", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["cas_hash", "format"],
+    "additionalProperties": false,
+    "properties": {
+      "cas_hash": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "format": {
+        "type": "string",
+        "enum": ["vtk", "cgns", "stl", "msh", "native"]
+      },
+      "element_kind": {
+        "type": "string",
+        "enum": ["tet4", "tet10", "hex8", "hex20", "triangle3", "quad4", "mixed"]
+      }
+    }
+  }
+}

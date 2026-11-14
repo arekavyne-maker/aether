@@ -1,0 +1,7 @@
+{
+  "type_id": "decomposes",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": ["System", "Assembly", "Component", "Part", "Requirement"],
+  "target_types": ["Assembly", "Component", "Part", "Requirement"]
+}

@@ -1,0 +1,40 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: a wing rib parametric recipe (SDP §11.1)
+# This is the design intent: a parametric recipe that can be executed
+# by any geometry.kernel implementation (OCC, commercial CAD, etc.).
+_schema_id: "https://aether.local/contracts/geometry.recipe/schema/recipe.schema.json"
+recipe_id: "wing-rib-014"
+version: "1.0.0"
+frame: "aether://proj/frames/wing-root"
+units:
+  length: "mm"
+  angle: "deg"
+parameters:
+  chord_mm: 240.0
+  thickness_mm: 4.0
+  height_mm: 80.0
+  flange_mm: 12.0
+features:
+  - id: base_sketch
+    kind: sketch
+    params:
+      plane: "XY"
+      points:
+        - [-120, 0, 0]
+        - [120, 0, 0]
+        - [120, 80, 0]
+        - [-120, 80, 0]
+        - [-120, 0, 0]
+  - id: extrude_thickness
+    kind: extrude
+    depends_on: [base_sketch]
+    params:
+      direction: [0, 0, 1]
+      distance_mm: 4.0
+  - id: flange
+    kind: fillet
+    depends_on: [extrude_thickness]
+    params:
+      edges: ["*"]
+      radius_mm: 1.5

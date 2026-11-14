@@ -1,0 +1,21 @@
+{
+  "type_id": "Part",
+  "version": "1.0.0",
+  "revisioned": true,
+  "allowed_states": ["draft", "released", "superseded", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["name", "kind"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string"},
+      "kind": {"type": "string", "enum": ["Assembly", "Component", "Part"]},
+      "mass_target_kg": {"type": "number", "minimum": 0},
+      "zone": {"type": "string"},
+      "configuration_flags": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  }
+}

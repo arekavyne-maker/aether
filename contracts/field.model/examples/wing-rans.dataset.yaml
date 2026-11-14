@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: a CFD result FieldDataset (SDP §10.3)
+_schema_id: "https://aether.local/contracts/field.model/schema/dataset.schema.json"
+name: "wing-rans-results"
+mesh:
+  points:
+    - [-0.1, 0.0, 0.0]
+    - [0.1, 0.0, 0.0]
+    - [0.0, 0.0, 0.01]
+  cells:
+    - [0, 1, 2]
+fields:
+  - name: "p"
+    values: [101325.0, 101325.0, 101325.0]
+    locations: "node"
+    units: "Pa"
+    fidelity_class: "high_fidelity"
+  - name: "U"
+    values: [[30.0, 0.0, 0.0], [30.0, 0.0, 0.0], [30.0, 0.0, 0.0]]
+    locations: "node"
+    units: "m/s"
+    fidelity_class: "high_fidelity"
+metadata:
+  frame: "aether://proj/frames/wing-root"
+  units: { length: "m", pressure: "Pa", velocity: "m/s" }
+  provenance_ref: "aether://proj/run-2031"

@@ -1,0 +1,17 @@
+{
+  "type_id": "ProcessStep",
+  "version": "1.0.0",
+  "revisioned": true,
+  "allowed_states": ["draft", "released", "superseded", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["name", "operation"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string"},
+      "operation": {"type": "string"},
+      "sequence_index": {"type": "integer", "minimum": 0},
+      "parameters": {"type": "object", "additionalProperties": true}
+    }
+  }
+}

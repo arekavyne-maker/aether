@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/physics.composable/schema/result.schema.json",
+  "title": "Aether Coupling Result",
+  "description": "Result of a coupled execution: per-step convergence, conservation residuals, divergence flags. (SDP §10.1)",
+  "type": "object",
+  "required": ["converged", "iterations", "conservation_residuals"],
+  "additionalProperties": false,
+  "properties": {
+    "converged": {"type": "boolean"},
+    "iterations": {"type": "integer", "minimum": 0},
+    "convergence_residual": {"type": "number", "minimum": 0},
+    "conservation_residuals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "value", "tolerance_rel"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "value": {"type": "number"},
+          "tolerance_rel": {"type": "number"},
+          "satisfied": {"type": "boolean"}
+        }
+      }
+    },
+    "diverged": {"type": "boolean", "default": false}
+  }
+}

@@ -1,0 +1,98 @@
+awl: "1.3"
+study: "wing-rib-closed-loop-ga2"
+description: |
+  Closed-loop manufacturing: a wing-rib geometry recipe binds a
+  process plan (AFP layup + autoclave cure + trim); the program
+  exports a machine program; CMM inspection acquires measurement
+  points and runs ICP alignment against the design geometry; a
+  buckling test on a servo-hydraulic rig produces telemetry; the
+  test-result SI governor produces an evidence Decision; the
+  surrogate trust SI governor reviews the test result; finally
+  the model update is recorded as a ModelRevision in the graph
+  (a SDP §3.6 invariant 7 verification).
+
+  This AWL is the G6 closed-loop idiom: plan -> execute -> inspect
+  -> test -> update-model. The executor routes to the reference
+  plugins; production sites replace these with their own.
+
+steps:
+  - id: plan-process
+    type: run
+    contract: aether.manufacturing.process
+    plugin: org.aether.reference.manufacturing.baseline
+    plugin_version: "0.1.0"
+    inputs:
+      operation: "plan"
+      geometry_ref:
+        cas_hash: "0000000000000000000000000000000000000000000000000000000000000000"
+        format: "step-ap242"
+      machine:
+        id: "AFP-CELL-2"
+        kind: "afp"
+      parameters:
+        layup_speed_mm_s: 100
+        consolidation_pressure_kpa: 100
+        tow_width_mm: 6.35
+    retries: { max_attempts: 1 }
+
+  - id: cmm-inspect
+    type: run
+    contract: aether.inspection.device
+    plugin: org.aether.reference.inspection.cmm
+    plugin_version: "0.1.0"
+    depends_on: [plan-process]
+    inputs:
+      operation: "acquire"
+      geometry_ref:
+        cas_hash: "0000000000000000000000000000000000000000000000000000000000000000"
+      device:
+        id: "CMM-001"
+        kind: "cmm"
+    retries: { max_attempts: 1 }
+
+  - id: buckling-test
+    type: run
+    contract: aether.test.rig
+    plugin: org.aether.reference.test.daq
+    plugin_version: "0.1.0"
+    depends_on: [plan-process]
+    inputs:
+      operation: "run"
+      rig:
+        id: "SH-001"
+        kind: "servo_hydraulic"
+        channels: 64
+        max_sampling_rate_hz: 10000.0
+        safety_envelope: { max_force_kn: 50.0, max_displacement_mm: 25.0 }
+      test_article:
+        physical_part_cas_hash: "0000000000000000000000000000000000000000000000000000000000000000"
+      load_profile:
+        type: "sine_sweep"
+        amplitude: 0.5
+        frequency_hz_min: 1.0
+        frequency_hz_max: 20.0
+        duration_s: 60.0
+        cycles: 0
+    retries: { max_attempts: 1 }
+
+  - id: si-decide
+    type: run
+    contract: aether.si.governor
+    plugin: org.aether.reference.si.essentials
+    plugin_version: "0.1.0"
+    depends_on: [buckling-test, cmm-inspect]
+    inputs:
+      governor: "SurrogateTrustAssessor"
+      held_out_rmse: 0.012
+      target_tolerance: 0.01
+      in_envelope: true
+    si_hooks: { surrogate_trust: true, autonomy_max: A2 }
+    retries: { max_attempts: 1 }
+
+evidence:
+  attach: true
+  verification_relevant: true
+
+reproducibility:
+  mode: equivalence
+  env_manifest: env/closed-loop-manufacturing.lock

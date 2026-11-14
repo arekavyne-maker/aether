@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/test.rig/schema/run.schema.json",
+  "title": "Aether Test Run",
+  "description": "A typed test-run record: per-channel data, summary statistics, and pass/fail. (SDP §12.5)",
+  "type": "object",
+  "required": ["rig_id", "started_at", "ended_at", "channels"],
+  "additionalProperties": false,
+  "properties": {
+    "rig_id": {"type": "string"},
+    "started_at": {"type": "string", "format": "date-time"},
+    "ended_at": {"type": "string", "format": "date-time"},
+    "status": {"type": "string", "enum": ["running", "succeeded", "failed", "aborted"]},
+    "channels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "samples"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "unit": {"type": "string"},
+          "samples": {"type": "integer", "minimum": 0},
+          "sampling_rate_hz": {"type": "number", "minimum": 0},
+          "summary": {
+            "type": "object",
+            "properties": {
+              "min": {"type": "number"},
+              "max": {"type": "number"},
+              "mean": {"type": "number"},
+              "rms": {"type": "number"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

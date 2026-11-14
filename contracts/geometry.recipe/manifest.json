@@ -1,0 +1,26 @@
+{
+  "contract_id": "aether.geometry.recipe",
+  "version": "0.1.0",
+  "title": "Aether Geometry Recipe",
+  "description": "Parametric recipe: a versioned, tool-agnostic feature history (Python) bound to parameters. The recipe IS the design intent; the geometry kernel is the executor. (SDP §11.1, MVR-06)",
+  "methods": [
+    "discover",
+    "bind_parameters",
+    "regenerate",
+    "export_features"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/geometry.recipe/schema/recipe.schema.json",
+      "path": "schema/recipe.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "feature_kind", "version": "0.1.0", "closed": true }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

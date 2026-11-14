@@ -1,0 +1,64 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: OpenFOAM Adapter Manifest (SDP §5.2 sample)
+#
+# This manifest is normative for the structure; the actual OpenFOAM
+# adapter will be implemented in Phase 2 and certified per ADR-0022.
+_schema_id: "https://aether.local/contracts/plugin.manifest/schema/manifest.schema.json"
+
+manifest_version: "1.2"
+plugin:
+  id: "com.acme.cfd.opensfoam"
+  name: "OpenFOAM CFD Adapter"
+  version: "2.4.1"
+  vendor: "ACME Sim"
+  license_ref: "license/AE-STD-2024"
+  signature:
+    alg: "ed25519"
+    keyid: "aether-prod-2026-03"
+    sig: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
+contracts:
+  - id: "aether.physics.solver"
+    version: ">=1.3.0 <2.0.0"
+    role: "implements"
+  - id: "aether.compute.executable"
+    version: ">=1.1.0"
+    role: "implements"
+capabilities:
+  physics:
+    aerodynamics: true
+    compressible_flow: true
+    conjugate_heat: false
+    multiphase: false
+    turbulence: true
+  compute:
+    cpu: true
+    gpu: false
+    mpi_distributed: true
+    accelerator_optional: false
+  features:
+    adjoint: false
+    autodiff: false
+    uncertainty_quantification: false
+    restart: true
+    checkpoint: true
+resources:
+  defaults: {memory_gb: 32, cores: 8}
+  maximums: {memory_gb: 512, cores: 256}
+isolation:
+  level: "process"
+  filesystem: "sandbox"
+  network: "deny"
+runtime:
+  entry:
+    kind: "native-binary"
+    path: "bin/aether-adapter"
+    args: ["--stdio"]
+  env_manifest_ref: "env/opensfoam.lock"
+airgap:
+  offline_install: true
+  data_bundle: "bundles/dfd-70.tgz"
+provenance_template: "prov/solver-run.v1.json"
+policy:
+  data_residency: "local_only"
+  export_class: "EAR-99"

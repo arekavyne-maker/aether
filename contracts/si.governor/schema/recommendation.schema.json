@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/si.governor/schema/recommendation.schema.json",
+  "title": "Aether SI Recommendation",
+  "description": "A typed recommendation from a governor. (SDP §8.3)",
+  "type": "object",
+  "required": ["governor", "selection", "autonomy_class"],
+  "additionalProperties": false,
+  "properties": {
+    "governor": {"type": "string"},
+    "selection": {"type": "string"},
+    "autonomy_class": {"type": "string", "enum": ["A0", "A1", "A2", "A3", "A4"]},
+    "rationale": {"type": "string"},
+    "evidence": {"type": "string", "description": "CAS reference to the evidence record."}
+  }
+}

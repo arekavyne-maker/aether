@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+_schema_id: "https://aether.local/contracts/io.format/schema/format-descriptor.schema.json"
+format_id: "aether.io.format.hdf5.xdmf"
+format_name: "HDF5 + XDMF"
+version: "1.0.0"
+capabilities:
+  read: true
+  write: true
+  stream: true
+  round_trip_fidelity: "lossless"
+schema_refs:
+  - "field-dataset.schema.json"
+standards:
+  - name: "HDF5"
+    version: "1.14"
+  - name: "XDMF"
+    version: "3"

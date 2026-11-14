@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/graph.model/schema/node-type.schema.json",
+  "title": "Aether Graph Node Type",
+  "description": "Schema for a registered node type in the Engineering Graph. Node types are data; the kernel's generic mechanics validate, revision, and index them (I-2).",
+  "type": "object",
+  "required": ["type_id", "version", "properties_schema", "revisioned", "allowed_states"],
+  "additionalProperties": false,
+  "properties": {
+    "type_id": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Za-z0-9]+$",
+      "description": "PascalCase type identifier, e.g. 'Requirement', 'SimulationRun'."
+    },
+    "version": {"type": "string"},
+    "revisioned": {
+      "type": "boolean",
+      "description": "If true, mutations produce immutable revisions; current state is a pointer."
+    },
+    "immutable": {
+      "type": "boolean",
+      "description": "If true, instances are immutable (e.g., SimulationRun, Result). Treated as always-revisioned."
+    },
+    "allowed_states": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "State values for this node type. The kernel recognizes four canonical states (draft, released, superseded, archived); other domain states (proposed, accepted, reversed, running, succeeded, etc.) are permitted as domain-specific extensions. The kernel only ever transitions between canonical states; domain states are advisory.",
+      "examples": [
+        ["draft", "released", "superseded", "archived"],
+        ["proposed", "accepted", "superseded", "reversed"]
+      ]
+    },
+    "properties_schema": {
+      "type": "object",
+      "description": "JSON Schema describing the node's typed properties (SDP §3.1).",
+      "additionalProperties": true
+    },
+    "initial_edges": {
+      "type": "object",
+      "description": "Edges that may legally exist when this node is created.",
+      "additionalProperties": {"type": "array", "items": {"type": "string"}}
+    },
+    "lifecycle": {
+      "type": "object",
+      "description": "Allowed state transitions and the policy checks that gate them."
+    }
+  }
+}

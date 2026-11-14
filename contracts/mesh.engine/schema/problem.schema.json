@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/mesh.engine/schema/problem.schema.json",
+  "title": "Aether Mesh Generation Problem",
+  "description": "A typed input to a mesh.engine generate/adapt call. (SDP §10.3)",
+  "type": "object",
+  "required": ["geometry_ref", "element_kind"],
+  "additionalProperties": false,
+  "properties": {
+    "geometry_ref": {
+      "type": "object",
+      "required": ["cas_hash", "format"],
+      "additionalProperties": false,
+      "properties": {
+        "cas_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "format": {"type": "string", "enum": ["step-ap242", "iges", "stl", "native"]}
+      }
+    },
+    "element_kind": {
+      "type": "string",
+      "enum": ["tet4", "tet10", "hex8", "hex20", "triangle3", "quad4", "mixed"]
+    },
+    "size": {
+      "type": "object",
+      "description": "Mesh size parameters.",
+      "properties": {
+        "max_edge_length_mm": {"type": "number", "minimum": 0},
+        "min_edge_length_mm": {"type": "number", "minimum": 0},
+        "growth_rate": {"type": "number", "minimum": 1.0, "maximum": 2.0}
+      }
+    },
+    "refinement": {
+      "type": "object",
+      "description": "Local refinement rules (field-driven).",
+      "properties": {
+        "fields": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

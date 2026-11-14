@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/compute.backend/schema/node-profile.schema.json",
+  "title": "Aether Compute Node Profile",
+  "type": "object",
+  "required": ["node_id", "architecture", "cpu", "memory_gb", "accelerators"],
+  "additionalProperties": false,
+  "properties": {
+    "node_id": {"type": "string"},
+    "architecture": {"type": "string", "enum": ["x86_64", "aarch64", "riscv64", "ppc64le"]},
+    "cpu": {
+      "type": "object",
+      "required": ["model_family", "cores", "threads_per_core"],
+      "properties": {
+        "model_family": {"type": "string", "description": "Family identifier (e.g., 'epyc-rome', 'grace'); not a vendor SKU."},
+        "cores": {"type": "integer", "minimum": 1},
+        "threads_per_core": {"type": "integer", "minimum": 1}
+      }
+    },
+    "memory_gb": {"type": "integer", "minimum": 1},
+    "accelerators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["class", "memory_gb"],
+        "properties": {
+          "class": {"type": "string", "enum": ["nvidia_cuda", "amd_rocm", "opencl", "generic_tensor"]},
+          "model_family": {"type": "string"},
+          "memory_gb": {"type": "number", "minimum": 0}
+        }
+      }
+    },
+    "mpi": {"type": "object", "properties": {"available": {"type": "boolean"}, "implementation": {"type": "string"}}},
+    "live": {
+      "type": "object",
+      "description": "Live inventory, refreshed by the backend adapter.",
+      "properties": {
+        "available_memory_gb": {"type": "number", "minimum": 0},
+        "available_cores": {"type": "integer", "minimum": 0},
+        "load_avg": {"type": "number", "minimum": 0}
+      }
+    }
+  }
+}

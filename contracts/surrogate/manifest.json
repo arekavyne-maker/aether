@@ -1,0 +1,33 @@
+{
+  "contract_id": "aether.surrogate.builder",
+  "version": "0.1.0",
+  "title": "Aether Surrogate Builder",
+  "description": "Contract for surrogate-builder plugins: GP regression, deep ensembles, polynomial chaos (POD + regression), RBF. (SDP §8.4, SDP §18 G5 / MVR-13)",
+  "methods": [
+    "discover",
+    "train",
+    "validate",
+    "export_features",
+    "trust_metrics"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/surrogate/schema/problem.schema.json",
+      "path": "schema/problem.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/surrogate/schema/result.schema.json",
+      "path": "schema/result.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "surrogate_kind", "version": "0.1.0", "closed": true },
+    { "namespace": "kernel_type", "version": "0.1.0", "closed": true }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

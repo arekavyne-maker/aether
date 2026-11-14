@@ -1,0 +1,17 @@
+{
+  "type_id": "Material",
+  "version": "1.0.0",
+  "revisioned": true,
+  "allowed_states": ["draft", "released", "superseded", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["name", "class"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string"},
+      "class": {"type": "string"},
+      "allowables_basis": {"type": "string"},
+      "certification_status": {"type": "string"}
+    }
+  }
+}

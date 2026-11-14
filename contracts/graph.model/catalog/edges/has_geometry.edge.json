@@ -1,0 +1,10 @@
+{
+  "type_id": "has_geometry",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": ["Part", "Component", "Assembly", "System"],
+  "target_types": ["GeometryRevision"],
+  "cardinality": {
+    "max_out_per_source": 1
+  }
+}

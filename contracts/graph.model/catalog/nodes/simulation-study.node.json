@@ -1,0 +1,17 @@
+{
+  "type_id": "SimulationStudy",
+  "version": "1.0.0",
+  "revisioned": true,
+  "allowed_states": ["draft", "released", "superseded", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["name"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string"},
+      "physics_class": {"type": "string", "enum": ["fluid", "structural", "thermal", "electromagnetic", "coupled"]},
+      "intent": {"type": "string"},
+      "fidelity_plan": {"type": "object", "additionalProperties": true}
+    }
+  }
+}

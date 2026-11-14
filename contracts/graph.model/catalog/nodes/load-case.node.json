@@ -1,0 +1,18 @@
+{
+  "type_id": "LoadCase",
+  "version": "1.0.0",
+  "revisioned": true,
+  "allowed_states": ["draft", "released", "superseded", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["name", "kind"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string"},
+      "kind": {"type": "string"},
+      "spectrum": {"type": "object", "additionalProperties": true},
+      "limits": {"type": "object", "additionalProperties": true},
+      "sources": {"type": "array", "items": {"type": "string"}}
+    }
+  }
+}

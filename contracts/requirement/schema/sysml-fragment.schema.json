@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/requirement/schema/sysml-fragment.schema.json",
+  "title": "Aether SysML v2 Textual Fragment",
+  "description": "A subset of the SysML v2 textual notation (KerML/SysML) sufficient for round-tripping Aether requirements. (SDP §11.3)",
+  "type": "object",
+  "required": ["package", "elements"],
+  "additionalProperties": false,
+  "properties": {
+    "package": {"type": "string"},
+    "elements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "id"],
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["requirement", "verification", "actor", "use_case", "concern", "stakeholder"]
+          },
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "text": {"type": "string"},
+          "verification_method": {
+            "type": "string",
+            "enum": ["analysis", "test", "inspection", "demonstration", "similarity"]
+          },
+          "criticality": {
+            "type": "string",
+            "enum": ["catastrophic", "hazardous", "major", "minor", "no_effect"]
+          },
+          "subject_ref": {"type": "string", "description": "Optional id of the subject the requirement applies to."},
+          "verify_ref": {"type": "string", "description": "Optional id of the verification case."}
+        }
+      }
+    }
+  }
+}

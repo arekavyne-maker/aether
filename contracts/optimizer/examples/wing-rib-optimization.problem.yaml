@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: NSGA-III optimization of a wing rib (SDP §9.3)
+# Minimize mass (kg) and tip deflection (mm) subject to max-stress
+# and tip-deflection constraints.
+_schema_id: "https://aether.local/contracts/optimizer/schema/problem.schema.json"
+algorithm: "nsga_iii"
+variables:
+  - { name: "chord_mm", lower: 200.0, upper: 280.0 }
+  - { name: "thickness_mm", lower: 2.0, upper: 8.0 }
+  - { name: "height_mm", lower: 60.0, upper: 120.0 }
+objectives:
+  - { name: "mass_kg", sense: "minimize", weight: 1.0 }
+  - { name: "tip_deflection_mm", sense: "minimize", weight: 1.0 }
+constraints:
+  - { name: "max_stress", expression: "tip_deflection_mm - 12.0" }
+model:
+  plugin: "com.acme.cfd.opensfoam"
+  plugin_version: "2.4.1"
+population_size: 32
+generations: 20
+seed: 42
+surrogate:
+  plugin: "org.aether.reference.surrogate.gp"
+  plugin_version: "0.1.0"
+  trust_threshold: 0.05

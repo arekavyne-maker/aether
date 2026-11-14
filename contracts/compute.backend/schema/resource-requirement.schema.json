@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/compute.backend/schema/resource-requirement.schema.json",
+  "title": "Aether Compute Resource Requirement",
+  "description": "Computational requirement declaration (SDP §6.1, ADR-0006). Workflows declare these; hardware names are FORBIDDEN here.",
+  "type": "object",
+  "required": ["memory_gb", "cores", "parallelism", "accelerator", "accelerator_class", "architecture"],
+  "additionalProperties": false,
+  "properties": {
+    "memory_gb": {"type": "integer", "minimum": 1},
+    "disk_gb": {"type": "integer", "minimum": 0},
+    "cores": {"type": "integer", "minimum": 1},
+    "parallelism": {
+      "type": "string",
+      "enum": ["single", "multi_thread", "multi_process", "distributed"]
+    },
+    "accelerator": {
+      "type": "string",
+      "enum": ["none", "optional", "required"]
+    },
+    "accelerator_class": {
+      "type": "string",
+      "enum": ["any", "nvidia_cuda", "amd_rocm", "opencl", "generic_tensor"],
+      "description": "I-6: vendor-neutral class. The runtime maps to vendor-specific execution at the backend."
+    },
+    "architecture": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "enum": ["x86_64", "aarch64", "riscv64", "ppc64le"]}
+    },
+    "license_slots": {
+      "type": "object",
+      "additionalProperties": {"type": "integer", "minimum": 0},
+      "description": "Map of named license slot to required count. The license-manager adapter resolves availability."
+    },
+    "data_locality": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "CAS path prefixes that should be staged to node-local scratch."
+    },
+    "max_runtime_h": {"type": "number", "minimum": 0}
+  },
+  "allOf": [
+    {
+      "description": "I-6: hardware-specific fields are forbidden in resource requirements.",
+      "if": {"properties": {"gpu_model": {"type": "string"}}, "required": ["gpu_model"]},
+      "then": {"false": true, "description": "gpu_model is a hardware-specific field and violates I-6."}
+    },
+    {
+      "if": {"properties": {"cpu_vendor": {"type": "string"}}, "required": ["cpu_vendor"]},
+      "then": {"false": true, "description": "cpu_vendor is a hardware-specific field and violates I-6."}
+    },
+    {
+      "if": {"properties": {"hostname": {"type": "string"}}, "required": ["hostname"]},
+      "then": {"false": true, "description": "hostname is a hardware-specific field and violates I-6."}
+    },
+    {
+      "if": {"properties": {"queue_name": {"type": "string"}}, "required": ["queue_name"]},
+      "then": {"false": true, "description": "queue_name is a hardware-specific scheduler field and violates I-6."}
+    }
+  ]
+}

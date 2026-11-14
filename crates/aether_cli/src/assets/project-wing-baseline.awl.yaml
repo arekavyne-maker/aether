@@ -1,0 +1,25 @@
+awl: "1.3"
+study: "wing-baseline"
+description: |
+  Wing structural baseline workflow scaffolded with the aerospace
+  profile. Cantilever wing-box equivalent beam; closed-form-checked
+  inside the reference plugin.
+
+  MODEL: Euler-Bernoulli beam FEM (fea-reference-beam)
+  VALID FOR: slender-beam bending, small deflections, linear elasticity
+steps:
+  - id: wing-tip-deflection
+    type: run
+    contract: aether.physics.solver
+    plugin: org.aether.reference.fea.beam
+    plugin_version: "0.1.0"
+    inputs:
+      problem_id: wing-baseline
+      physics_class: structural
+      beam_length_m: 8.0
+      E_pa: 7.0e10
+      I_m4: 4.0e-4
+      case: cantilever_point
+      P_n: 40000.0
+      n_elements: 16
+    retries: { max_attempts: 1 }

@@ -1,0 +1,45 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: an SI evidence record (SDP §8.4 / §3.7)
+# The SurrogateTrustAssessor decision on whether a GP surrogate may
+# answer a query outside its training envelope.
+_schema_id: "https://aether.local/contracts/si.governor/schema/evidence.schema.json"
+decision_id: "00000000-0000-0000-0000-000000000001"
+governor: "SurrogateTrustAssessor@1.0.0"
+question: "May the GP surrogate answer the tip-deflection query outside its training envelope?"
+options:
+  - choice: "use_surrogate"
+    expected_gain: 0.83
+    cost_h: 0.2
+  - choice: "use_surrogate_with_bounds"
+    expected_gain: 0.7
+    cost_h: 0.3
+  - choice: "high_fidelity"
+    expected_gain: 0.97
+    cost_h: 36.0
+selection: "use_surrogate_with_bounds"
+justification:
+  validation_runs:
+    - "aether://proj/run-2031"
+  held_out_rmse: 0.014
+  calibration:
+    slope: 0.98
+    intercept: 0.002
+    r_squared: 0.97
+  envelope:
+    mach: [0.10, 0.28]
+    qbar: [0, 4100]
+uncertainty:
+  method: "deep_ensemble"
+  predictive_band: [0.011, 0.019]
+reversal_conditions:
+  - "qbar > 4100"
+  - "ensemble_disagreement > 0.05"
+autonomy_class: "A2"
+provenance:
+  governor_id: "SurrogateTrustAssessor"
+  governor_version: "1.0.0"
+  inputs:
+    - "aether://proj/run-2031"
+  code: "org.aether.reference.si.essentials:SurrogateTrustAssessor@1.0.0"
+  env: "env/si.lock"

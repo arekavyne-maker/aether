@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: a UQ propagation problem (SDP §9.4) using LHS
+_schema_id: "https://aether.local/contracts/uq.method/schema/problem.schema.json"
+method: "lhs"
+inputs:
+  - { name: x1, distribution: uniform, params: { min: -3.14159, max: 3.14159 } }
+  - { name: x2, distribution: uniform, params: { min: -3.14159, max: 3.14159 } }
+  - { name: x3, distribution: uniform, params: { min: -3.14159, max: 3.14159 } }
+model:
+  plugin: "aether.test.ishigami"
+  plugin_version: "0"
+samples: 200
+seed: 42

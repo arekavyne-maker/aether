@@ -1,0 +1,84 @@
+awl: "1.2"
+study: "rib-optimization-closed-loop"
+description: |
+  Closed-loop design optimization: a NSGA-III optimizer drives a
+  surrogate-assisted design loop. The optimizer is aether.optimizer
+  (NSGA-III on ZDT1's mass/deflection surrogate). The surrogate is
+  aether.surrogate.builder (POD on a (X, Y) pair). The SI
+  SurrogateTrustAssessor gates the loop: when the surrogate's
+  held-out RMSE exceeds the trust threshold, the SI governor
+  downgrades to a high-fidelity re-evaluation.
+
+  This AWL is the G5 closed-loop idiom: design -> simulate ->
+  surrogate -> optimize -> verify. The executor routes to the
+  reference plugins; production sites replace these with real
+  analysis models and production surrogates.
+
+steps:
+  - id: build-surrogate
+    type: run
+    contract: aether.surrogate.builder
+    plugin: org.aether.reference.surrogate.core
+    plugin_version: "0.1.0"
+    inputs:
+      kind: "pod"
+      X:
+        - [0.0, 0.0]
+        - [0.1, 0.0]
+        - [0.0, 0.1]
+        - [0.1, 0.1]
+        - [0.05, 0.05]
+      Y:
+        - [0.001]
+        - [0.002]
+        - [0.003]
+        - [0.005]
+        - [0.004]
+    si_hooks: { surrogate_trust: true, autonomy_max: A2 }
+    retries: { max_attempts: 1 }
+
+  - id: optimize
+    type: run
+    contract: aether.optimizer
+    plugin: org.aether.reference.optimizer.nsga_iii
+    plugin_version: "0.1.0"
+    depends_on: [build-surrogate]
+    inputs:
+      algorithm: "nsga_iii"
+      variables:
+        - { name: "chord_mm", lower: 200.0, upper: 280.0 }
+        - { name: "thickness_mm", lower: 2.0, upper: 8.0 }
+      objectives:
+        - { name: "mass_kg", sense: "minimize" }
+        - { name: "deflection_mm", sense: "minimize" }
+      model: { plugin: "aether.test.zdt1", plugin_version: "0" }
+      population_size: 16
+      generations: 8
+      seed: 42
+    si_hooks: { data_value: true, autonomy_max: A2 }
+    retries: { max_attempts: 1 }
+
+  - id: twin-trace
+    type: run
+    contract: aether.twin.estimator
+    plugin: org.aether.reference.twin.kf
+    plugin_version: "0.1.0"
+    depends_on: [optimize]
+    inputs:
+      estimator: "ekf"
+      state: { x: { mean: 0.0, variance: 1.0 } }
+      process_noise: { x: 0.01 }
+      measurement_noise: { y: 0.1 }
+      measurements:
+        - { t: 0.0, values: { y: 0.05 } }
+        - { t: 1.0, values: { y: 0.12 } }
+        - { t: 2.0, values: { y: 0.18 } }
+    retries: { max_attempts: 1 }
+
+evidence:
+  attach: true
+  verification_relevant: true
+
+reproducibility:
+  mode: equivalence
+  env_manifest: env/closed-loop.lock

@@ -1,0 +1,17 @@
+{
+  "type_id": "PhysicsModel",
+  "version": "1.0.0",
+  "revisioned": true,
+  "allowed_states": ["draft", "released", "superseded", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["name", "physics_kind", "formulation"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string"},
+      "physics_kind": {"type": "string"},
+      "formulation": {"type": "string"},
+      "assumptions": {"type": "array", "items": {"type": "string"}}
+    }
+  }
+}

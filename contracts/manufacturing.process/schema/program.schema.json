@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/manufacturing.process/schema/program.schema.json",
+  "title": "Aether Manufacturing Program",
+  "description": "A typed manufacturing program: ordered process steps, machine allocation, parameters, acceptance criteria. (SDP §12.2)",
+  "type": "object",
+  "required": ["name", "steps"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {"type": "string"},
+    "geometry_ref": {
+      "type": "object",
+      "properties": {
+        "cas_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "machine": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "kind": {"type": "string"},
+        "capability_envelope": {"type": "object", "additionalProperties": true}
+      }
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sequence_index", "operation", "parameters"],
+        "additionalProperties": false,
+        "properties": {
+          "sequence_index": {"type": "integer", "minimum": 0},
+          "operation": {"type": "string", "enum": ["sketch", "extrude", "revolve", "fillet", "boolean", "mill", "lathe", "additive", "cure", "scan", "test"]},
+          "feature_refs": {"type": "array", "items": {"type": "string"}},
+          "parameters": {"type": "object", "additionalProperties": true},
+          "acceptance_criteria": {"type": "object", "additionalProperties": true}
+        }
+      }
+    }
+  }
+}

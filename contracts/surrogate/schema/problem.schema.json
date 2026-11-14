@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/surrogate/schema/problem.schema.json",
+  "title": "Aether Surrogate Builder Problem",
+  "description": "A typed input to a surrogate.builder.train call: training data (X, Y) and the model kind. (SDP §8.4)",
+  "type": "object",
+  "required": ["kind", "X", "Y"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "type": "string",
+      "enum": ["gp", "deep_ensemble", "polynomial_chaos", "rbf", "pod"]
+    },
+    "X": {
+      "type": "array",
+      "description": "Training inputs (n_samples x n_inputs).",
+      "items": {
+        "type": "array",
+        "items": {"type": "number"}
+      }
+    },
+    "Y": {
+      "type": "array",
+      "description": "Training outputs (n_samples x n_outputs).",
+      "items": {
+        "type": "array",
+        "items": {"type": "number"}
+      }
+    },
+    "kernel": {
+      "type": "string",
+      "description": "Optional kernel type (e.g. RBF, Matern 3/2 for GP).",
+      "enum": ["rbf", "matern_32", "matern_52", "linear"]
+    },
+    "validation_split": {"type": "number", "minimum": 0.05, "maximum": 0.5, "default": 0.2}
+  }
+}

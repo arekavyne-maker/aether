@@ -1,0 +1,17 @@
+{
+  "type_id": "Machine",
+  "version": "1.0.0",
+  "revisioned": false,
+  "allowed_states": ["released", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["name"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string"},
+      "class": {"type": "string"},
+      "capability_envelope": {"type": "object", "additionalProperties": true},
+      "calibration_status": {"type": "string"}
+    }
+  }
+}

@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: aeroelastic flutter screen (SDP §3.7 / §10.1)
+# Two participants: a CFD solver and a structural FEA solver.
+# They exchange pressure and displacement at the wet interface.
+_schema_id: "https://aether.local/contracts/physics.composable/schema/coupling.schema.json"
+name: aeroelastic_flutter
+participants:
+  - name: flow
+    plugin: com.acme.cfd.opensfoam
+    plugin_version: "2.4.1"
+    physics_class: fluid
+  - name: structure
+    plugin: org.oss.feather.calculix
+    plugin_version: "2.21.0"
+    physics_class: structural
+exchanges:
+  - from: flow
+    to: structure
+    name: pressure
+    units: Pa
+    mapping: conservative
+    tolerance: 1.0e-4
+  - from: structure
+    to: flow
+    name: displacement
+    units: m
+    mapping: conservative
+    tolerance: 1.0e-6
+scheme:
+  type: partitioned_implicit
+  accelerator: iqn_ils
+  max_iterations: 30
+  tolerance: 1.0e-4
+  divergence_abort: true
+conservation_checks:
+  - name: force_resultant
+    tolerance_rel: 1.0e-3

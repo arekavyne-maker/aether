@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/twin.estimator/schema/problem.schema.json",
+  "title": "Aether Twin Estimator Problem",
+  "description": "A typed initialization or measurement for a digital-twin estimator. (SDP §13)",
+  "type": "object",
+  "required": ["estimator", "state", "measurements"],
+  "additionalProperties": false,
+  "properties": {
+    "estimator": {
+      "type": "string",
+      "enum": ["ekf", "ukf", "enkf", "particle", "batch_bayes"]
+    },
+    "state": {
+      "type": "object",
+      "description": "Initial state estimate: name -> value (mean) and variance.",
+      "additionalProperties": true
+    },
+    "process_noise": {
+      "type": "object",
+      "description": "Process noise covariance (per-state variance).",
+      "additionalProperties": {"type": "number", "minimum": 0}
+    },
+    "measurement_noise": {
+      "type": "object",
+      "description": "Measurement noise covariance (per-sensor variance).",
+      "additionalProperties": {"type": "number", "minimum": 0}
+    },
+    "measurements": {
+      "type": "array",
+      "description": "Time-stamped measurement vectors.",
+      "items": {
+        "type": "object",
+        "required": ["t", "values"],
+        "additionalProperties": false,
+        "properties": {
+          "t": {"type": "number", "description": "Time (s)."},
+          "values": {
+            "type": "object",
+            "description": "Sensor readings: sensor -> value.",
+            "additionalProperties": {"type": "number"}
+          }
+        }
+      }
+    }
+  }
+}

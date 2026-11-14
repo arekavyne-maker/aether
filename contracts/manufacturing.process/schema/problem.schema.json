@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/manufacturing.process/schema/problem.schema.json",
+  "title": "Aether Manufacturing Process Problem",
+  "description": "A typed input to a manufacturing.process method: feature recognition, plan, simulate, or program-export request. (SDP §12)",
+  "type": "object",
+  "required": ["operation", "geometry_ref"],
+  "additionalProperties": false,
+  "properties": {
+    "operation": {
+      "type": "string",
+      "enum": ["plan", "simulate", "export_program", "record_as_run"]
+    },
+    "geometry_ref": {
+      "type": "object",
+      "required": ["cas_hash"],
+      "additionalProperties": false,
+      "properties": {
+        "cas_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "format": {"type": "string", "enum": ["step-ap242", "iges", "stl", "native"]}
+      }
+    },
+    "machine": {
+      "type": "object",
+      "description": "Target machine or machine class; plugin looks up by class or by id.",
+      "properties": {
+        "id": {"type": "string"},
+        "kind": {"type": "string", "enum": ["3_axis_cnc", "5_axis_cnc", "l_pbf", "ded", "afp", "atl", "autoclave", "trim"]}
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Process-specific parameters (feed, spindle speed, layer height, etc.).",
+      "additionalProperties": true
+    },
+    "acceptance_criteria": {
+      "type": "object",
+      "description": "Geometric and surface-finish constraints.",
+      "additionalProperties": true
+    }
+  }
+}

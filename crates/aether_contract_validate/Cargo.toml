@@ -1,0 +1,26 @@
+[package]
+name = "aether_contract_validate"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Aether contract validation harness (Rust half of the two-implementation rule, ADR-0022)."
+
+[lib]
+name = "aether_contract_validate"
+path = "src/lib.rs"
+
+[[bin]]
+name = "aether-contract-validate"
+path = "src/main.rs"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+anyhow = { workspace = true }
+clap = { workspace = true }
+jsonschema = { workspace = true }
+walkdir = "2.5"

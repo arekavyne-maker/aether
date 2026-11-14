@@ -1,0 +1,27 @@
+awl: "1.0"
+study: MVR-01-02-conformance
+description: |
+  The two-impl rule (ADR-0022) says the contract is not stable until
+  two independent implementations pass. This workflow runs the same
+  AWL against OpenFOAM and against CalculiX; the workflow + AWL are
+  unchanged; only the solver is swapped. See MVR-01 / MVR-02 in
+  crates/aether_exec/tests/mvr_01_02.rs for the executable form.
+
+steps:
+  - id: prep
+    type: noop
+  - id: solve
+    type: run
+    plugin: org.example.solver
+    plugin_version: "0.1.0"
+    contract: aether.physics.solver
+    depends_on: [prep]
+    retries: { max_attempts: 2, backoff_seconds: 1 }
+outputs:
+  - name: result.bundle
+    description: The solver's output bundle.
+evidence:
+  attach: true
+  verification_relevant: false
+reproducibility:
+  mode: equivalence

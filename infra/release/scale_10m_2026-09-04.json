@@ -1,0 +1,44 @@
+{
+  "scale_test": "aether_graph_scale (walking skeleton b, SDP §18 Phase 0 acceptance)",
+  "host": "aarch64-apple-darwin (MacBook-Pro-de-Yasseen.local, Darwin 25.5.0)",
+  "rustc": "1.97.1",
+  "run_at": "2026-09-04T01:49:16Z",
+  "finished_at": "2026-09-04T01:58:29Z",
+  "config": {
+    "node_count": 10000000,
+    "batch_size": 5000,
+    "db_path": "/tmp/aether_scale_10m.db",
+    "type_distribution": [
+      ["Requirement", 1],
+      ["Part", 3],
+      ["SimulationRun", 1],
+      ["Result", 2],
+      ["Evidence", 1]
+    ]
+  },
+  "result": {
+    "node_count": 10000000,
+    "insert_seconds": 546.349579042,
+    "replay_seconds": 6.300766792,
+    "total_seconds": 552.655977125,
+    "events_per_second_insert": 18303.299542272114,
+    "nodes_replayed": 10000000,
+    "distinct_types": 5,
+    "db_size_bytes": 7255519232
+  },
+  "sdp_budget_evaluation": {
+    "replay_budget_seconds_phase0": 300,
+    "replay_actual_seconds": 6.300766792,
+    "replay_passes": true,
+    "replay_margin": "replay is 47.6x faster than the SDP budget; well within Phase 0 acceptance",
+    "insert_budget_seconds_phase1_implied": 300,
+    "insert_actual_seconds": 546.349579042,
+    "insert_passes_phase1_budget": false,
+    "insert_note": "the SDP does not state a numerical insert-time budget for Phase 0 (the budget applies to replay); a Phase 1+ 5-min insert budget is implied by the 17k events/s throughput stated in the README. On this aarch64 box the insert is 9m6s, missing the 5-min implied budget by 1.82x. This is recorded as an open gap (see workflows/paper-run/gaps.md AP-26) — NOT silently loosened."
+  },
+  "comparison_to_x86_64_priors": {
+    "x86_64_phase0_measurement": "insert=565s, replay=6.4s (per crates/aether_graph/README.md)",
+    "aarch64_2026_09_04_measurement": "insert=546.35s, replay=6.30s",
+    "comment": "the aarch64 single-thread measurement is slightly faster than the x86_64 number recorded in the README on insert (546 vs 565 s) and within noise on replay (6.30 vs 6.4 s). The prior x86_64 number was a single prior-session measurement; the aarch64 number is a fresh measurement in this session. Both fit in the same order of magnitude and confirm the SQLite-on-event-log design scales to 10M events on a single thread."
+  }
+}

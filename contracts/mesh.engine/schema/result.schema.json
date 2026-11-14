@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/mesh.engine/schema/result.schema.json",
+  "title": "Aether Mesh Result",
+  "description": "A typed mesh result: node coordinates, element connectivity, and quality metrics. (SDP §10.3)",
+  "type": "object",
+  "required": ["element_kind", "nodes", "elements", "metrics"],
+  "additionalProperties": false,
+  "properties": {
+    "element_kind": {
+      "type": "string",
+      "enum": ["tet4", "tet10", "hex8", "hex20", "triangle3", "quad4", "mixed"]
+    },
+    "nodes": {
+      "type": "array",
+      "description": "Flat (x, y, z) tuples in meters.",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": {"type": "number"}
+      }
+    },
+    "elements": {
+      "type": "array",
+      "description": "Element connectivity as (n0, n1, ...) per element.",
+      "items": {
+        "type": "array",
+        "items": {"type": "integer", "minimum": 0}
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Mesh quality metrics; min Jacobian > 0 indicates no inverted elements.",
+      "properties": {
+        "node_count": {"type": "integer", "minimum": 0},
+        "element_count": {"type": "integer", "minimum": 0},
+        "min_jacobian": {"type": "number"},
+        "max_aspect_ratio": {"type": "number", "minimum": 1.0},
+        "negative_volume_count": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

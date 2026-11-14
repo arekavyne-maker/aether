@@ -1,0 +1,59 @@
+{
+  "contract_id": "aether.graph.model",
+  "version": "0.1.0",
+  "title": "Aether Engineering Graph",
+  "description": "Top-level package metadata for the aether.graph.model contract package (SDP §3).",
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/graph.model/schema/node-type.schema.json",
+      "path": "schema/node-type.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/graph.model/schema/edge-type.schema.json",
+      "path": "schema/edge-type.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/graph.model/schema/event-envelope.schema.json",
+      "path": "schema/event-envelope.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    {
+      "namespace": "node_type",
+      "version": "0.1.0",
+      "closed": false
+    },
+    {
+      "namespace": "edge_type",
+      "version": "0.1.0",
+      "closed": false
+    },
+    {
+      "namespace": "event_kind",
+      "version": "0.1.0",
+      "closed": true
+    },
+    {
+      "namespace": "autonomy_class",
+      "version": "0.1.0",
+      "closed": true,
+      "values": ["A0", "A1", "A2", "A3", "A4"]
+    }
+  ],
+  "invariants": [
+    "every_artifact_reference_resolves",
+    "every_simulation_run_has_immutable_input_snapshot",
+    "revision_nodes_are_immutable",
+    "deletions_are_tombstones",
+    "all_cross_domain_edges_declared",
+    "every_mutation_has_actor_and_authz",
+    "satisfies_requires_verifies_path"
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "type_id": "depends_on",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": ["Workflow", "PluginInstance", "ProcessPlan"],
+  "target_types": ["PluginInstance", "Workflow", "ProcessStep"]
+}

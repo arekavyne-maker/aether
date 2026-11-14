@@ -1,0 +1,42 @@
+[package]
+name = "aether_cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Aether canonical CLI (G1 deliverable: init|project|graph|requirement|plugin|package|provenance subset; Phase 0: TUF verifier and dark-build smoke)."
+
+[[bin]]
+name = "aether"
+path = "src/main.rs"
+
+[lib]
+name = "aether_cli"
+path = "src/lib.rs"
+
+[features]
+default = []
+g2 = []  # Phase 2: workflow + plugin lifecycle commands
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+anyhow = { workspace = true }
+clap = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+sha2 = { workspace = true }
+ed25519-dalek = { workspace = true }
+uuid = { workspace = true }
+chrono = { version = "0.4", default-features = false, features = ["serde", "clock"] }
+aether_graph = { path = "../aether_graph" }
+aether_provenance = { path = "../aether_provenance" }
+aether_workflow = { path = "../aether_workflow" }
+aether_exec = { path = "../aether_exec" }
+aether_compose = { path = "../aether_compose" }
+aether_registry = { path = "../aether_registry" }
+aether_policy = { path = "../aether_policy" }
+aether_envman = { path = "../aether_envman" }

@@ -1,0 +1,32 @@
+{
+  "contract_id": "aether.twin.estimator",
+  "version": "0.1.0",
+  "title": "Aether Digital-Twin Estimator",
+  "description": "Contract for state-estimation plugins: EKF, UKF, EnKF, particle filters, batch Bayesian. (SDP §13, SDP §18 G5)",
+  "methods": [
+    "discover",
+    "initialize",
+    "ingest",
+    "estimate",
+    "detect_drift"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/twin.estimator/schema/problem.schema.json",
+      "path": "schema/problem.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/twin.estimator/schema/state.schema.json",
+      "path": "schema/state.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "estimator_kind", "version": "0.1.0", "closed": true }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

@@ -1,0 +1,27 @@
+[package]
+name = "aether_compose"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Aether composition engine (G4 deliverable for SDP §10.1, §10.2): coupling orchestration, unit/conservation checks, IQN-ILS acceleration."
+
+[lib]
+name = "aether_compose"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+chrono = { version = "0.4", default-features = false, features = ["serde", "clock"] }
+uuid = { workspace = true }
+aether_provenance = { path = "../aether_provenance" }
+aether_workflow = { path = "../aether_workflow" }

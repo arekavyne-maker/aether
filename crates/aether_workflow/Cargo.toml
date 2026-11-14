@@ -1,0 +1,25 @@
+[package]
+name = "aether_workflow"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Aether AWL v1 workflow compile + execute (G2 deliverable: DAG executor with parameter spaces, retries, checkpoints)."
+
+[lib]
+name = "aether_workflow"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+chrono = { version = "0.4", default-features = false, features = ["serde", "clock"] }
+tracing = { workspace = true }
+sha2 = { workspace = true }
+aether_graph = { path = "../aether_graph" }

@@ -1,0 +1,17 @@
+{
+  "type_id": "OptimizationStudy",
+  "version": "1.0.0",
+  "revisioned": true,
+  "allowed_states": ["draft", "released", "superseded", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["name", "formulation"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string"},
+      "formulation": {"type": "string"},
+      "algorithm": {"type": "string"},
+      "pareto_refs": {"type": "array", "items": {"type": "string"}}
+    }
+  }
+}

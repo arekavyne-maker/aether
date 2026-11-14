@@ -1,0 +1,18 @@
+{
+  "type_id": "satisfies",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": ["Part", "Component", "Assembly", "System", "ProcessPlan"],
+  "target_types": ["Requirement"],
+  "cardinality": {
+    "max_out_per_source": null,
+    "min_in_per_target": null
+  },
+  "forbidden_combinations": [
+    {
+      "source": "Evidence",
+      "target": "Requirement",
+      "reason": "Evidence does not 'satisfy' requirements; it 'verifies' them."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+# Example: CalculiX Adapter Manifest (SDP §5.2 sample)
+#
+# Second reference implementation of aether.physics.solver for the
+# MVR-01/02 conformance test (two-impl rule, ADR-0022).
+_schema_id: "https://aether.local/contracts/plugin.manifest/schema/manifest.schema.json"
+
+manifest_version: "1.2"
+plugin:
+  id: "org.oss.feather.calculix"
+  name: "CalculiX FEA Adapter"
+  version: "2.21.0"
+  vendor: "CalculiX OConvergence"
+  license_ref: "license/GPL-2.0"
+  signature:
+    alg: "ed25519"
+    keyid: "aether-prod-2026-03"
+    sig: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
+contracts:
+  - id: "aether.physics.solver"
+    version: ">=1.3.0 <2.0.0"
+    role: "implements"
+  - id: "aether.compute.executable"
+    version: ">=1.1.0"
+    role: "implements"
+capabilities:
+  physics:
+    fluid: false
+    structural: true
+    thermal: true
+    conjugate_heat: true
+    multiphase: false
+    linear_static: true
+    modal: true
+    buckling: true
+  compute:
+    cpu: true
+    gpu: false
+    mpi_distributed: true
+    accelerator_optional: false
+  features:
+    adjoint: false
+    autodiff: false
+    uncertainty_quantification: false
+    restart: true
+    checkpoint: true
+resources:
+  defaults: {memory_gb: 16, cores: 4}
+  maximums: {memory_gb: 128, cores: 64}
+isolation:
+  level: "process"
+  filesystem: "sandbox"
+  network: "deny"
+runtime:
+  entry:
+    kind: "native-binary"
+    path: "bin/ccx-adapter"
+    args: ["--stdio"]
+  env_manifest_ref: "env/calculix.lock"
+airgap:
+  offline_install: true
+provenance_template: "prov/solver-run.v1.json"
+policy:
+  data_residency: "local_only"
+  export_class: "EAR-99"

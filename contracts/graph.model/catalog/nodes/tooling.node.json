@@ -1,0 +1,16 @@
+{
+  "type_id": "Tooling",
+  "version": "1.0.0",
+  "revisioned": false,
+  "allowed_states": ["released", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["name"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string"},
+      "kind": {"type": "string"},
+      "calibration_status": {"type": "string"}
+    }
+  }
+}

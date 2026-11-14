@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+_schema_id: "https://aether.local/contracts/io.format/schema/format-descriptor.schema.json"
+format_id: "aether.io.format.step.ap242"
+format_name: "STEP AP242 (B-rep + PMI + Assembly)"
+version: "1.0.0"
+capabilities:
+  read: true
+  write: true
+  stream: false
+  round_trip_fidelity: "lossy_partial"
+schema_refs:
+  - "step-ap242-model.schema.json"
+options:
+  pmi_round_trip: true
+  assembly_structure: true
+  units_handling: "strict"
+standards:
+  - name: "ISO 10303-242"
+    version: "AP242"
+    edition: "2nd-edition"

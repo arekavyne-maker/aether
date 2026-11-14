@@ -1,0 +1,40 @@
+awl: "1.3"
+study: "aether-demo-aircraft-wing-section"
+description: |
+  Aether aircraft wing-section demonstrator (offline, deterministic).
+
+  Chain: requirement -> simulation (structural) -> result -> evidence
+  -> decision, all recorded in the project's Engineering Graph.
+
+  Physics: Euler-Bernoulli beam FEM (REFERENCE implementation,
+  closed-form-checked inside the plugin; not high-fidelity 3D FEA).
+  The SI governor recommends the fidelity class; the governor's
+  decision is recorded as a graph Decision node with provenance.
+
+steps:
+  - id: wing-tip-deflection
+    type: run
+    contract: aether.physics.solver
+    plugin: org.aether.reference.fea.beam
+    plugin_version: "0.1.0"
+    inputs:
+      problem_id: aether-demo-aircraft-wing-section
+      physics_class: structural
+      beam_length_m: 8.0
+      E_pa: 7.0e10
+      I_m4: 4.0e-4
+      case: cantilever_point
+      P_n: 40000.0
+      n_elements: 16
+    retries: { max_attempts: 1 }
+
+  - id: fidelity-check
+    type: run
+    contract: aether.si.governor
+    plugin: org.aether.reference.si.essentials
+    plugin_version: "0.1.0"
+    depends_on: [wing-tip-deflection]
+    inputs:
+      governor: FidelityGovernor
+      target_tolerance: 1.0e-3
+    retries: { max_attempts: 1 }

@@ -1,0 +1,64 @@
+# Build artifacts
+target/
+**/target/
+**/*.o
+**/*.so
+**/*.dylib
+**/*.dll
+**/*.exe
+**/*.rlib
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Node / docs tooling
+node_modules/
+.docusaurus/
+.cache/
+.parcel-cache/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Generated / local
+*.log
+*.tmp
+*.bak
+local/
+fixtures/generated/
+contracts/*/generated/
+
+# CLI scratch databases (transient working state of the
+# aether CLI; see infra/run/ for the running directory).
+infra/run/*.aether.db
+infra/run/_mvr05/
+
+# Scratch artifacts from CLI runs at the monorepo root
+/benchmarks/
+/aether-platform-eval.zip
+
+# Signing / keys (NEVER commit)
+*.pem
+*.key
+*.p12
+secrets/
+.hypothesis/

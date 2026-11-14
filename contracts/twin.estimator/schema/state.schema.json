@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/twin.estimator/schema/state.schema.json",
+  "title": "Aether Twin State",
+  "description": "A typed digital-twin state estimate: per-variable mean and variance after filtering. (SDP §13.2)",
+  "type": "object",
+  "required": ["t", "mean", "variance"],
+  "additionalProperties": false,
+  "properties": {
+    "t": {"type": "number"},
+    "estimator": {"type": "string"},
+    "mean": {
+      "type": "object",
+      "description": "Posterior mean: variable -> value.",
+      "additionalProperties": {"type": "number"}
+    },
+    "variance": {
+      "type": "object",
+      "description": "Posterior variance: variable -> value.",
+      "additionalProperties": {"type": "number", "minimum": 0}
+    },
+    "innovation": {
+      "type": "object",
+      "description": "Last measurement innovation (z - H*x_prior).",
+      "additionalProperties": {"type": "number"}
+    },
+    "drift_detected": {"type": "boolean", "default": false}
+  }
+}

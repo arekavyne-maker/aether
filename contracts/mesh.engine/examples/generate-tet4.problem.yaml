@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: mesh.engine generate problem (SDP §10.3)
+_schema_id: "https://aether.local/contracts/mesh.engine/schema/problem.schema.json"
+geometry_ref:
+  cas_hash: "0000000000000000000000000000000000000000000000000000000000000000"
+  format: "step-ap242"
+element_kind: "tet4"
+size:
+  max_edge_length_mm: 2.0
+  min_edge_length_mm: 0.5
+  growth_rate: 1.3

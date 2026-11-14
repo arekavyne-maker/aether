@@ -1,0 +1,33 @@
+{
+  "contract_id": "aether.inspection.device",
+  "version": "0.1.0",
+  "title": "Aether Inspection Device",
+  "description": "Contract for inspection/NDT device plugins: CMM, structured-light scan, ultrasonic, thermography. (SDP §12.4)",
+  "methods": [
+    "discover",
+    "capabilities",
+    "device_profile",
+    "acquire",
+    "register",
+    "export_measurements"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/inspection.device/schema/problem.schema.json",
+      "path": "schema/problem.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/inspection.device/schema/measurements.schema.json",
+      "path": "schema/measurements.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "inspection_kind", "version": "0.1.0", "closed": true }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

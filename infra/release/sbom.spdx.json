@@ -1,0 +1,1300 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "creationInfo": {
+    "created": "2026-09-12T08:09:57.639958+00:00",
+    "creators": [
+      "Tool: aether-fitness-pipeline-0.1.0"
+    ]
+  },
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "https://aether.local/sbom/aether-platform-2026-09-12",
+  "name": "aether-platform",
+  "packages": [
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_cli",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_compose",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_contract_validate",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_envman",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_exec",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_graph",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_kernel",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_policy",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_provenance",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_registry",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_sdk_ffi",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_workflow",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "ahash",
+      "versionInfo": "0.8.12"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aho-corasick",
+      "versionInfo": "1.1.5"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "android_system_properties",
+      "versionInfo": "0.1.6"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "anstream",
+      "versionInfo": "1.0.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "anstyle",
+      "versionInfo": "1.0.14"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "anstyle-parse",
+      "versionInfo": "1.0.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "anstyle-query",
+      "versionInfo": "1.1.5"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "anstyle-wincon",
+      "versionInfo": "3.0.11"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "anyhow",
+      "versionInfo": "1.0.104"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "async-trait",
+      "versionInfo": "0.1.92"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "autocfg",
+      "versionInfo": "1.5.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "base64",
+      "versionInfo": "0.22.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "base64ct",
+      "versionInfo": "1.8.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "bit-set",
+      "versionInfo": "0.8.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "bit-vec",
+      "versionInfo": "0.8.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "bitflags",
+      "versionInfo": "2.13.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "block-buffer",
+      "versionInfo": "0.10.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "block-buffer",
+      "versionInfo": "0.12.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "borrow-or-share",
+      "versionInfo": "0.2.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "bumpalo",
+      "versionInfo": "3.20.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "bytecount",
+      "versionInfo": "0.6.9"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "byteorder",
+      "versionInfo": "1.5.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "bytes",
+      "versionInfo": "1.12.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "cc",
+      "versionInfo": "1.4.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "cfg-if",
+      "versionInfo": "1.0.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "chacha20",
+      "versionInfo": "0.10.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "chrono",
+      "versionInfo": "0.4.45"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "clap",
+      "versionInfo": "4.6.6"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "clap_builder",
+      "versionInfo": "4.6.6"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "clap_derive",
+      "versionInfo": "4.6.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "clap_lex",
+      "versionInfo": "1.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "cmov",
+      "versionInfo": "0.5.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "colorchoice",
+      "versionInfo": "1.0.5"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "const-oid",
+      "versionInfo": "0.9.6"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "const-oid",
+      "versionInfo": "0.10.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "core-foundation-sys",
+      "versionInfo": "0.8.7"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "cpufeatures",
+      "versionInfo": "0.2.17"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "cpufeatures",
+      "versionInfo": "0.3.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "crypto-common",
+      "versionInfo": "0.1.7"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "crypto-common",
+      "versionInfo": "0.2.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "ctutils",
+      "versionInfo": "0.4.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "curve25519-dalek",
+      "versionInfo": "4.1.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "curve25519-dalek-derive",
+      "versionInfo": "0.1.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "der",
+      "versionInfo": "0.7.10"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "digest",
+      "versionInfo": "0.10.7"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "digest",
+      "versionInfo": "0.11.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "displaydoc",
+      "versionInfo": "0.2.7"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "ed25519",
+      "versionInfo": "2.2.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "ed25519-dalek",
+      "versionInfo": "2.2.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "email_address",
+      "versionInfo": "0.2.9"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "equivalent",
+      "versionInfo": "1.0.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "errno",
+      "versionInfo": "0.3.14"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "fallible-iterator",
+      "versionInfo": "0.2.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "fallible-iterator",
+      "versionInfo": "0.3.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "fallible-streaming-iterator",
+      "versionInfo": "0.1.9"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "fancy-regex",
+      "versionInfo": "0.14.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "fastrand",
+      "versionInfo": "2.5.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "fiat-crypto",
+      "versionInfo": "0.2.9"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "find-msvc-tools",
+      "versionInfo": "0.1.11"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "fluent-uri",
+      "versionInfo": "0.3.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "fraction",
+      "versionInfo": "0.15.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "futures-channel",
+      "versionInfo": "0.3.34"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "futures-core",
+      "versionInfo": "0.3.34"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "futures-sink",
+      "versionInfo": "0.3.34"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "futures-task",
+      "versionInfo": "0.3.34"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "futures-util",
+      "versionInfo": "0.3.34"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "generic-array",
+      "versionInfo": "0.14.7"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "getrandom",
+      "versionInfo": "0.2.17"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "getrandom",
+      "versionInfo": "0.3.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "getrandom",
+      "versionInfo": "0.4.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "hashbrown",
+      "versionInfo": "0.14.5"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "hashbrown",
+      "versionInfo": "0.17.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "hashlink",
+      "versionInfo": "0.9.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "heck",
+      "versionInfo": "0.5.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "hex",
+      "versionInfo": "0.4.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "hmac",
+      "versionInfo": "0.13.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "hybrid-array",
+      "versionInfo": "0.4.14"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "iana-time-zone",
+      "versionInfo": "0.1.65"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "iana-time-zone-haiku",
+      "versionInfo": "0.1.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "icu_collections",
+      "versionInfo": "2.3.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "icu_locale_core",
+      "versionInfo": "2.3.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "icu_normalizer",
+      "versionInfo": "2.3.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "icu_normalizer_data",
+      "versionInfo": "2.3.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "icu_properties",
+      "versionInfo": "2.3.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "icu_properties_data",
+      "versionInfo": "2.3.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "icu_provider",
+      "versionInfo": "2.3.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "idna",
+      "versionInfo": "1.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "idna_adapter",
+      "versionInfo": "1.2.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "indexmap",
+      "versionInfo": "2.14.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "is_terminal_polyfill",
+      "versionInfo": "1.70.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "itoa",
+      "versionInfo": "1.0.18"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "js-sys",
+      "versionInfo": "0.3.104"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "jsonschema",
+      "versionInfo": "0.29.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "lazy_static",
+      "versionInfo": "1.5.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "libc",
+      "versionInfo": "0.2.189"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "libredox",
+      "versionInfo": "0.1.21"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "libsqlite3-sys",
+      "versionInfo": "0.28.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "linux-raw-sys",
+      "versionInfo": "0.12.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "litemap",
+      "versionInfo": "0.8.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "lock_api",
+      "versionInfo": "0.4.14"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "log",
+      "versionInfo": "0.4.34"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "matchers",
+      "versionInfo": "0.2.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "md-5",
+      "versionInfo": "0.11.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "memchr",
+      "versionInfo": "2.8.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "mio",
+      "versionInfo": "1.2.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "nu-ansi-term",
+      "versionInfo": "0.50.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "num",
+      "versionInfo": "0.4.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "num-bigint",
+      "versionInfo": "0.4.8"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "num-cmp",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "num-complex",
+      "versionInfo": "0.4.6"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "num-integer",
+      "versionInfo": "0.1.47"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "num-iter",
+      "versionInfo": "0.1.46"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "num-rational",
+      "versionInfo": "0.4.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "num-traits",
+      "versionInfo": "0.2.19"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "objc2-core-foundation",
+      "versionInfo": "0.3.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "objc2-system-configuration",
+      "versionInfo": "0.3.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "once_cell",
+      "versionInfo": "1.21.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "once_cell_polyfill",
+      "versionInfo": "1.70.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "outref",
+      "versionInfo": "0.5.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "parking_lot",
+      "versionInfo": "0.12.5"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "parking_lot_core",
+      "versionInfo": "0.9.12"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "percent-encoding",
+      "versionInfo": "2.3.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "phf",
+      "versionInfo": "0.13.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "phf_shared",
+      "versionInfo": "0.13.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "pin-project-lite",
+      "versionInfo": "0.2.17"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "pkcs8",
+      "versionInfo": "0.10.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "pkg-config",
+      "versionInfo": "0.3.34"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "postgres-protocol",
+      "versionInfo": "0.6.12"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "postgres-types",
+      "versionInfo": "0.2.14"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "potential_utf",
+      "versionInfo": "0.1.6"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "ppv-lite86",
+      "versionInfo": "0.2.21"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "proc-macro2",
+      "versionInfo": "1.0.107"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "quote",
+      "versionInfo": "1.0.47"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "r-efi",
+      "versionInfo": "5.3.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "r-efi",
+      "versionInfo": "6.0.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "rand",
+      "versionInfo": "0.8.8"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "rand",
+      "versionInfo": "0.10.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "rand_chacha",
+      "versionInfo": "0.3.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "rand_core",
+      "versionInfo": "0.6.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "rand_core",
+      "versionInfo": "0.10.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "redox_syscall",
+      "versionInfo": "0.5.18"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "ref-cast",
+      "versionInfo": "1.0.27"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "ref-cast-impl",
+      "versionInfo": "1.0.27"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "referencing",
+      "versionInfo": "0.29.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "regex-automata",
+      "versionInfo": "0.4.18"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "regex-syntax",
+      "versionInfo": "0.8.11"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "rusqlite",
+      "versionInfo": "0.31.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "rustc_version",
+      "versionInfo": "0.4.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "rustix",
+      "versionInfo": "1.1.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "rustversion",
+      "versionInfo": "1.0.23"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "ryu",
+      "versionInfo": "1.0.23"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "same-file",
+      "versionInfo": "1.0.6"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "scopeguard",
+      "versionInfo": "1.2.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "semver",
+      "versionInfo": "1.0.28"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "serde",
+      "versionInfo": "1.0.229"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "serde_core",
+      "versionInfo": "1.0.229"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "serde_derive",
+      "versionInfo": "1.0.229"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "serde_json",
+      "versionInfo": "1.0.151"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "serde_yaml",
+      "versionInfo": "0.9.34+deprecated"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "sha2",
+      "versionInfo": "0.10.9"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "sha2",
+      "versionInfo": "0.11.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "sharded-slab",
+      "versionInfo": "0.1.7"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "shlex",
+      "versionInfo": "2.0.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "signal-hook-registry",
+      "versionInfo": "1.4.8"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "signature",
+      "versionInfo": "2.2.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "siphasher",
+      "versionInfo": "1.0.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "slab",
+      "versionInfo": "0.4.12"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "smallvec",
+      "versionInfo": "1.15.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "socket2",
+      "versionInfo": "0.6.5"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "spki",
+      "versionInfo": "0.7.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "stable_deref_trait",
+      "versionInfo": "1.2.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "stringprep",
+      "versionInfo": "0.1.5"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "strsim",
+      "versionInfo": "0.11.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "subtle",
+      "versionInfo": "2.6.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "syn",
+      "versionInfo": "2.0.119"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "syn",
+      "versionInfo": "3.0.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "synstructure",
+      "versionInfo": "0.13.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tempfile",
+      "versionInfo": "3.27.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "thiserror",
+      "versionInfo": "1.0.69"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "thiserror-impl",
+      "versionInfo": "1.0.69"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "thread_local",
+      "versionInfo": "1.1.10"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tinystr",
+      "versionInfo": "0.8.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tinyvec",
+      "versionInfo": "1.12.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tinyvec_macros",
+      "versionInfo": "0.1.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tokio",
+      "versionInfo": "1.53.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tokio-macros",
+      "versionInfo": "2.7.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tokio-postgres",
+      "versionInfo": "0.7.18"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tokio-util",
+      "versionInfo": "0.7.19"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tracing",
+      "versionInfo": "0.1.44"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tracing-attributes",
+      "versionInfo": "0.1.31"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tracing-core",
+      "versionInfo": "0.1.36"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tracing-log",
+      "versionInfo": "0.2.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tracing-subscriber",
+      "versionInfo": "0.3.23"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "typenum",
+      "versionInfo": "1.20.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "unicode-bidi",
+      "versionInfo": "0.3.18"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "unicode-ident",
+      "versionInfo": "1.0.24"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "unicode-normalization",
+      "versionInfo": "0.1.25"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "unicode-properties",
+      "versionInfo": "0.1.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "unsafe-libyaml",
+      "versionInfo": "0.2.11"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "utf8_iter",
+      "versionInfo": "1.0.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "utf8parse",
+      "versionInfo": "0.2.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "uuid",
+      "versionInfo": "1.26.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "uuid-simd",
+      "versionInfo": "0.8.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "valuable",
+      "versionInfo": "0.1.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "vcpkg",
+      "versionInfo": "0.2.15"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "version_check",
+      "versionInfo": "0.9.5"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "vsimd",
+      "versionInfo": "0.8.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "walkdir",
+      "versionInfo": "2.5.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "wasi",
+      "versionInfo": "0.11.1+wasi-snapshot-preview1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "wasi",
+      "versionInfo": "0.14.7+wasi-0.2.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "wasip2",
+      "versionInfo": "1.0.4+wasi-0.2.12"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "wasite",
+      "versionInfo": "1.0.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "wasm-bindgen",
+      "versionInfo": "0.2.127"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "wasm-bindgen-macro",
+      "versionInfo": "0.2.127"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "wasm-bindgen-macro-support",
+      "versionInfo": "0.2.127"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "wasm-bindgen-shared",
+      "versionInfo": "0.2.127"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "web-sys",
+      "versionInfo": "0.3.104"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "whoami",
+      "versionInfo": "2.1.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "winapi-util",
+      "versionInfo": "0.1.11"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "windows-core",
+      "versionInfo": "0.62.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "windows-implement",
+      "versionInfo": "0.60.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "windows-interface",
+      "versionInfo": "0.59.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "windows-link",
+      "versionInfo": "0.2.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "windows-result",
+      "versionInfo": "0.4.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "windows-strings",
+      "versionInfo": "0.5.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "windows-sys",
+      "versionInfo": "0.61.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "wit-bindgen",
+      "versionInfo": "0.57.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "writeable",
+      "versionInfo": "0.6.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "yoke",
+      "versionInfo": "0.8.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "yoke-derive",
+      "versionInfo": "0.8.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "zerocopy",
+      "versionInfo": "0.8.56"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "zerocopy-derive",
+      "versionInfo": "0.8.56"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "zerofrom",
+      "versionInfo": "0.1.8"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "zerofrom-derive",
+      "versionInfo": "0.1.7"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "zeroize",
+      "versionInfo": "1.9.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "zerotrie",
+      "versionInfo": "0.2.5"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "zerovec",
+      "versionInfo": "0.11.8"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "zerovec-derive",
+      "versionInfo": "0.11.6"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "zmij",
+      "versionInfo": "1.0.23"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "jsonschema",
+      "versionInfo": ">=4.21"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "PyYAML",
+      "versionInfo": ">=6.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "pyyaml",
+      "versionInfo": ">=6.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether-sdk",
+      "versionInfo": "*"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "pytest",
+      "versionInfo": ">=7.4"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "pyyaml",
+      "versionInfo": ">=6.0"
+    }
+  ],
+  "spdxVersion": "SPDX-2.3"
+}

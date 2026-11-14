@@ -1,0 +1,27 @@
+[package]
+name = "aether_envman"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Aether Environment Manifest (envman) — locks Python toolchains, solver builds, container digests for reproducibility (SDP §17.4, MVR-11)."
+
+[lib]
+name = "aether_envman"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+sha2 = { workspace = true }
+hex = "0.4"
+chrono = { version = "0.4", default-features = false, features = ["serde", "clock"] }
+tracing = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3.10"

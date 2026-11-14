@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/test.rig/schema/problem.schema.json",
+  "title": "Aether Test Rig Problem",
+  "description": "A typed input to a test.rig method. (SDP §12.5)",
+  "type": "object",
+  "required": ["operation"],
+  "additionalProperties": false,
+  "properties": {
+    "operation": {"type": "string", "enum": ["rig_profile", "configure", "run", "stream_telemetry", "collect"]},
+    "rig": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "kind": {"type": "string", "enum": ["structural_static", "servo_hydraulic", "shaker", "wind_tunnel", "thermal_chamber"]},
+        "channels": {"type": "integer", "minimum": 1},
+        "max_sampling_rate_hz": {"type": "number", "minimum": 0},
+        "safety_envelope": {"type": "object", "additionalProperties": true}
+      }
+    },
+    "test_article": {
+      "type": "object",
+      "description": "The physical part or assembly under test (refs the Engineering Graph).",
+      "properties": {
+        "physical_part_cas_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "load_profile": {
+      "type": "object",
+      "description": "The programmed excitation (spectrum, sweep, step, etc.).",
+      "properties": {
+        "type": {"type": "string", "enum": ["static_step", "sine_sweep", "random_PSD", "fatigue_block"]},
+        "amplitude": {"type": "number"},
+        "frequency_hz_min": {"type": "number", "minimum": 0},
+        "frequency_hz_max": {"type": "number", "minimum": 0},
+        "duration_s": {"type": "number", "minimum": 0},
+        "cycles": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

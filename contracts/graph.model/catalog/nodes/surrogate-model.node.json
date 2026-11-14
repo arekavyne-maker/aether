@@ -1,0 +1,18 @@
+{
+  "type_id": "SurrogateModel",
+  "version": "1.0.0",
+  "revisioned": true,
+  "allowed_states": ["draft", "released", "superseded", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["name", "type"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string"},
+      "type": {"type": "string", "enum": ["gp", "deep_ensemble", "polynomial_chaos", "pod", "dmd", "neural_operator"]},
+      "training_data_refs": {"type": "array", "items": {"type": "string"}},
+      "trust_record": {"type": "object", "additionalProperties": true},
+      "envelope": {"type": "object", "additionalProperties": true}
+    }
+  }
+}

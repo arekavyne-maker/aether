@@ -1,0 +1,26 @@
+{
+  "type_id": "System",
+  "version": "1.0.0",
+  "revisioned": true,
+  "allowed_states": ["draft", "released", "superseded", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["name"],
+    "additionalProperties": false,
+    "properties": {
+      "name": {"type": "string"},
+      "architecture_layer": {"type": "string"},
+      "interfaces": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {"type": "string"},
+            "kind": {"type": "string"},
+            "units": {"type": "string"}
+          }
+        }
+      }
+    }
+  }
+}

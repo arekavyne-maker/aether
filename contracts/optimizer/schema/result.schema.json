@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/optimizer/schema/result.schema.json",
+  "title": "Aether Optimization Result",
+  "description": "A typed optimization result: the Pareto front, convergence history, and per-individual metadata. (SDP §9.3)",
+  "type": "object",
+  "required": ["algorithm", "pareto", "convergence"],
+  "additionalProperties": false,
+  "properties": {
+    "algorithm": {"type": "string"},
+    "evaluations": {"type": "integer", "minimum": 0},
+    "pareto": {
+      "type": "array",
+      "description": "Pareto-optimal individuals; empty for failed runs.",
+      "items": {
+        "type": "object",
+        "required": ["x", "f"],
+        "additionalProperties": false,
+        "properties": {
+          "x": {
+            "type": "object",
+            "description": "Decision variables: name -> value.",
+            "additionalProperties": {"type": "number"}
+          },
+          "f": {
+            "type": "object",
+            "description": "Objective values: name -> value.",
+            "additionalProperties": {"type": "number"}
+          },
+          "constraint_violation": {"type": "number", "default": 0.0}
+        }
+      }
+    },
+    "convergence": {
+      "type": "object",
+      "description": "Per-generation best/mean objective values (one entry per generation).",
+      "properties": {
+        "generations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "generation": {"type": "integer"},
+              "best_f": {"type": "array", "items": {"type": "number"}},
+              "mean_f": {"type": "array", "items": {"type": "number"}}
+            }
+          }
+        },
+        "converged": {"type": "boolean"}
+      }
+    }
+  }
+}

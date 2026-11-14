@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/compute.backend/schema/job.schema.json",
+  "title": "Aether Compute Job Specification",
+  "type": "object",
+  "required": ["job_id", "plugin_id", "plugin_version", "run_ref", "requirements"],
+  "additionalProperties": false,
+  "properties": {
+    "job_id": {"type": "string", "description": "UUIDv7."},
+    "plugin_id": {"type": "string"},
+    "plugin_version": {"type": "string"},
+    "run_ref": {
+      "type": "string",
+      "description": "CAS reference to the PreparedRun produced by the solver contract's 'prepare' method."
+    },
+    "requirements": {"$ref": "resource-requirement.schema.json"},
+    "placement": {
+      "type": "object",
+      "description": "Placement hints; advisory only — the runtime may override (SDP §17.2).",
+      "properties": {
+        "policy": {"type": "string", "enum": ["prefer", "require", "forbid"]},
+        "node_selector": {"type": "object", "additionalProperties": true}
+      }
+    },
+    "env_manifest_ref": {"type": "string"},
+    "timeout_h": {"type": "number", "minimum": 0}
+  }
+}

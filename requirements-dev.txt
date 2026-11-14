@@ -1,0 +1,24 @@
+# Aether Python development/test environment.
+#
+# Pins the toolchain the reference plugins, conformance suites, and
+# fitness checks need. Install with:
+#
+#   python3 -m pip install --no-index --find-links vendor/wheels -r requirements-dev.txt
+#
+# or, when a package index is reachable:
+#
+#   python3 -m pip install -r requirements-dev.txt
+#
+# Versions are the ones verified on the wave-1 alignment machine
+# (Python 3.9.6, aarch64-apple-darwin, 2026-09-11); see README-EVAL.md.
+# jsonschema is given as a range (4.18..5) because it is not currently
+# installed on the alignment machine; any 4.x satisfies the conformance
+# suites. pynacl backs scripts/author_tuf_bundle.py (TUF bundle authoring
+# in the walking-skeleton-c integration test). Any Python >= 3.9 with these versions should reproduce the suite.
+
+hypothesis==6.141.1
+pynacl==1.6.2
+jsonschema>=4.18,<5
+numpy==2.0.2
+pytest==8.4.2
+scipy==1.13.1

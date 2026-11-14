@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/geometry.kernel/schema/tessellation.schema.json",
+  "title": "Aether Geometry Tessellation",
+  "description": "A tessellated B-rep: indexed vertices, triangles, normals, and a coarse bounding box. (SDP §11.1)",
+  "type": "object",
+  "required": ["vertices", "triangles", "bounding_box"],
+  "additionalProperties": false,
+  "properties": {
+    "vertices": {
+      "type": "array",
+      "description": "Flat list of (x, y, z) tuples in meters.",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": {"type": "number"}
+      }
+    },
+    "triangles": {
+      "type": "array",
+      "description": "Flat list of (i, j, k) vertex indices (0-based).",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": {"type": "integer", "minimum": 0}
+      }
+    },
+    "normals": {
+      "type": "array",
+      "description": "Per-triangle normals (matches triangles length).",
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": {"type": "number"}
+      }
+    },
+    "bounding_box": {
+      "type": "object",
+      "required": ["min", "max"],
+      "additionalProperties": false,
+      "properties": {
+        "min": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+        "max": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}}
+      }
+    },
+    "element_quality": {
+      "type": "object",
+      "description": "Mesh quality metrics (Phase 0 placeholder; G3 adds min Jacobian, aspect ratio distributions).",
+      "properties": {
+        "min_jacobian": {"type": "number"},
+        "max_aspect_ratio": {"type": "number"},
+        "negative_volume_count": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

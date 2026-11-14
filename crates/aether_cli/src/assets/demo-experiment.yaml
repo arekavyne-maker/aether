@@ -1,0 +1,33 @@
+experiment:
+  name: aether-demo-aircraft-wing-section
+  id: demo-aircraft
+  created: "2026-09-11"
+  status: REFERENCE
+
+hypothesis:
+  id: H2
+  statement: >
+    A single immutable engineering graph can maintain coherent state
+    across simulation, evidence and decision nodes for an aerostructural
+    workflow, such that every reported quantity can be traced to its
+    producing simulation run and plugin version.
+
+baseline:
+  workflow: embedded://aether-demo-aircraft-wing-section
+  note: >
+    The baseline is the platform's own offline reference workflow; it is
+    REFERENCE-grade (analytical closed-form check inside the plugin),
+    not experimental or industrial data.
+
+metrics:
+  - name: tip_deflection_rel_err
+    description: Relative error of FEM tip deflection vs closed form P L^3/(3 E I)
+    tolerance: 1.0e-2
+  - name: graph_coherence
+    description: All simulation results carry provenance edges to a SimulationRun
+    tolerance: "exact"
+
+seed: 42
+reproducibility:
+  mode: strict
+  deterministic_inputs: true

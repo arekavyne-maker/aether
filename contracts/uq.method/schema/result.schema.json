@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/uq.method/schema/result.schema.json",
+  "title": "Aether UQ Result",
+  "description": "A typed UQ result: per-output statistics, convergence diagnostics, and (for Sobol) sensitivity indices. (SDP §9.4)",
+  "type": "object",
+  "required": ["method", "samples", "outputs", "convergence"],
+  "additionalProperties": false,
+  "properties": {
+    "method": {"type": "string"},
+    "samples": {"type": "integer", "minimum": 1},
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "statistics"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "statistics": {
+            "type": "object",
+            "properties": {
+              "mean": {"type": "number"},
+              "std": {"type": "number", "minimum": 0},
+              "p05": {"type": "number"},
+              "p50": {"type": "number"},
+              "p95": {"type": "number"}
+            }
+          }
+        }
+      }
+    },
+    "convergence": {
+      "type": "object",
+      "description": "MC/LHS convergence diagnostics (mean-of-means and std-of-stds).",
+      "properties": {
+        "mean_of_means": {"type": "object", "additionalProperties": {"type": "number"}},
+        "std_of_stds": {"type": "object", "additionalProperties": {"type": "number"}},
+        "sobol_converged": {"type": "boolean"}
+      }
+    },
+    "sobol_indices": {
+      "type": "array",
+      "description": "Per-output first-order Sobol indices (only for method=sobol).",
+      "items": {
+        "type": "object",
+        "required": ["output", "input", "S1", "ST"],
+        "additionalProperties": false,
+        "properties": {
+          "output": {"type": "string"},
+          "input": {"type": "string"},
+          "S1": {"type": "number", "description": "First-order Sobol index."},
+          "ST": {"type": "number", "description": "Total-order Sobol index."}
+        }
+      }
+    }
+  }
+}

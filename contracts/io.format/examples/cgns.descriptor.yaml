@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+_schema_id: "https://aether.local/contracts/io.format/schema/format-descriptor.schema.json"
+format_id: "aether.io.format.cgns"
+format_name: "CGNS (CFD General Notation System)"
+version: "1.0.0"
+capabilities:
+  read: true
+  write: true
+  stream: true
+  round_trip_fidelity: "lossless"
+schema_refs:
+  - "cgns-model.schema.json"
+standards:
+  - name: "CGNS"
+    version: "4.4"

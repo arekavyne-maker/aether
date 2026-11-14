@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/inspection.device/schema/problem.schema.json",
+  "title": "Aether Inspection Device Problem",
+  "description": "A typed input to an inspection.device method. (SDP §12.4)",
+  "type": "object",
+  "required": ["operation", "geometry_ref"],
+  "additionalProperties": false,
+  "properties": {
+    "operation": {"type": "string", "enum": ["device_profile", "acquire", "register", "export_measurements"]},
+    "geometry_ref": {
+      "type": "object",
+      "required": ["cas_hash"],
+      "properties": {
+        "cas_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "device": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "kind": {"type": "string", "enum": ["cmm", "structured_light", "laser_scanner", "ultrasonic", "thermography", "eddy_current"]},
+        "calibration_status": {"type": "string"}
+      }
+    },
+    "alignment": {
+      "type": "object",
+      "description": "ICP alignment parameters (initial guess, convergence threshold).",
+      "additionalProperties": true
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/surrogate/schema/result.schema.json",
+  "title": "Aether Surrogate Builder Result",
+  "description": "A typed surrogate result: content-hashed model handle + trust metrics (envelope, RMSE, R^2). (SDP §8.4)",
+  "type": "object",
+  "required": ["kind", "cas_hash", "trust_metrics"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {"type": "string"},
+    "cas_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Content hash of the trained model + (X, Y) bindings. The MVR-13 substrate."
+    },
+    "n_train": {"type": "integer", "minimum": 1},
+    "n_validation": {"type": "integer", "minimum": 1},
+    "trust_metrics": {
+      "type": "object",
+      "properties": {
+        "rmse": {"type": "number", "minimum": 0},
+        "r_squared": {"type": "number", "minimum": 0, "maximum": 1},
+        "calibration_slope": {"type": "number"},
+        "calibration_intercept": {"type": "number"}
+      }
+    },
+    "envelope": {
+      "type": "object",
+      "description": "Per-input training envelope (min, max).",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "min": {"type": "number"},
+          "max": {"type": "number"}
+        }
+      }
+    }
+  }
+}

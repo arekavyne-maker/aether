@@ -1,0 +1,42 @@
+{
+  "contract_id": "aether.physics.solver",
+  "version": "0.1.0",
+  "title": "Aether Physics Solver",
+  "description": "Top-level package metadata for the aether.physics.solver contract package.",
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/physics.solver/schema/problem.schema.json",
+      "path": "schema/problem.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/physics.solver/schema/result-bundle.schema.json",
+      "path": "schema/result-bundle.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/physics.solver/schema/verification-report.schema.json",
+      "path": "schema/verification-report.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    {
+      "namespace": "physics_class",
+      "version": "0.1.0",
+      "closed": true
+    },
+    {
+      "namespace": "fidelity_class",
+      "version": "0.1.0",
+      "closed": true
+    }
+  ],
+  "methods": [
+    "discover", "capabilities", "validate", "prepare", "execute", "collect", "verify", "provenance"
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

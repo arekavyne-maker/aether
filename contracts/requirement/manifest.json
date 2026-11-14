@@ -1,0 +1,32 @@
+{
+  "contract_id": "aether.requirement",
+  "version": "0.1.0",
+  "title": "Aether Requirement Package",
+  "description": "Requirement graph objects + SysML v2 textual subset import/export. (SDP §11.3)",
+  "methods": [
+    "import_sysml",
+    "export_sysml",
+    "verify_status",
+    "report"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/requirement/schema/sysml-fragment.schema.json",
+      "path": "schema/sysml-fragment.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/requirement/schema/verify-report.schema.json",
+      "path": "schema/verify-report.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "verification_method", "version": "0.1.0", "closed": true },
+    { "namespace": "criticality", "version": "0.1.0", "closed": true }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type_id": "PhysicalPart",
+  "version": "1.0.0",
+  "revisioned": false,
+  "allowed_states": ["released", "archived"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["serial"],
+    "additionalProperties": false,
+    "properties": {
+      "serial": {"type": "string"},
+      "as_built_refs": {"type": "array", "items": {"type": "string"}},
+      "genealogy": {"type": "object", "additionalProperties": true}
+    }
+  }
+}

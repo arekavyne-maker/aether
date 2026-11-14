@@ -1,0 +1,7 @@
+{
+  "type_id": "subject_to",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": ["Part", "Component", "Assembly", "System"],
+  "target_types": ["LoadCase"]
+}

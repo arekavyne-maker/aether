@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/physics.solver/schema/problem.schema.json",
+  "title": "Aether Physics Solver Problem Specification",
+  "description": "Typed problem specification for a physics solver. The 'validate' method checks feasibility against this spec; 'prepare' stages inputs based on it.",
+  "type": "object",
+  "required": ["problem_id", "physics_class", "geometry", "boundary_conditions", "solver_settings"],
+  "additionalProperties": false,
+  "properties": {
+    "problem_id": {
+      "type": "string",
+      "description": "Stable identifier for the problem (UUIDv7)."
+    },
+    "physics_class": {
+      "type": "string",
+      "enum": ["fluid", "structural", "thermal", "electromagnetic", "coupled"],
+      "description": "Coarse classification; finer capability matching uses the manifest."
+    },
+    "geometry": {
+      "type": "object",
+      "required": ["cas_hash", "format"],
+      "properties": {
+        "cas_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "SHA-256 of the geometry artifact in the content-addressed store."
+        },
+        "format": {
+          "type": "string",
+          "enum": ["step-ap242", "iges", "cgns", "stl", "native"]
+        },
+        "frame": {
+          "type": "string",
+          "description": "Coordinate frame URN; defaults to project root frame."
+        }
+      }
+    },
+    "material": {
+      "type": "object",
+      "properties": {
+        "cas_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "model_ref": {"type": "string"}
+      }
+    },
+    "boundary_conditions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "region"],
+        "properties": {
+          "type": {"type": "string", "enum": ["dirichlet", "neumann", "robin", "periodic", "symmetry", "free"]},
+          "region": {"type": "string"},
+          "values": {"type": "object", "additionalProperties": true}
+        }
+      }
+    },
+    "load_cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind"],
+        "properties": {
+          "id": {"type": "string"},
+          "kind": {"type": "string", "enum": ["static", "modal", "harmonic", "transient", "buckling", "flutter"]}
+        }
+      }
+    },
+    "solver_settings": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Plugin-specific settings; the manifest declares the schema subset the plugin understands."
+    },
+    "fidelity_target": {
+      "type": "string",
+      "enum": ["measurement", "high_fidelity", "medium_fidelity", "low_fidelity", "surrogate", "rom", "heuristic"],
+      "description": "Requested minimum fidelity class; the solver may not exceed it without policy review (I-7)."
+    },
+    "determinism_class": {
+      "type": "string",
+      "enum": ["bit-reproducible", "statistically-reproducible", "documented-equivalent"]
+    }
+  }
+}

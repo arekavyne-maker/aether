@@ -1,0 +1,299 @@
+# Aether Vetted-Partner Source-Available License v1.0
+## (Aether-VPSL-1.0)
+
+Copyright © 2026 The Aether Consortium (the "Licensor").
+All rights reserved.
+
+This software, including its source code, object code,
+schemas, reference plugins, contract packages, fitness
+checks, documentation, and any accompanying materials
+(collectively, the "Software"), is the work of the
+Licensor and is made available under this License.
+
+This Software is a dual-use engineering platform developed
+under the European Innovation Council (EIC) Pathfinder
+programme within Horizon Europe, Grant Agreement reference
+as recorded in the accompanying grant documentation. The
+Licensor has elected to release the source code for the
+purposes of collaborative development, conformance testing,
+and security review by named partners only.
+
+---
+
+## 1. Definitions
+
+1.1. "Vetted Partner" means a natural person, legal
+entity, or organisational unit that has been (a) admitted
+to the Aether Consortium under the EIC Pathfinder Grant
+Agreement, (b) named in the Vetted Partner Register
+maintained by the Licensor at the canonical project
+repository (the "Register", published in the file
+`PARTNERS.md` at the root of the canonical project
+repository), and (c) bound by a written
+vetted-partner agreement with the Licensor that includes
+confidentiality, use-restriction, and export-control
+obligations at least as protective as this License.
+
+1.2. "Permitted Use" means any use of the Software that
+is (a) made by a Vetted Partner, (b) made in the course
+of the Aether Consortium's work under the EIC Pathfinder
+Grant Agreement, and (c) not prohibited by Section 3.
+
+1.3. "Affiliates" of a Vetted Partner means entities
+controlling, controlled by, or under common control with
+that Vetted Partner, where "control" means ownership of
+more than fifty percent (50%) of the voting equity.
+
+1.4. **Initial Vetted Partners.** The following EU
+partners of the Aether Consortium are named in the
+Register as Vetted Partners as of the date of this
+License:
+
+- **Addcomposites Oy** (Finland);
+- **Institut national polytechnique de Toulouse**
+  (National Polytechnic Institute of Toulouse) (France).
+
+Admission, cessation, and register administration follow
+Sections 1.1 and 8.3.
+
+---
+
+## 2. Grant of Rights (Vetted Partners Only)
+
+Subject to the terms of this License, the Licensor
+hereby grants each Vetted Partner a limited,
+non-exclusive, non-transferable, non-sublicensable,
+revocable license to:
+
+(a) use, study, and modify the Software for Permitted
+Use;
+
+(b) compile, build, and run the Software, and integrate
+it with other software under the Licensor's written
+permission, for Permitted Use;
+
+(c) reproduce the Software internally for backup,
+archival, and reproducibility purposes as required by
+Permitted Use;
+
+(d) distribute the Software, in source or compiled
+form, **only** to other Vetted Partners, and only for
+Permitted Use.
+
+No rights are granted to any person or entity that is
+not, at the time of the relevant act, a Vetted Partner.
+Without limiting the foregoing, **no rights are granted
+to the general public**, and there is no implied license
+under copyright, patent, trade secret, or any other
+doctrine of intellectual-property law for any non-Vetted-
+Partner use.
+
+---
+
+## 3. Prohibited Uses
+
+The following are expressly prohibited, regardless of
+whether the user is otherwise a Vetted Partner:
+
+3.1. Use of the Software in, or for the benefit of, any
+country, territory, or natural/legal person subject to
+EU restrictive measures, EU sanctions, or UN sanctions,
+or in violation of the EU Dual-Use Regulation
+(Regulation (EU) 2021/821) or any successor or equivalent
+instrument.
+
+3.2. Use of the Software for any application whose
+end-use is prohibited under EU or Member-State law,
+including without limitation any application falling
+within Article 5 of EU Regulation 2021/821, or under
+any applicable arms embargo, anti-torture regulation,
+or chemical/biological weapons non-proliferation
+obligation.
+
+3.3. Reverse engineering, decompilation, or
+disassembly of the Software except to the extent that
+such activity is expressly permitted by applicable
+non-waivable law, and only for the purpose of
+interoperability with independently created software
+under a Vetted Partner's control.
+
+3.4. Removal, alteration, or obscuring of any copyright
+notice, license header, SPDX-License-Identifier, or
+provenance marker in the Software.
+
+3.5. Distribution of the Software to any person or
+entity that is not a Vetted Partner at the time of
+distribution, including without limitation publishing
+the Software on a publicly accessible website, posting
+it to a public package registry, or mirroring it on a
+public version-control host.
+
+3.6. Use of the Software to provide commercial
+aerostructure engineering services to a third party
+who is not a Vetted Partner, except under a written
+subcontract with the Licensor.
+
+---
+
+## 4. Dual-Use Notice
+
+The Licensor acknowledges that the Software is a
+dual-use technology within the meaning of EU Regulation
+2021/821. The Software is published in the relevant
+EU dual-use database as required by Article 11 of that
+Regulation. Each Vetted Partner is responsible for
+assessing the end-use of any derivative work, export,
+or service built on the Software and for obtaining any
+authorisations required by applicable export-control
+law before transferring the Software, any derivative, or
+any technical service related to it outside the EU.
+
+---
+
+## 5. Confidentiality
+
+The Software includes portions that the Licensor has
+marked "Confidential" or "Vetted-Partner Only" in a
+header comment, README, or the Register. Each Vetted
+Partner agrees to treat such portions as confidential
+information of the Licensor, to use them only for
+Permitted Use, and to protect them with the same degree
+of care as the Vetted Partner uses for its own
+confidential information of similar sensitivity, but in
+no event less than reasonable care.
+
+---
+
+## 6. No Patent Grant
+
+This License does not grant any licence under any
+patent of the Licensor, whether by implication, estoppel,
+or otherwise. A separate patent licence is required for
+any patent claim of the Licensor that reads on the
+Software; Vetted Partners should contact the Licensor
+to negotiate such a licence.
+
+---
+
+## 7. No Trademark Licence
+
+This License does not grant any right to use the
+Licensor's name, logo, or trademarks, including without
+limitation "Aether", the Aether wordmark, or the Aether
+logo. Vetted Partners must not represent that any
+derivative work, product, or service is endorsed by or
+officially part of the Aether project without the
+Licensor's prior written consent.
+
+---
+
+## 8. Term and Termination
+
+8.1. This License is effective as of the date the
+Vetted Partner first accesses, downloads, copies, or
+otherwise uses the Software, and continues until
+terminated.
+
+8.2. The Licensor may terminate this License with
+respect to any Vetted Partner on thirty (30) days'
+written notice, or immediately on any material breach
+of Section 3 or Section 5.
+
+8.3. A Vetted Partner ceases to be a Vetted Partner
+upon (a) removal from the Register by the Licensor,
+(b) expiration or termination of the EIC Pathfinder
+Grant Agreement, or (c) termination of the Vetted
+Partner's written vetted-partner agreement with the
+Licensor. Upon cessation, the licence granted by
+Section 2 terminates automatically and the former
+Vetted Partner must promptly destroy all copies of the
+Software in its possession or control, except copies
+required to be retained by mandatory non-waivable
+law.
+
+8.4. Sections 3, 4, 5, 6, 7, 9, 10, and 11 survive
+termination of this License.
+
+---
+
+## 9. Disclaimer of Warranty
+
+THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE",
+WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+NON-INFRINGEMENT, AND FREEDOM FROM DEFECTS. THE
+LICENSOR MAKES NO WARRANTY THAT THE SOFTWARE WILL
+MEET THE VETTED PARTNER'S REQUIREMENTS, OPERATE
+WITHOUT INTERRUPTION, OR BE FREE FROM HARMFUL
+COMPONENTS, INCLUDING VULNERABILITIES.
+
+---
+
+## 10. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN
+NO EVENT WILL THE LICENSOR, ITS MEMBERS, EMPLOYEES,
+AGENTS, OR AFFILIATES BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY,
+OR PUNITIVE DAMAGES (INCLUDING LOSS OF PROFITS, DATA,
+OR GOODWILL) ARISING OUT OF OR IN CONNECTION WITH THIS
+LICENSE OR THE USE, MODIFICATION, OR DISTRIBUTION OF
+THE SOFTWARE, EVEN IF THE LICENSOR HAS BEEN ADVISED OF
+THE POSSIBILITY OF SUCH DAMAGES. NOTHING IN THIS
+LICENSE EXCLUDES OR LIMITS LIABILITY THAT CANNOT BE
+EXCLUDED OR LIMITED UNDER APPLICABLE LAW.
+
+---
+
+## 11. General
+
+11.1. **Governing law and forum.** This License is
+governed by the laws of Belgium, excluding its
+conflict-of-laws rules and the UN Convention on
+Contracts for the International Sale of Goods. The
+exclusive forum for disputes arising from this License
+is the courts of Brussels, Belgium.
+
+11.2. **Severability.** If any provision of this License
+is held unenforceable, the remaining provisions remain
+in full force and effect.
+
+11.3. **Entire agreement.** This License is the entire
+agreement between the Licensor and each Vetted Partner
+with respect to the Software, and supersedes any prior
+agreement or understanding, whether written or oral.
+
+11.4. **No waiver.** Failure by the Licensor to enforce
+any provision of this License is not a waiver of its
+right to do so later.
+
+11.5. **Amendments.** The Licensor may publish amended
+versions of this License. Amendments apply prospectively
+from the date of publication; use of the Software after
+publication of an amended version is acceptance of the
+amended version.
+
+11.6. **Language.** This License is published in
+English. Translations, if any, are for convenience only;
+the English text prevails.
+
+11.7. **Contact.** Questions about this License,
+requests for Vetted Partner admission, and notices
+under Section 8 should be addressed to:
+
+> The Aether Consortium
+> Attn: Vetted Partner Administration
+> (Contact details as published in the Register at the
+> canonical project repository)
+
+---
+
+## 12. SPDX Identifier
+
+The Software Source License Interface (SPDX) identifier
+for this License is `Aether-VPSL-1.0`. Each source file
+in the Software carries an SPDX-License-Identifier
+header referencing either this License or one of its
+later versions; in case of conflict, the SPDX header in
+the file controls.

@@ -1,0 +1,49 @@
+{
+  "gate": "g8-final-acceptance",
+  "started_at": "2026-09-04T06:19:35Z",
+  "duration_seconds": 279.4844961166382,
+  "exit_code": 0,
+  "passed": true,
+  "phases": {
+    "G0": [
+      "cargo build (workspace)",
+      "cargo test (workspace)",
+      "contract conformance (Python harness)",
+      "walking skeleton (a) \u2014 stdio JSON-RPC",
+      "walking skeleton (c) \u2014 TUF bundle roundtrip",
+      "Rust contract validation"
+    ],
+    "G1": [
+      "paper run \u2014 UAV wing rib chain",
+      "CLI golden tests"
+    ],
+    "G2": [
+      "MVR-01/02 \u2014 plugin replacement",
+      "MVR-09/11 \u2014 reproducibility"
+    ],
+    "G3": [
+      "MVR-06 \u2014 CAD connector replacement"
+    ],
+    "G4": [
+      "AGARD 445.6 flutter benchmark"
+    ],
+    "G5": [
+      "MVR-13 \u2014 surrogate CAS stability",
+      "G5 closed-loop AWL workflow"
+    ],
+    "G6": [
+      "GA-2 closed-loop manufacturing AWL workflow"
+    ],
+    "G7": [
+      "MVR-04/05/12 \u2014 cross-hardware + strict reproducibility",
+      "G7 conformance: offline soak + DR drill",
+      "G7 CLI smoke: deploy / envman"
+    ],
+    "shared": [
+      "Python SDK packages (recipe + requirements)",
+      "AWL v1.3 extensions",
+      "fitness pipeline (loc_budget, token_scan, schema_semver, sbom)"
+    ]
+  },
+  "log_path": "/Users/asseen/Documents/projects/aethers/aether-platform/infra/release/g8-final-acceptance.log"
+}

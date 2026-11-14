@@ -1,0 +1,45 @@
+{
+  "contract_id": "aether.compute.backend",
+  "version": "0.1.0",
+  "title": "Aether Compute Backend",
+  "description": "Top-level package metadata for the aether.compute.backend contract package.",
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/compute.backend/schema/resource-requirement.schema.json",
+      "path": "schema/resource-requirement.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/compute.backend/schema/job.schema.json",
+      "path": "schema/job.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/compute.backend/schema/node-profile.schema.json",
+      "path": "schema/node-profile.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    {
+      "namespace": "parallelism",
+      "version": "0.1.0",
+      "closed": true
+    },
+    {
+      "namespace": "accelerator_class",
+      "version": "0.1.0",
+      "closed": true
+    },
+    {
+      "namespace": "architecture",
+      "version": "0.1.0",
+      "closed": true
+    }
+  ],
+  "methods": ["node_profile", "submit", "status", "stage_data", "reap"],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: Aether-VPSL-1.0
+# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# Example: a SysML v2 textual fragment (SDP §11.3)
+# The same content as the paper run's chain.yaml but in SysML notation.
+_schema_id: "https://aether.local/contracts/requirement/schema/sysml-fragment.schema.json"
+package: "UAVWingRequirements"
+elements:
+  - kind: requirement
+    id: "R-STR-011"
+    name: "Wing rib limit load"
+    text: "The wing rib shall sustain the limit load factor of 1.5 with no failure, across the maneuver spectrum -1g to +4g."
+    verification_method: "test"
+    criticality: "catastrophic"
+  - kind: requirement
+    id: "R-STR-012"
+    name: "Wing rib fatigue"
+    text: "The wing rib shall sustain 10^6 cycles at 0.7 * limit load without crack initiation."
+    verification_method: "test"
+    criticality: "hazardous"
+    subject_ref: "R-STR-011"
+  - kind: verification
+    id: "V-STR-011-1"
+    name: "Buckling test TR-114"
+    verify_ref: "R-STR-011"

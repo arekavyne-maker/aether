@@ -1,0 +1,25 @@
+{
+  "type_id": "Evidence",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": true,
+  "allowed_states": ["draft", "released", "invalidated"],
+  "properties_schema": {
+    "type": "object",
+    "required": ["claim", "verification_status", "source_refs"],
+    "additionalProperties": false,
+    "properties": {
+      "claim": {"type": "string"},
+      "verification_status": {
+        "type": "string",
+        "enum": ["unvalidated", "supported", "verified", "contradicted"]
+      },
+      "source_refs": {
+        "type": "array",
+        "items": {"type": "string"},
+        "description": "References to artifacts, test runs, inspection records, or simulation runs that support or contradict the claim."
+      },
+      "rationale": {"type": "string"}
+    }
+  }
+}

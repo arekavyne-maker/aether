@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/graph.model/schema/event-envelope.schema.json",
+  "title": "Aether Graph Event Envelope",
+  "description": "Every graph mutation is first appended to the event log (SDP §3.1). The envelope is the immutable record; graph state is its materialized view.",
+  "type": "object",
+  "required": ["event_id", "occurred_at", "actor", "authz", "tool", "kind", "payload"],
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "UUIDv7 of the event."
+    },
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "actor": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": {"type": "string"},
+        "type": {"type": "string", "enum": ["person", "service", "plugin"]},
+        "role": {"type": "string"}
+      }
+    },
+    "authz": {
+      "type": "object",
+      "required": ["decision"],
+      "properties": {
+        "decision": {"type": "string", "enum": ["allow", "deny"]},
+        "policy_ref": {"type": "string"},
+        "rationale": {"type": "string"}
+      }
+    },
+    "tool": {
+      "type": "object",
+      "required": ["plugin_id", "plugin_version"],
+      "properties": {
+        "plugin_id": {"type": "string"},
+        "plugin_version": {"type": "string"},
+        "contract_id": {"type": "string"}
+      }
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["node_created", "node_updated", "node_state_changed", "node_tombstoned", "edge_added", "edge_removed", "revision_superseded"]
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "prev_event_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Hash of the previous event; null on the genesis event. Forms the Merkle chain (SDP §7.6)."
+    },
+    "event_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "signature": {
+      "type": "object",
+      "properties": {
+        "alg": {"type": "string", "const": "ed25519"},
+        "keyid": {"type": "string"},
+        "sig": {"type": "string"}
+      }
+    }
+  }
+}

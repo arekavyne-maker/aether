@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/io.format/schema/format-descriptor.schema.json",
+  "title": "Aether IO Format Descriptor",
+  "type": "object",
+  "required": ["format_id", "format_name", "version", "capabilities"],
+  "additionalProperties": false,
+  "properties": {
+    "format_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(\\.[a-z0-9]+)+$",
+      "description": "Format identifier, e.g. aether.io.format.step-ap242."
+    },
+    "format_name": {"type": "string"},
+    "version": {"type": "string"},
+    "capabilities": {
+      "type": "object",
+      "required": ["read", "write"],
+      "properties": {
+        "read": {"type": "boolean"},
+        "write": {"type": "boolean"},
+        "stream": {"type": "boolean", "description": "Whether the reader can stream (chunked) rather than load fully."},
+        "round_trip_fidelity": {"type": "string", "enum": ["lossless", "lossy_declared", "lossy_partial"]}
+      }
+    },
+    "schema_refs": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "JSON Schema files describing the in-memory model produced by read()."
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Format-specific options (e.g., tolerance, units)."
+    },
+    "standards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "version"],
+        "properties": {
+          "name": {"type": "string"},
+          "version": {"type": "string"},
+          "edition": {"type": "string"}
+        }
+      }
+    }
+  }
+}

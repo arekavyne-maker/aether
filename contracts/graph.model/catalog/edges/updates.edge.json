@@ -1,0 +1,7 @@
+{
+  "type_id": "updates",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": ["MeasurementDataset", "Evidence", "Result"],
+  "target_types": ["Model", "PhysicsModel", "SurrogateModel"]
+}

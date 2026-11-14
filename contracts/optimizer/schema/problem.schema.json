@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/optimizer/schema/problem.schema.json",
+  "title": "Aether Optimization Problem",
+  "description": "A typed optimization problem: decision variables, objectives, constraints, algorithm settings. (SDP §9.3)",
+  "type": "object",
+  "required": ["algorithm", "variables", "objectives"],
+  "additionalProperties": false,
+  "properties": {
+    "algorithm": {
+      "type": "string",
+      "enum": ["nsga_iii", "moead", "cma_es", "gradient_nlp", "random_search"]
+    },
+    "variables": {
+      "type": "array",
+      "description": "Decision variables with bounds; the optimizer explores the box.",
+      "items": {
+        "type": "object",
+        "required": ["name", "lower", "upper"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "lower": {"type": "number"},
+          "upper": {"type": "number"},
+          "initial": {"type": "number", "description": "Optional starting point; default is the midpoint of the bounds."}
+        }
+      }
+    },
+    "objectives": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "sense"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "sense": {"type": "string", "enum": ["minimize", "maximize"]},
+          "weight": {"type": "number", "default": 1.0}
+        }
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "description": "Inequality constraints g(x) <= 0.",
+      "items": {
+        "type": "object",
+        "required": ["name", "expression"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "expression": {"type": "string", "description": "Python expression over x: vars; must be <= 0."}
+        }
+      }
+    },
+    "model": {
+      "type": "object",
+      "description": "The analysis model (e.g. a physics.solver plugin call or a surrogate).",
+      "required": ["plugin", "plugin_version"],
+      "additionalProperties": false,
+      "properties": {
+        "plugin": {"type": "string"},
+        "plugin_version": {"type": "string"}
+      }
+    },
+    "population_size": {"type": "integer", "minimum": 4, "default": 64, "description": "Population size for evolutionary algorithms."},
+    "generations": {"type": "integer", "minimum": 1, "default": 50},
+    "seed": {"type": "integer"},
+    "surrogate": {
+      "type": "object",
+      "description": "Optional surrogate model for surrogate-assisted optimization.",
+      "properties": {
+        "plugin": {"type": "string"},
+        "plugin_version": {"type": "string"},
+        "trust_threshold": {"type": "number", "default": 0.05, "description": "Max held-out RMSE; surrogate predictions above this are validated against the high-fidelity model."}
+      }
+    }
+  }
+}

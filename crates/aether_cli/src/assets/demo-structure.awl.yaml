@@ -1,0 +1,34 @@
+awl: "1.3"
+study: "aether-demo-structural-baseline"
+description: |
+  Aether structural baseline (offline, deterministic).
+
+  A cantilever wing-box equivalent beam under a tip load, solved with
+  the Euler-Bernoulli beam FEM reference implementation and checked
+  against the closed-form tip deflection P L^3 / (3 E I) inside the
+  plugin itself.
+
+  MODEL: Euler-Bernoulli beam FEM (fea-reference-beam)
+  VALID FOR: slender-beam bending, small deflections, linear elasticity
+  NOT VALID FOR: thick 3D structures, buckling, material nonlinearity
+
+  Reference numbers (aluminium wing-box equivalent):
+    L = 8.0 m, E = 7.0e10 Pa, I = 4.0e-4 m^4, P = 40 kN
+    closed-form tip deflection = 0.2438 m
+
+steps:
+  - id: wing-tip-deflection
+    type: run
+    contract: aether.physics.solver
+    plugin: org.aether.reference.fea.beam
+    plugin_version: "0.1.0"
+    inputs:
+      problem_id: aether-demo-structural-baseline
+      physics_class: structural
+      beam_length_m: 8.0
+      E_pa: 7.0e10
+      I_m4: 4.0e-4
+      case: cantilever_point
+      P_n: 40000.0
+      n_elements: 16
+    retries: { max_attempts: 1 }

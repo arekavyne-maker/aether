@@ -1,0 +1,129 @@
+# NOTICE — Aether
+
+## 1. Project identity
+
+**Aether** is a dual-use engineering platform for emerging
+aerostructures, developed by **The Aether Consortium** under
+the **European Innovation Council (EIC) Pathfinder**
+programme within **Horizon Europe**.
+
+The Aether Consortium is the contracting party under the EIC
+Pathfinder Grant Agreement identified in the grant
+documentation. The canonical project repository is
+maintained at a location recorded in the Register (see
+Section 3 below); mirrors at other hosts are not
+authoritative and are not licensed to grant any rights
+under this License.
+
+## 2. License
+
+The Software is distributed under the **Aether Vetted-
+Partner Source-Available License v1.0 (Aether-VPSL-1.0)**.
+See the `LICENSE` file at the root of this repository for
+the full text. The license's key terms are:
+
+- The Software may be used **only by Vetted Partners** of
+  the Aether Consortium.
+- Vetted Partners are admitted under the EIC Pathfinder
+  Grant Agreement and named in the Register; the
+  Register is the authoritative list.
+- Distribution to non-Vetted Partners, public hosting,
+  commercial use by non-members, and any use in violation
+  of EU restrictive measures or the EU Dual-Use
+  Regulation (EU) 2021/821 are prohibited.
+- There is no patent grant and no trademark grant under
+  this License; those require a separate written
+  agreement with the Licensor.
+
+## 3. The Register
+
+The **Vetted Partner Register** is maintained by the
+Licensor at the canonical project repository, in the file
+`PARTNERS.md` at the root of the repository. It contains,
+for each Vetted Partner, the partner's legal name, the
+contact for license-administration notices, the
+representative authorised to commit the partner under
+Section 8 of the License, and the date of admission and
+(if applicable) cessation. The partners named in the
+Register as of 2026-09-12 are **Addcomposites Oy**
+(Finland) and **Institut national polytechnique de
+Toulouse** (National Polytechnic Institute of Toulouse,
+France); see `LICENSE` Section 1.4.
+
+To request admission as a Vetted Partner, contact the
+Licensor at the address listed in `LICENSE` Section 11.7.
+
+## 4. Dual-use and export-control posture
+
+The Software is, by design and by the Licensor's
+classification, a **dual-use item** within the meaning
+of EU Regulation 2021/821 (the "EU Dual-Use Regulation")
+and is published in the relevant EU dual-use database
+as required by Article 11 of that Regulation. The
+Software is intended to support both civilian
+aerostructure engineering (UAV and eVTOL airframes,
+hydrogen-tank and electric-aircraft structures,
+additive-manufactured and reusable aerospace
+structures) and aerostructure engineering of strategic
+relevance to European industrial and defence autonomy.
+
+Each Vetted Partner is responsible for:
+
+- assessing the end-use of any derivative work, export,
+  or service built on the Software;
+- obtaining any authorisations required by EU
+  Regulation 2021/821, by Member-State export-control
+  law, and by the EU sanctions regime before
+  transferring the Software, any derivative, or any
+  related technical service outside the EU; and
+- ensuring that no part of the Software, any derivative
+  work, or any related service is made available to a
+  natural or legal person subject to EU restrictive
+  measures.
+
+Vetted Partners are reminded that the EU Dual-Use
+Regulation's catch-all controls (Articles 4 and 5)
+apply independently of the Software's license terms and
+may impose authorisation requirements on transfers that
+this License does not, of itself, prohibit.
+
+## 5. No public-license grant
+
+This NOTICE and the License together make the project's
+posture explicit: **Aether is not open source** for the
+purposes of the OSI definition. The Source-Available
+license restricts the audience of permitted users to
+named, vetted, EU-partner entities. Use by anyone else
+is not authorised. The Licensor makes the source code
+available to the small, defined community of Vetted
+Partners for the purpose of collaborative development
+under the EIC Pathfinder Grant Agreement, not for
+unrestricted redistribution.
+
+If you arrived at this Software without being a named
+Vetted Partner, you must:
+
+1. cease use of the Software;
+2. destroy any copies in your possession or control;
+3. contact the Licensor (see `LICENSE` Section 11.7) if
+   you wish to request admission as a Vetted Partner.
+
+## 6. Trademarks
+
+"Aether", the Aether wordmark, and the Aether logo are
+trademarks of the Licensor. Use of any of these in any
+derivative work, product, or service requires the
+Licensor's prior written consent. See `LICENSE` Section
+7.
+
+## 7. Provenance and integrity
+
+The Software carries a hash-chained provenance record
+(see `crates/aether_provenance/`) and is signed with
+Ed25519 signatures under a TUF-inspired trust model
+(see `crates/aether_registry/`). Modifying the Software
+outside the Licensor's authorised development chain
+invalidates the provenance chain and the signature. No
+rights are granted to a modified copy that is not
+authenticated against the Licensor's current trust
+root.

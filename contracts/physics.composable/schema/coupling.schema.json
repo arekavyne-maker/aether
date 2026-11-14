@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/physics.composable/schema/coupling.schema.json",
+  "title": "Aether Coupling Declaration",
+  "description": "A typed coupling between two or more PhysicsModel participants. (SDP §10.1)",
+  "type": "object",
+  "required": ["name", "participants", "exchanges", "scheme"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {"type": "string"},
+    "participants": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["name", "plugin", "physics_class"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "plugin": {"type": "string", "description": "Plugin id, reverse-DNS."},
+          "plugin_version": {"type": "string"},
+          "physics_class": {"type": "string"}
+        }
+      }
+    },
+    "exchanges": {
+      "type": "array",
+      "description": "Field exchanges between participants.",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "from": {"type": "string", "description": "Source participant name."},
+          "to": {"type": "string", "description": "Target participant name."},
+          "name": {"type": "string", "description": "Field name exchanged."},
+          "units": {"type": "string"},
+          "mapping": {
+            "type": "string",
+            "enum": ["nearest", "linear_rbf", "conservative_rbf", "conservative"],
+            "default": "conservative"
+          },
+          "tolerance": {"type": "number", "minimum": 0, "description": "Convergence tolerance on the exchange."}
+        }
+      }
+    },
+    "scheme": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["partitioned_implicit", "explicit_subcycling", "co_simulation"]
+        },
+        "accelerator": {
+          "type": "string",
+          "enum": ["none", "iqn_ils", "aitken", "anderson"]
+        },
+        "max_iterations": {"type": "integer", "minimum": 1, "default": 30},
+        "tolerance": {"type": "number", "minimum": 0, "default": 1e-4},
+        "divergence_abort": {"type": "boolean", "default": true}
+      }
+    },
+    "conservation_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "tolerance_rel"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "tolerance_rel": {"type": "number", "minimum": 0}
+        }
+      }
+    }
+  }
+}

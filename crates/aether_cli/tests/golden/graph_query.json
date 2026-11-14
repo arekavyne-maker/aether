@@ -1,0 +1,35 @@
+{
+  "chain_head": "<chain_head>",
+  "count": 2,
+  "event_count": 2,
+  "nodes": [
+    {
+      "id": "<id>",
+      "immutable": false,
+      "properties": {
+        "criticality": "catastrophic",
+        "status": "open",
+        "text": "The wing rib shall sustain the limit load",
+        "verification_method": "test"
+      },
+      "revisioned": true,
+      "state": "draft",
+      "tombstoned": false,
+      "type_id": "Requirement"
+    },
+    {
+      "id": "<id>",
+      "immutable": false,
+      "properties": {
+        "criticality": "major",
+        "status": "open",
+        "text": "All fasteners shall be torque-marked",
+        "verification_method": "test"
+      },
+      "revisioned": true,
+      "state": "draft",
+      "tombstoned": false,
+      "type_id": "Requirement"
+    }
+  ]
+}
