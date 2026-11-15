@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! Aether policy engine and RBAC (G1).
 //!
 //! The policy engine is the **only** place where authorization decisions

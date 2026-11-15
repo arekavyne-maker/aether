@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """Open-source tet/surface baseline mesh plugin (aether.mesh.engine).
 
 This is the **Phase 0 / Phase 3 baseline**: an honest, deterministic

@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! DAG compilation and topological execution ordering (G2).
 //!
 //! The DAG is the **typed** view of the workflow: nodes are step

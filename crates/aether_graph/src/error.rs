@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! Typed graph errors (SDP §4.5). All variants are **fatal** to the
 //! operation that produced them; a contract violation halts the run
 //! (I-12). The error taxonomy is part of the kernel ABI and must not

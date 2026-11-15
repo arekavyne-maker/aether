@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """Aether testing harness (Phase 0 stub).
 
 Conformance runner for the contract validation suite. Phase 2 expands

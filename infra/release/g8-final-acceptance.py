@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 #!/usr/bin/env python3
 """Final integrated acceptance gate (G8).
 

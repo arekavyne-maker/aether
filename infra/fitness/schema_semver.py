@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """Schema semver discipline check (Phase 0; ADR-0011).
 
 Each contract package has a `manifest.json` declaring its `version`. Phase 0

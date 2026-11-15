@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! `aether.physics.solver` reference handlers (G2).
 //!
 //! Two independent implementations of the `aether.physics.solver`

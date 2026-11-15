@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """Conformance tests for the FidelityEscalationGovernor (Phase 4: H1).
 
 The escalation governor is the decision logic behind adaptive fidelity:

@@ -3,120 +3,98 @@
 ## 1. Project identity
 
 **Aether** is a dual-use engineering platform for emerging
-aerostructures, developed by **The Aether Consortium** under
-the **European Innovation Council (EIC) Pathfinder**
-programme within **Horizon Europe**.
+aerostructures, developed and owned by **Crocell Company**
+(the "Licensor").
 
-The Aether Consortium is the contracting party under the EIC
-Pathfinder Grant Agreement identified in the grant
-documentation. The canonical project repository is
-maintained at a location recorded in the Register (see
-Section 3 below); mirrors at other hosts are not
-authoritative and are not licensed to grant any rights
-under this License.
+The canonical project repository is maintained by the
+Licensor; mirrors at other hosts are not authoritative and
+are not licensed to grant any rights under this License.
 
 ## 2. License
 
-The Software is distributed under the **Aether Vetted-
-Partner Source-Available License v1.0 (Aether-VPSL-1.0)**.
-See the `LICENSE` file at the root of this repository for
-the full text. The license's key terms are:
+The Software is proprietary. It is distributed under the
+**Aether Proprietary License (Crocell-Proprietary)**. See
+the `LICENSE` file at the root of this repository for the
+full text. The license's key terms are:
 
-- The Software may be used **only by Vetted Partners** of
-  the Aether Consortium.
-- Vetted Partners are admitted under the EIC Pathfinder
-  Grant Agreement and named in the Register; the
-  Register is the authoritative list.
-- Distribution to non-Vetted Partners, public hosting,
-  commercial use by non-members, and any use in violation
-  of EU restrictive measures or the EU Dual-Use
-  Regulation (EU) 2021/821 are prohibited.
-- There is no patent grant and no trademark grant under
-  this License; those require a separate written
+- The Software is made available to **Authorised
+  Recipients only** — parties that have a written
   agreement with the Licensor.
+- No rights are granted to the general public. There is no
+  open-source licence, and no implied licence of any kind
+  for use by anyone who is not an Authorised Recipient.
+- Reproduction, modification, and internal distribution are
+  permitted for Permitted Use only. Publication, mirroring
+  on a public version-control host, posting to a public
+  package registry, sale, and sublicensing are prohibited.
+- Removal or alteration of copyright notices, SPDX headers,
+  or provenance markers is prohibited.
+- Each Authorised Recipient is responsible for end-use
+  assessment and for compliance with applicable
+  export-control and sanctions law.
+- There is no patent grant and no trademark grant under this
+  License; those require a separate written agreement with
+  the Licensor.
 
-## 3. The Register
+The SPDX identifier for the Software is
+`LicenseRef-Crocell-Proprietary`, carried in the header of
+each source file.
 
-The **Vetted Partner Register** is maintained by the
-Licensor at the canonical project repository, in the file
-`PARTNERS.md` at the root of the repository. It contains,
-for each Vetted Partner, the partner's legal name, the
-contact for license-administration notices, the
-representative authorised to commit the partner under
-Section 8 of the License, and the date of admission and
-(if applicable) cessation. The partners named in the
-Register as of 2026-09-12 are **Addcomposites Oy**
-(Finland) and **Institut national polytechnique de
-Toulouse** (National Polytechnic Institute of Toulouse,
-France); see `LICENSE` Section 1.4.
+## 3. No public-license grant
 
-To request admission as a Vetted Partner, contact the
-Licensor at the address listed in `LICENSE` Section 11.7.
+This NOTICE and the License together make the project's
+posture explicit: **Aether is not open source** for the
+purposes of the OSI definition, and it is not
+source-available under any public licence. The Licensor
+makes the source code available to a small, defined set of
+Authorised Recipients for internal engineering and
+development purposes, not for unrestricted redistribution.
+
+If you arrived at this Software without being an Authorised
+Recipient, you must:
+
+1. cease use of the Software;
+2. destroy any copies in your possession or control; and
+3. seek a written agreement with the Licensor before any
+   further use.
 
 ## 4. Dual-use and export-control posture
 
 The Software is, by design and by the Licensor's
-classification, a **dual-use item** within the meaning
-of EU Regulation 2021/821 (the "EU Dual-Use Regulation")
-and is published in the relevant EU dual-use database
-as required by Article 11 of that Regulation. The
-Software is intended to support both civilian
-aerostructure engineering (UAV and eVTOL airframes,
-hydrogen-tank and electric-aircraft structures,
-additive-manufactured and reusable aerospace
+classification, a **dual-use technology**. It is intended
+to support both civilian aerostructure engineering (UAV and
+eVTOL airframes, hydrogen-tank and electric-aircraft
+structures, additive-manufactured and reusable aerospace
 structures) and aerostructure engineering of strategic
-relevance to European industrial and defence autonomy.
+relevance to industrial and defence autonomy.
 
-Each Vetted Partner is responsible for:
+Each Authorised Recipient is responsible for:
 
-- assessing the end-use of any derivative work, export,
-  or service built on the Software;
-- obtaining any authorisations required by EU
-  Regulation 2021/821, by Member-State export-control
-  law, and by the EU sanctions regime before
-  transferring the Software, any derivative, or any
-  related technical service outside the EU; and
+- assessing the end-use of any derivative work, export, or
+  service built on the Software;
+- obtaining any authorisations required by applicable
+  export-control law and by the sanctions regime of the
+  relevant jurisdiction before transferring the Software,
+  any derivative, or any related technical service outside
+  that jurisdiction; and
 - ensuring that no part of the Software, any derivative
   work, or any related service is made available to a
-  natural or legal person subject to EU restrictive
-  measures.
+  natural or legal person that is the target of applicable
+  restrictive measures.
 
-Vetted Partners are reminded that the EU Dual-Use
-Regulation's catch-all controls (Articles 4 and 5)
-apply independently of the Software's license terms and
-may impose authorisation requirements on transfers that
+The catch-all controls of applicable export-control
+regimes apply independently of the Software's licence terms
+and may impose authorisation requirements on transfers that
 this License does not, of itself, prohibit.
 
-## 5. No public-license grant
-
-This NOTICE and the License together make the project's
-posture explicit: **Aether is not open source** for the
-purposes of the OSI definition. The Source-Available
-license restricts the audience of permitted users to
-named, vetted, EU-partner entities. Use by anyone else
-is not authorised. The Licensor makes the source code
-available to the small, defined community of Vetted
-Partners for the purpose of collaborative development
-under the EIC Pathfinder Grant Agreement, not for
-unrestricted redistribution.
-
-If you arrived at this Software without being a named
-Vetted Partner, you must:
-
-1. cease use of the Software;
-2. destroy any copies in your possession or control;
-3. contact the Licensor (see `LICENSE` Section 11.7) if
-   you wish to request admission as a Vetted Partner.
-
-## 6. Trademarks
+## 5. Trademarks
 
 "Aether", the Aether wordmark, and the Aether logo are
 trademarks of the Licensor. Use of any of these in any
 derivative work, product, or service requires the
-Licensor's prior written consent. See `LICENSE` Section
-7.
+Licensor's prior written consent. See `LICENSE` Section 6.
 
-## 7. Provenance and integrity
+## 6. Provenance and integrity
 
 The Software carries a hash-chained provenance record
 (see `crates/aether_provenance/`) and is signed with
@@ -125,5 +103,4 @@ Ed25519 signatures under a TUF-inspired trust model
 outside the Licensor's authorised development chain
 invalidates the provenance chain and the signature. No
 rights are granted to a modified copy that is not
-authenticated against the Licensor's current trust
-root.
+authenticated against the Licensor's current trust root.

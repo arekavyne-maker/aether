@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """CalculiX binary presence check (alignment pass, I-7 / honesty discipline).
 
 The `reference_plugins/calculix-adapter/` plugin claims to be a

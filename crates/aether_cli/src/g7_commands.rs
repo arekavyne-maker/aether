@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! G7 CLI commands: `aether deploy` and `aether envman`.
 //!
 //! `aether deploy plan <awl>` — build a deployment plan for an AWL

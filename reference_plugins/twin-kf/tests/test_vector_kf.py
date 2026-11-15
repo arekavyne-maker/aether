@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """Wave 4: vector-state (multivariate) linear Kalman filter tests.
 
 The estimator under test is ``ekf_vector`` in the twin-kf reference

@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """Parametric recipe interpreter (aether.geometry.recipe, SDP §11.1).
 
 A recipe is a versioned, tool-agnostic feature history. This module

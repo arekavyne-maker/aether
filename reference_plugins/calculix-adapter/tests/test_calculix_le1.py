@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """Conformance tests for calculix-adapter (LE1 cantilever, SDP §5.6, §5.8, ADR-0022).
 
 The calculix-adapter is a real native-binary adapter: it writes a real

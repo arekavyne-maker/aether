@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 # Example: a vendor-neutral resource requirement (SDP §6.1, ADR-0006).
 # I-6 forbids `gpu_model`, `queue_name`, `hostname`, `cpu_vendor`.
 

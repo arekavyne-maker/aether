@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 # Example: a SysML v2 textual fragment (SDP §11.3)
 # The same content as the paper run's chain.yaml but in SysML notation.
 _schema_id: "https://aether.local/contracts/requirement/schema/sysml-fragment.schema.json"

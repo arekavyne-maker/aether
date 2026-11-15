@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! Closed-form 1-DOF aeroelastic flutter test (SDP §10.1, §18 G4).
 //!
 //! This is the *second* independently-checkable coupling test added

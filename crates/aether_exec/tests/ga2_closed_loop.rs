@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! MVR-14 conformance: a closed-loop manufacturing workflow runs
 //! end-to-end (plan -> inspect -> test -> SI decision) with the
 //! reference plugins. The SDP §18 GA-2 acceptance is that the

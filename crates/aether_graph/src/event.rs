@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! Graph event model — Phase 0 walking skeleton (b); G1 expansion.
 //!
 //! The event log is the substrate of the digital thread (SDP §14.1). Every

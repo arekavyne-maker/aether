@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! MVR-01 / MVR-02 conformance: two independent `aether.physics.solver`
 //! plugins (OpenFOAM and CalculiX) execute the same AWL workflow
 //! identically, with only the handler reference changed (SDP §20).

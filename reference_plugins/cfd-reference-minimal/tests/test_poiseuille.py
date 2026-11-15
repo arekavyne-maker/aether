@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """Conformance tests for cfd-reference-minimal (SDP §5.6, §21; ADR-0022).
 
 The Poiseuille flow test exercises the closed-form analytical

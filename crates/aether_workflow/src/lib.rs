@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! Aether Workflow Language (AWL) v1 — compile + execute (G2).
 //!
 //! AWL is the platform's declarative workflow surface (SDP §4.2, §17, §18).

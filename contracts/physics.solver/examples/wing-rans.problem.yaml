@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 # Example: a physics problem specification (SDP §5.5).
 # `physics_class` must be one of the closed enum; `fidelity_target`
 # is the I-7 contract that the result bundle must match or exceed.

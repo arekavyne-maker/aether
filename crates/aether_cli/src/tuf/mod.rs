@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! Phase 0 walking skeleton (c) — offline TUF bundle verification.
 //!
 //! Implements a minimal subset of TUF (The Update Framework) metadata,

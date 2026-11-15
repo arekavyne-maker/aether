@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """OCC-shaped geometry kernel (aether.geometry.kernel) — Phase 0/3 reference.
 
 This is a **conformance fixture** (SDP §5.6, §21): a deliberately simple

@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! PROV-O export for provenance records (SDP §14.2).
 //!
 //! Maps an Aether `ProvenanceRecord` to standard PROV-O RDF terms:

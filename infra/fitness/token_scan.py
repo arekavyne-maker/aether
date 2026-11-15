@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """Forbidden-token scan (Phase 0; ADR-0003, §2 I-3).
 
 The scan looks for branch-by-vendor and other prohibited patterns. Phase 0

@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! Core graph types: identity, nodes, edges, properties, type catalog.
 //!
 //! All identifiers are UUIDv7 (time-ordered, sortable). All node and edge

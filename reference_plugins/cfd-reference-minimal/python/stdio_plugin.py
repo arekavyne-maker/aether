@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """cfd-reference-minimal — Phase 0 stdio JSON-RPC plugin (ADR-0015).
 
 A deliberately minimal reference plugin used **only** for conformance

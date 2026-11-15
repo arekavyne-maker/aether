@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """UQ methods (aether.uq.method) — Phase 0/4 reference plugin.
 
 Implements LHS, Monte Carlo, polynomial chaos, and Sobol on a simple

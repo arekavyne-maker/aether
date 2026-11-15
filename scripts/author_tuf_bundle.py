@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """TUF bundle author — Phase 0 walking skeleton (c).
 
 Builds a minimal TUF-style offline bundle (SDP §7.2, ADR-0021):

@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """Digital-twin estimator reference plugin (aether.twin.estimator).
 
 Implements the Extended Kalman Filter (EKF), Unscented Kalman Filter

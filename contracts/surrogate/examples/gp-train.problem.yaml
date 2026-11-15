@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 # Example: GP surrogate training (SDP §8.4)
 # Train a Gaussian-process surrogate on a (X, Y) pair, then export
 # the trust metrics. The conformance test asserts that the content

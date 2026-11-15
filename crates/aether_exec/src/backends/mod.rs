@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! Backend registry: dispatches to the right `Backend` implementation
 //! based on the `BackendKind` (Local / Slurm / Apptainer / SSH-batch /
 //! agent-pool). Phase 7 (G7) introduces the four production backends;

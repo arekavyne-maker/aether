@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """Rosetta cross-architecture equivalence check (alignment pass).
 
 MVR-04/05/12 (SDP §20) require cross-hardware equivalence: a workflow

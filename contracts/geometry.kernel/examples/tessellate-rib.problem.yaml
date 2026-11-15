@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 # Example: geometry.kernel problem (SDP §11.1)
 # Tessellate a geometry that is already in the CAS.
 _schema_id: "https://aether.local/contracts/geometry.kernel/schema/problem.schema.json"

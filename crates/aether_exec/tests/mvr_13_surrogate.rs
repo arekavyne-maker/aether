@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! MVR-13 surrogate conformance: two independent `aether.surrogate.builder`
 //! plugins trained on the same (X, Y) data produce the same content-
 //! hashed model handle, with the held-out RMSE below a declared

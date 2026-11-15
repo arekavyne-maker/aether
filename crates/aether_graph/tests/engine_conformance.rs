@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! Engine conformance tests — graph invariants + AS-OF + AQL.
 //!
 //! These tests exercise the SDP §3.6 invariants on the Phase 1 engine

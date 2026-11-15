@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: Aether-VPSL-1.0
-// SPDX-FileCopyrightText: 2026 The Aether Consortium
+// SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+// SPDX-FileCopyrightText: 2026 Crocell Company
 //! Walking skeleton (c) — offline TUF bundle round-trip test.
 //!
 //! Invokes the Python `scripts/author_tuf_bundle.py` to build a fresh

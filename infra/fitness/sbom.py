@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: Aether-VPSL-1.0
-# SPDX-FileCopyrightText: 2026 The Aether Consortium
+# SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
+# SPDX-FileCopyrightText: 2026 Crocell Company
 """SBOM (SPDX 2.3) emitter (Phase 0; SDP §16).
 
 Emits a minimal SPDX 2.3 SBOM for the Aether platform monorepo. Phase 0
