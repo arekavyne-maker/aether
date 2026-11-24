@@ -10,8 +10,10 @@
 #![warn(missing_docs)]
 
 mod registry;
+mod slurm_real;
 
 pub use registry::{
     AgentPoolBackend, ApptainerBackend, BackendKind, SlurmBackend, SshBatchBackend,
     make_backend,
 };
+pub use slurm_real::SlurmRealBackend;

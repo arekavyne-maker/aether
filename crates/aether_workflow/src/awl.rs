@@ -272,6 +272,12 @@ pub struct Step {
     /// Optional iteration count for `loop` steps.
     #[serde(default)]
     pub max_iterations: Option<u32>,
+    /// For `approval` steps: the role authorized to decide.
+    #[serde(default)]
+    pub approver_role: Option<String>,
+    /// For `nested` steps: path to the nested AWL document.
+    #[serde(default)]
+    pub nested_workflow: Option<String>,
 }
 
 /// A declarative when-condition for branch and loop steps.
@@ -322,6 +328,11 @@ pub enum StepType {
     Join,
     /// A bounded loop with a termination condition.
     Loop,
+    /// An approval gate: blocks until an authorized human decision is
+    /// recorded in the evidence ledger.
+    Approval,
+    /// A nested workflow: runs another AWL document as a sub-run.
+    Nested,
 }
 
 /// Resource requirement for a step.

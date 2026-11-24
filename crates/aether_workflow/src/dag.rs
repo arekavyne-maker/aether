@@ -60,6 +60,10 @@ pub struct StepInstance {
     pub when: Option<crate::awl::WhenCondition>,
     /// Optional iteration count for loop steps.
     pub max_iterations: Option<u32>,
+    /// For approval steps: the role authorized to decide.
+    pub approver_role: Option<String>,
+    /// For nested steps: path to the nested AWL document.
+    pub nested_workflow: Option<String>,
 }
 
 impl From<&Step> for StepInstance {
@@ -79,6 +83,8 @@ impl From<&Step> for StepInstance {
             determinism: s.determinism.clone(),
             when: s.when.clone(),
             max_iterations: s.max_iterations,
+            approver_role: s.approver_role.clone(),
+            nested_workflow: s.nested_workflow.clone(),
         }
     }
 }

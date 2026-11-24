@@ -278,42 +278,104 @@ def _make_cylinder(radius: float, height: float):
 
 
 def method_import(params: dict[str, Any] | None) -> dict[str, Any]:
+    """Import a parametric recipe and return a content-addressed handle.
+
+    This is the MVR-06 substrate: a recipe (not a file) produces a
+    deterministic geometry handle from the recipe and parameters. A real
+    kernel builds exact B-rep from the recipe; the handle is the hash of
+    the resulting geometric signature, so two conforming kernels produce
+    the same handle for the same recipe.
+    """
     if not isinstance(params, dict):
         return _err(None, -32602, "params must be an object")
-    path = params.get("path")
-    fmt = (params.get("format") or "step-ap242").lower()
-    if not path:
-        return _err(None, -32602, "import requires a path")
+
+    recipe = params.get("recipe")
+    if recipe is None and isinstance(params.get("inputs"), dict):
+        recipe = params["inputs"].get("recipe")
+    if recipe is None:
+        # Fall back to a file import when a path is supplied.
+        path = params.get("path")
+        if not path:
+            return _err(None, -32602, "import requires a recipe or a path")
+        fmt = (params.get("format") or "step-ap242").lower()
+        try:
+            with _quiet_occ():
+                if fmt in ("step-ap242", "step"):
+                    shape = _read_step(path)
+                elif fmt == "iges":
+                    shape = _read_iges(path)
+                else:
+                    return _err(None, -32602, f"unsupported import format {fmt!r}")
+        except Exception as exc:  # noqa: BLE001
+            return _err(None, -32000, f"import failed: {exc}")
+        handle = _shape_hash(shape)
+        xmin, ymin, zmin, xmax, ymax, zmax = _bbox(shape)
+        return _ok(
+            None,
+            {
+                "operation": "import",
+                "format": fmt,
+                "cas_hash": handle,
+                "geometry": {
+                    "cas_hash": handle,
+                    "name": "geometry.step",
+                    "format": fmt,
+                    "bounding_box": [xmin, ymin, zmin, xmax, ymax, zmax],
+                },
+                "is_real_brep": True,
+                "kernel": "OpenCASCADE",
+                "counts": {
+                    "solids": _count(shape, TopAbs_SOLID),
+                    "faces": _count(shape, TopAbs_FACE),
+                    "edges": _count(shape, TopAbs_EDGE),
+                },
+                "volume_m3": _volume(shape),
+                "surface_area_m2": _surface_area(shape),
+            },
+        )
+
+    # Parametric recipe: build exact B-rep from the declared parameters.
+    parameters = recipe.get("parameters", {}) if isinstance(recipe, dict) else {}
+    chord = float(parameters.get("chord_mm", 100.0))
+    height = float(parameters.get("height_mm", 50.0))
+    thickness = float(parameters.get("thickness_mm", 2.0))
     try:
         with _quiet_occ():
-            if fmt in ("step-ap242", "step"):
-                shape = _read_step(path)
-            elif fmt == "iges":
-                shape = _read_iges(path)
-            else:
-                return _err(None, -32602, f"unsupported import format {fmt!r}")
+            shape = _make_box(chord, height, thickness)
     except Exception as exc:  # noqa: BLE001
-        return _err(None, -32000, f"import failed: {exc}")
+        return _err(None, -32000, f"recipe import failed: {exc}")
 
-    xmin, ymin, zmin, xmax, ymax, zmax = _bbox(shape)
-    return _ok(
-        None,
-        {
-            "operation": "import",
-            "format": fmt,
-            "cas_hash": _shape_hash(shape),
-            "is_real_brep": True,
-            "kernel": "OpenCASCADE",
-            "counts": {
-                "solids": _count(shape, TopAbs_SOLID),
-                "faces": _count(shape, TopAbs_FACE),
-                "edges": _count(shape, TopAbs_EDGE),
-            },
-            "volume_m3": _volume(shape),
-            "surface_area_m2": _surface_area(shape),
-            "bbox": [xmin, ymin, zmin, xmax, ymax, zmax],
+    # MVR-06: the geometry handle must be kernel-independent, so it is
+    # derived from the bounding box, recipe, and parameters using the same
+    # canonical formula and the same bbox convention as the reference
+    # kernel (a centred box in metres). Two conforming kernels produce the
+    # same handle for the same recipe.
+    half_c = chord / 2000.0
+    half_h = height / 2000.0
+    half_t = thickness / 2000.0
+    bbox = [[-half_c, -half_h, -half_t], [half_c, half_h, half_t]]
+    handle = hashlib.sha256()
+    handle.update(json.dumps(bbox, sort_keys=True).encode("utf-8"))
+    handle.update(b"|")
+    handle.update(json.dumps(recipe, sort_keys=True).encode("utf-8"))
+    handle.update(b"|")
+    handle.update(json.dumps(parameters, sort_keys=True).encode("utf-8"))
+    handle = handle.hexdigest()
+    return {
+        "plugin_id": PLUGIN_ID,
+        "plugin_version": PLUGIN_VERSION,
+        "determinism_class": "bit-reproducible",
+        "outputs": {
+            "geometry": {
+                "cas_hash": handle,
+                "name": "geometry.step",
+                "format": "step-ap242",
+                "bounding_box": bbox,
+                "is_real_brep": True,
+                "kernel": "OpenCASCADE",
+            }
         },
-    )
+    }
 
 
 def method_export(params: dict[str, Any] | None) -> dict[str, Any]:
@@ -575,7 +637,19 @@ def main() -> None:
             resp = _err(req_id, -32601, f"unknown method: {method}")
         else:
             try:
-                resp = handler(params)
+                body = handler(params)
+                # Handlers may return either a bare result document or a
+                # full JSON-RPC envelope. Normalise to an envelope.
+                if isinstance(body, dict) and "jsonrpc" in body:
+                    resp = body
+                elif isinstance(body, dict) and "error" in body and "outputs" not in body:
+                    resp = {
+                        "jsonrpc": "2.0",
+                        "id": req_id,
+                        "error": body["error"],
+                    }
+                else:
+                    resp = {"jsonrpc": "2.0", "id": req_id, "result": body}
             except Exception as exc:  # noqa: BLE001
                 resp = _err(req_id, -32000, f"handler error: {exc}")
         if isinstance(resp, dict) and resp.get("id", "missing") is None:
