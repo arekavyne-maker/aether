@@ -1,0 +1,41 @@
+# Aether process digital twin reference plugin manifest.
+_schema_id: "https://aether.local/contracts/plugin.manifest/schema/manifest.schema.json"
+
+manifest_version: "1.2"
+plugin:
+  id: "org.aether.reference.process.twin"
+  name: "Aether Process Twin"
+  version: "0.1.0"
+  vendor: "Crocell Company"
+  license_ref: "LicenseRef-Crocell-Proprietary"
+contracts:
+  - id: "aether.manufacturing.process"
+    version: ">=0.1.0 <1.0.0"
+    role: "implements"
+capabilities:
+  process_twin:
+    cases: [machining, layup, additive, tolerance_stack]
+    autonomous_machine_control: false
+compute:
+  cpu: true
+  gpu: false
+  mpi_distributed: false
+  accelerator_optional: false
+resources:
+  defaults: {memory_gb: 1, cores: 1}
+  maximums: {memory_gb: 8, cores: 4}
+isolation:
+  level: "process"
+  filesystem: "scoped"
+  network: "deny"
+runtime:
+  entry:
+    kind: "python-stdio"
+    path: "python/stdio_plugin.py"
+    args: []
+airgap:
+  offline_install: true
+provenance_template: "prov/process.v1.json"
+policy:
+  data_residency: "local_only"
+  export_class: "PUBLIC"

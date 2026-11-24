@@ -32,6 +32,10 @@ members = [
     "crates/aether_identity",
     "crates/aether_job",
     "crates/aether_federation",
+    "crates/aether_research",
+    "crates/aether_generative",
+    "crates/aether_genome",
+    "crates/aether_digital_twin",
 ]
 
 [workspace.package]

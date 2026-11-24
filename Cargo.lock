@@ -133,6 +133,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "aether_digital_twin"
+version = "3.0.0"
+dependencies = [
+ "serde",
+ "thiserror",
+]
+
+[[package]]
 name = "aether_envman"
 version = "3.0.0"
 dependencies = [
@@ -193,6 +201,26 @@ name = "aether_fidelity"
 version = "3.0.0"
 dependencies = [
  "serde",
+ "thiserror",
+]
+
+[[package]]
+name = "aether_generative"
+version = "3.0.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "thiserror",
+]
+
+[[package]]
+name = "aether_genome"
+version = "3.0.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
  "thiserror",
 ]
 
@@ -351,6 +379,14 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_yaml",
+ "thiserror",
+]
+
+[[package]]
+name = "aether_research"
+version = "3.0.0"
+dependencies = [
+ "serde",
  "thiserror",
 ]
 
