@@ -181,9 +181,11 @@ P0 truth/cleanup
 
 ## Versioning
 
-The workspace is now `3.0.0`. That version reflects the Phase 0–7 vertical
-slices and their acceptance evidence, not a claim of certification. The
-remaining gaps (federation, kernel-level isolation hardening, physical
-validation, and Demonstrators C and E) are tracked in
-[`../verification/STATUS.md`](../verification/STATUS.md) and do not block
-the version, but they do bound what the version means.
+The workspace is held at `3.0.0-rc.1`. Production-grade code and vertical
+slices exist across Phases 0–7, but final `3.0.0` is reserved until the P7
+gate passes: measured restore/SLO evidence, a real second federation site or
+an explicitly labelled harness, an independent security review, and signed
+reproducible release evidence. The rc version reflects implemented
+engineering capability, not certification. Physical validation and
+Demonstrators C/E validation plans are tracked in
+[`../verification/STATUS.md`](../verification/STATUS.md).

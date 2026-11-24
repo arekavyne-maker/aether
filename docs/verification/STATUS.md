@@ -8,18 +8,20 @@ verdicts. Historical evaluations live under [`../history/`](../history/).
 
 ## Current capability line
 
-Aether 3.0 is implemented as a **physics-grounded, evidence-native
-engineering platform** with working vertical slices across Phases 0–7. It
-does **not** claim certification, airworthiness, or production
-qualification, and several capabilities remain deliberately out of scope.
+Aether is held at **`3.0.0-rc.1`** — a production-grade, evidence-native
+engineering platform with working vertical slices across Phases 0–7 and
+production-grade implementations of the research methods behind ADR-0038's
+promotion gate. Final `3.0.0` is reserved until the P7 evidence gate passes.
+It does **not** claim certification, airworthiness, or production
+qualification.
 
 | Area | Status | Evidence |
 |---|---|---|
-| Rust workspace | builds; 29 crates, ~31.2k Rust LOC | `cargo build --workspace` |
-| Rust tests | green baseline (77 test binaries) | `cargo test --workspace` |
+| Rust workspace | builds; 38 crates, ~33.9k Rust LOC | `cargo build --workspace` |
+| Rust tests | green baseline (97 test binaries) | `cargo test --workspace` |
 | Python tests | green baseline | `python3 -m pytest -q` |
-| Contracts | 25 packages / 51 schemas | `contracts/*/manifest.json` |
-| Graph catalog | 61 node types / 32 edge types | `contracts/graph.model/catalog/` |
+| Contracts | 32 packages / 58 schemas | `contracts/*/manifest.json` |
+| Graph catalog | 78 node types / 38 edge types | `contracts/graph.model/catalog/` |
 | Geometry | **real OpenCASCADE B-rep** (STEP/IGES, booleans, fillets, tessellation) | `reference_plugins/occ-geometry` |
 | Meshing | **real Gmsh** tetrahedral mesher with quality metrics | `reference_plugins/mesh-gmsh` |
 | Physics | beam, thermal, buckling, composite CLT, lattice — all analytics-verified; CalculiX real | `reference_plugins/` |
@@ -45,7 +47,7 @@ qualification, and several capabilities remain deliberately out of scope.
 | Interop | STEP/IGES/STL/HDF5/CSV/JSON + QIF, declared semantic loss | `python/aether_standards` |
 | Benchmarks | 11 benchmarks; absent optional tooling is `SKIP`, not `FAIL` | `benchmarks/` |
 | Dark-build | 24 steps, egress-free by policy | `infra/ci/dark-build.sh` |
-| Fitness | 13 checks; 1 optional-tool skip on this machine | `infra/fitness/run.py` |
+| Fitness | 16 checks; 1 optional-tool skip on this machine | `infra/fitness/run.py` |
 
 ## Honest boundaries
 
@@ -77,9 +79,9 @@ qualification, and several capabilities remain deliberately out of scope.
 | Phase 2 vertical slice | complete | `phase2-wingbox.sh`, `phase2-release-package.sh` |
 | Phase 3 manufacturing | complete (slice) | `phase3-manufacturing.sh`; no machine control |
 | Phase 4 multi-physics | complete (slice) | `phase4-fidelity.sh`, `phase4-control-flow.sh`, `phase4-federation.sh` |
-| Phase 5 emerging structures | demonstrators B and D | `demonstrator-b-composite.sh`, `demonstrator-d-lattice.sh` |
-| Phase 6 adaptive intelligence | complete (governance) | model governance, agent runtime; no model training |
-| Phase 7 hardening/federation | partial | chain/export/replay/tamper/DR/sandbox/classification pass; federation open |
+| Phase 5 emerging structures | demonstrators A/B/C/D/E | synthetic-fixture validation plans for C and E |
+| Phase 6 adaptive intelligence | complete | model/agent governance plus production-grade research methods behind ADR-0038 |
+| Phase 7 hardening/federation | engineering complete; evidence gate open | encryption, key rotation, signed release, restore/SLO runbook pass; real second site and independent security review required for `3.0.0` |
 
 ## Acceptance commands
 

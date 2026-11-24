@@ -83,6 +83,19 @@ impl IdentityService {
         }
     }
 
+    /// Rotate the signing secret. Tokens signed with the old secret no
+    /// longer verify; explicitly revoke their ids first if needed.
+    pub fn rotate(&mut self, new_secret: &[u8]) {
+        self.secret = new_secret.to_vec();
+    }
+
+    /// Current key fingerprint for audit records.
+    pub fn key_fingerprint(&self) -> String {
+        let mut hasher = Sha256::new();
+        hasher.update(&self.secret);
+        format!("{:x}", hasher.finalize())
+    }
+
     /// Issue a token.
     pub fn issue(&self, claims: Claims) -> Token {
         let signature = self.sign(&claims);
@@ -205,5 +218,25 @@ mod tests {
             .verify(&token, "project:other", "2026-11-24T00:30:00Z")
             .unwrap_err();
         assert!(matches!(err, TokenError::Audience(_, _)));
+    }
+
+    #[test]
+    fn rotation_invalidates_old_tokens() {
+        let mut service = IdentityService::new(b"old-secret");
+        let token = service.issue(claims());
+        assert!(service.verify(&token, "project:falcon", "2026-11-24T00:30:00Z").is_ok());
+        service.rotate(b"new-secret");
+        assert!(matches!(
+            service.verify(&token, "project:falcon", "2026-11-24T00:30:00Z"),
+            Err(TokenError::BadSignature)
+        ));
+    }
+
+    #[test]
+    fn fingerprint_changes_on_rotation() {
+        let mut service = IdentityService::new(b"old");
+        let before = service.key_fingerprint();
+        service.rotate(b"new");
+        assert_ne!(before, service.key_fingerprint());
     }
 }

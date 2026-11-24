@@ -1,7 +1,7 @@
 {
   "SPDXID": "SPDXRef-DOCUMENT",
   "creationInfo": {
-    "created": "2026-11-24T18:45:33.365067+00:00",
+    "created": "2026-11-24T18:58:48.961951+00:00",
     "creators": [
       "Tool: aether-fitness-pipeline-0.1.0"
     ]
@@ -13,177 +13,192 @@
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_agent_runtime",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_agents",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_artifacts",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_asm",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_classification",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_cli",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_compose",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_contract_validate",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_crypto",
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_design",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_digital_twin",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_envman",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_evidence",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_exec",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_federation",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_fidelity",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_generative",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_genome",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_graph",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_health",
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_identity",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_job",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_kernel",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_loads",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_manufacturing",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_materials",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_migration",
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_model_registry",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_model_runtime",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_observability",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_policy",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_provenance",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_quantities",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_registry",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_research",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_sdk_ffi",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_vv",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_workflow",
-      "versionInfo": "3.0.0"
+      "versionInfo": "3.0.0-rc.1"
     },
     {
       "downloadLocation": "NOASSERTION",

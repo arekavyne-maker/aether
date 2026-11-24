@@ -36,10 +36,13 @@ members = [
     "crates/aether_generative",
     "crates/aether_genome",
     "crates/aether_digital_twin",
+    "crates/aether_crypto",
+    "crates/aether_health",
+    "crates/aether_migration",
 ]
 
 [workspace.package]
-version = "3.0.0"
+version = "3.0.0-rc.1"
 edition = "2021"
 rust-version = "1.75"
 license = "LicenseRef-Crocell-Proprietary"
