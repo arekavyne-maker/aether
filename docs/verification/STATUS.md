@@ -42,7 +42,7 @@ qualification.
 ## Honest boundaries
 
 - `openfoam-adapter` is a shim, not real OpenFOAM.
-- `occ-geometry` is a bounding-box fixture, not real B-rep.
+- `occ-geometry` is a real OpenCASCADE B-rep kernel when the OCP bindings are installed (they are, and `geom_fixture_label` asserts the label matches). Without them it degrades to a labelled fixture and the build reports a skip, never a silent pass.
 - Slurm/Apptainer/SSH/AgentPool backends are contract-surface fixtures.
 - Manufacturing, inspection, and test are conformance fixtures; the new
   manufacturing crate records and checks evidence, it does not control machines.

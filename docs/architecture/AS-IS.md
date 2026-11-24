@@ -100,7 +100,8 @@
 | `openfoam-adapter` | physics.solver | Thin shim to the Poiseuille fixture |
 | `aero-lifting-line` | physics.solver | Glauert collocation, closed-form verification |
 | `structures-sizing` | physics.solver | Wing-box boom-idealization sizing |
-| `occ-geometry` | geometry.kernel | Bounding-box fixture, `is_real_brep: false` |
+| `occ-geometry` | geometry.kernel | Real OpenCASCADE B-rep kernel (STEP/IGES, booleans, fillets, tessellation) |
+| `mesh-gmsh` | mesh.engine | Real Gmsh tetrahedral mesher with quality metrics |
 | `reference-geometry` | geometry.recipe | Recipe/tessellation reference |
 | `mesh-baseline` | mesh.engine | Minimal baseline mesher |
 | `uq-basic` | uq.method | Sobol/LHS, analytic benchmarks |

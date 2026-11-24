@@ -223,7 +223,7 @@ Fifteen reference plugins implement the contract surface. Their honesty classifi
 | `openfoam-adapter` | physics.solver | Thin shell-wrapper with own PLUGIN_ID; relays to the Poiseuille fixture; the contract-surface half for fluids | **SHIM** (real OpenFOAM = AP-11) |
 | `aero-lifting-line` | physics.solver | Glauert Fourier collocation of the lifting-line equation; elliptical planform is a fixed point → machine-precision closed-form verification + span-efficiency identity check | **REFERENCE** |
 | `structures-sizing` | physics.solver | Wing-box boom-idealization sizing: stress, shear buckling, deflection, mass, reserve margins; batch mode | **REFERENCE** (assumptions declared) |
-| `occ-geometry` | geometry.kernel | Bounding-box fixture; machine-enforceable `is_real_brep: false` flag + "not real B-rep" note enforced by the `geom_fixture_label` fitness check | **FIXTURE** (real B-rep = AP-13) |
+| `occ-geometry` | geometry.kernel | Real OpenCASCADE B-rep kernel (OCP 7.7.2): STEP AP242/IGES import-export, booleans, fillets, tessellation, validation. `is_real_brep` is asserted against the installed bindings by `geom_fixture_label` | **REAL** (when OCP is installed; labelled fixture otherwise) |
 | `reference-geometry` | geometry.recipe | Tessellation matching the OCC-shaped path; exists so MVR-06 (CAD connector replacement) has its two implementations | **REFERENCE** |
 | `mesh-baseline` | mesh.engine | Baseline mesher; contract surface for a commercial mesher later | **REFERENCE** (minimal) |
 | `uq-basic` | uq.method | Real Sobol/LHS (Saltelli A/B matrices, per-column stratified permutation — a real bug found here by BENCH-06), Ishigami/ZDT1/DTLZ2 | **REFERENCE** |
@@ -326,7 +326,7 @@ The loop's epistemology is uniform: **classification (REFERENCE/SYNTHETIC) and v
 | `token_scan` | I-3 — no prohibited coupling tokens (`if solver == X` and friends) |
 | `schema_semver` | I-11 — 24 contracts / 48 schemas, all valid, semver discipline |
 | `sbom` | Supply chain — SPDX 2.3 SBOM emitted per run |
-| `geom_fixture_label` | I-12 — the geometry fixture *must* self-label `is_real_brep: false` or the build fails |
+| `geom_fixture_label` | I-12 / A3-I22 — the geometry label must match the installed capability: real OCP bindings require `is_real_brep: true` with a kernel version; absent bindings require an honestly labelled fixture |
 | `ccx_binary` | The CalculiX adapter must resolve the real binary and reproduce LE1 within tolerance; absent optional tooling is reported as `SKIP`, never a silent pass |
 | `rosetta_cross_arch` | MVR-04 equivalence substrate — aarch64 native ≡ x86_64 Rosetta cas_hash; `SKIP` when Rosetta is unavailable |
 | `fuzz_contracts` | I-12 — hypothesis fuzzing of the JSON contract-validation parser (200 × 24 adversarial inputs, zero unhandled exceptions) |
@@ -375,7 +375,7 @@ The strongest defensible status is **Phase 0–2 substrate + golden path + scien
 - Second implementations of `aether.twin.estimator` (AP-34) and the SDP's remaining two-impl badges;
 - `cargo-fuzz` Rust-side fuzzing and AP242/CGNS parser fuzz harnesses (AP-30) — the parsers themselves are G3 deliverables.
 
-Every one of these is visible in the artifacts themselves (`is_real_brep: false`, `data_class: SYNTHETIC`, "does not reproduce the published flutter speed") — the architecture treats its own honesty as a machine-checked property, which is the only kind that survives contact with time.
+Every one of these is visible in the artifacts themselves (`data_class: SYNTHETIC`, "does not reproduce the published flutter speed", explicit `is_real_brep` reporting) — the architecture treats its own honesty as a machine-checked property, which is the only kind that survives contact with time. Where a capability became real (OpenCASCADE B-rep, Gmsh meshing, CalculiX), the label changed with it and the fitness check was updated to assert the label matches the installed capability rather than demanding a fixture.
 
 ---
 
