@@ -30,6 +30,8 @@ pub enum OutputMode {
     Text,
     /// Stable machine-readable JSON.
     Json,
+    /// Stable machine-readable YAML.
+    Yaml,
 }
 
 /// Emit a command result to stdout. In text mode, the result is
@@ -45,6 +47,11 @@ pub fn emit<T: Serialize>(mode: OutputMode, value: &T) -> Result<()> {
         OutputMode::Json => {
             let json = serde_json::to_string(value)?;
             println!("{json}");
+        }
+        OutputMode::Yaml => {
+            let json = serde_json::to_value(value)?;
+            let yaml = serde_yaml::to_string(&json)?;
+            print!("{yaml}");
         }
     }
     Ok(())
@@ -296,6 +303,82 @@ pub fn cmd_package_verify(project: PathBuf, package: PathBuf, mode: OutputMode) 
         "note": "G1: manifest is read and rendered. Full hash-chained verification is G2.",
     });
     emit(mode, &summary)
+}
+
+/// `aether discover commands` — the full machine-readable command surface.
+pub fn cmd_discover_commands(
+    commands: Vec<serde_json::Value>,
+    mode: OutputMode,
+) -> Result<()> {
+    emit(
+        mode,
+        &serde_json::json!({
+            "contract_version": "1.0",
+            "command_count": commands.len(),
+            "commands": commands,
+            "flags": ["--json", "--format", "--dry-run", "--offline", "--explain", "--plan", "--yes"],
+        }),
+    )
+}
+
+/// Collect the command tree into name/about records for discovery.
+pub fn command_tree(cmd: &clap::Command) -> Vec<serde_json::Value> {
+    let mut out = Vec::new();
+    fn walk(c: &clap::Command, out: &mut Vec<serde_json::Value>, prefix: &str) {
+        for sub in c.get_subcommands() {
+            if matches!(sub.get_name(), "help" | "completion") {
+                continue;
+            }
+            let name = if prefix.is_empty() {
+                sub.get_name().to_string()
+            } else {
+                format!("{prefix} {}", sub.get_name())
+            };
+            out.push(serde_json::json!({
+                "name": name,
+                "about": sub.get_about().map(|s| s.to_string()).unwrap_or_default(),
+            }));
+            walk(sub, out, &name);
+        }
+    }
+    walk(cmd, &mut out, "");
+    out
+}
+
+/// `aether discover project-context` — project state for LLM/automation use.
+pub fn cmd_project_context(project: PathBuf, mode: OutputMode) -> Result<()> {
+    let root = engine_bridge::find_monorepo_root(&project);
+    let contracts = crate::aether3_commands::schema_summary(&root)?;
+    emit(
+        mode,
+        &serde_json::json!({
+            "project": project.display().to_string(),
+            "monorepo": root.display().to_string(),
+            "contract_count": contracts.contracts.len(),
+            "node_type_count": contracts.nodes.len(),
+            "edge_type_count": contracts.edges.len(),
+            "cli_contract": "1.0",
+        }),
+    )
+}
+
+/// `aether commands` — the versioned command/API contract summary.
+pub fn cmd_command_contract(mode: OutputMode) -> Result<()> {
+    emit(
+        mode,
+        &serde_json::json!({
+            "contract": "aether.cli.contract",
+            "version": "1.0",
+            "data_to_stdout": true,
+            "logs_to_stderr": true,
+            "exit_codes": {
+                "0": "success",
+                "30": "contract violation or fail-closed denial",
+                "2": "usage error"
+            },
+            "flags": ["--json", "--format json|yaml", "--dry-run", "--offline", "--explain", "--plan", "--yes"],
+        }),
+    )
 }
 
 /// Re-export the workflow commands (defined in `workflow_cmd.rs`).

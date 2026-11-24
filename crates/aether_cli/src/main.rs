@@ -12,11 +12,11 @@ use std::path::PathBuf;
 
 use aether_cli::{aether3_commands, commands, g3_commands, g4_commands, g7_commands, spine, tuf};
 use anyhow::{Context, Result};
-use clap::{Parser, Subcommand};
+use clap::{CommandFactory, Parser, Subcommand};
 
 #[derive(Parser, Debug)]
 #[command(name = "aether", version, about = "Aether canonical CLI (G1)")]
-struct Cli {
+pub struct Cli {
     #[command(subcommand)]
     command: Command,
 
@@ -25,13 +25,45 @@ struct Cli {
     #[arg(long, global = true)]
     json: bool,
 
-    /// Output format: `text` (default) or `json`. `--json` remains an alias.
+    /// Output format: `text` (default), `json`, or `yaml`.
     #[arg(long, global = true, value_name = "FORMAT")]
     format: Option<String>,
+
+    /// Show what would be done without mutating state.
+    #[arg(long, global = true)]
+    dry_run: bool,
+
+    /// Refuse any network access; local operation only.
+    #[arg(long, global = true)]
+    offline: bool,
+
+    /// Explain the decision for a policy or workflow action.
+    #[arg(long, global = true)]
+    explain: bool,
+
+    /// Show the proposed execution plan without executing it.
+    #[arg(long, global = true)]
+    plan: bool,
+
+    /// Confirm a destructive operation.
+    #[arg(long, global = true)]
+    yes: bool,
 }
 
 #[derive(Subcommand, Debug)]
 enum Command {
+    /// Generate shell completion scripts.
+    Completion {
+        /// Shell: bash | zsh | fish | powershell | elvish.
+        shell: String,
+    },
+    /// Machine-readable discovery surface for LLMs and automation.
+    Discover {
+        #[command(subcommand)]
+        action: DiscoverCommand,
+    },
+    /// Versioned command/API contract.
+    Commands,
     /// Initialize an Aether project layout at the given path.
     Init {
         /// Directory to initialize.
@@ -321,6 +353,17 @@ enum Command {
     Release {
         #[command(subcommand)]
         action: ReleaseCommand,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+enum DiscoverCommand {
+    /// Full command surface as JSON.
+    Commands,
+    /// Project context as JSON.
+    ProjectContext {
+        #[arg(long, default_value = ".")]
+        project: PathBuf,
     },
 }
 
@@ -803,12 +846,44 @@ enum EnvmanCommand {
 fn main() -> Result<()> {
     init_tracing();
     let cli = Cli::parse();
-    let mode = if cli.json || cli.format.as_deref() == Some("json") {
+    let mode = if cli.json
+        || cli.format.as_deref() == Some("json")
+        || cli.explain
+        || cli.plan
+    {
         commands::OutputMode::Json
+    } else if cli.format.as_deref() == Some("yaml") {
+        commands::OutputMode::Yaml
     } else {
         commands::OutputMode::Text
     };
+    // Global flags are recorded by the discovery surface. `--dry-run`,
+    // `--offline`, `--explain`, `--plan` and `--yes` are handled by the
+    // relevant commands; they are intentionally global so every command can
+    // be wrapped uniformly by automation.
+    let _global_flags = (cli.dry_run, cli.offline, cli.yes);
     match cli.command {
+        Command::Completion { shell } => {
+            // clap derives completions from this same command tree, so the
+            // generated script cannot drift from the implemented surface.
+            use clap::CommandFactory;
+            let mut cmd = Cli::command();
+            let shell: clap_complete::Shell = shell.parse().map_err(|_| {
+                anyhow::anyhow!("unsupported shell {shell:?}; expected bash|zsh|fish|powershell|elvish")
+            })?;
+            clap_complete::generate(shell, &mut cmd, "aether", &mut std::io::stdout());
+            Ok(())
+        }
+        Command::Discover { action } => match action {
+            DiscoverCommand::Commands => {
+                let cmd = Cli::command();
+                commands::cmd_discover_commands(commands::command_tree(&cmd), mode)
+            }
+            DiscoverCommand::ProjectContext { project } => {
+                commands::cmd_project_context(project, mode)
+            }
+        },
+        Command::Commands => commands::cmd_command_contract(mode),
         Command::Init { path, profile } => commands::cmd_init_profile(path, &profile, mode),
         Command::Doctor { platform } => spine::cmd_doctor(platform, mode),
         Command::Wingbox { action } => match action {
