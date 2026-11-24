@@ -97,6 +97,11 @@ def run_toolchain() -> CheckResult:
     return check(REPO_ROOT)
 
 
+def run_interop_roundtrip() -> CheckResult:
+    from interop_roundtrip import check
+    return check(REPO_ROOT)
+
+
 CHECKS = {
     "loc_budget": run_loc_budget,
     "token_scan": run_token_scan,
@@ -110,6 +115,7 @@ CHECKS = {
     "traceability": run_traceability,
     "claim_scan": run_claim_scan,
     "toolchain": run_toolchain,
+    "interop_roundtrip": run_interop_roundtrip,
 }
 
 
