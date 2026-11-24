@@ -24,6 +24,7 @@ pub mod local;
 pub mod backends;
 pub mod supervisor;
 pub mod handlers;
+pub mod sandbox;
 
 pub use backend::{Backend, ExitRecord, JobHandle, JobSpec, JobState, NodeCapabilities, Placement};
 pub use run_token::{RunToken, RunTokenError, RunTokenResult, RunTokenScope, signed_token};
@@ -33,3 +34,35 @@ pub use handlers::{
     CalculiXAdapterHandler, MeshBaselineHandler, OpenFOAMAdapterHandler, SharedState,
     StdioPluginHandler, monorepo_root,
 };
+pub use sandbox::{
+    NetworkPolicy, ResourceLimits, SandboxError, SandboxPolicy, SandboxRequest,
+};
+
+/// Spawn a process under an explicit sandbox policy.
+///
+/// The caller builds the command and arguments; this function applies the
+/// policy by setting the working directory and *replacing* the environment
+/// with only the allowlisted keys. A request that violates the policy is
+/// refused before the process starts. Kernel-level isolation remains an
+/// adapter behind this function.
+pub fn spawn_sandboxed(
+    policy: &SandboxPolicy,
+    request: &SandboxRequest,
+    program: &str,
+    args: &[String],
+) -> Result<std::process::Child, SandboxError> {
+    policy.check_request(request)?;
+    let mut command = std::process::Command::new(program);
+    command
+        .args(args)
+        .current_dir(&policy.working_directory)
+        .env_clear();
+    for (key, value) in std::env::vars() {
+        if policy.env_allowlist.contains(&key) {
+            command.env(key, value);
+        }
+    }
+    command
+        .spawn()
+        .map_err(|e| SandboxError::Violation(format!("spawn {program}: {e}")))
+}

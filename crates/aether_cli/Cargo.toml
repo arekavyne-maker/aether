@@ -47,3 +47,5 @@ aether_evidence = { path = "../aether_evidence" }
 aether_manufacturing = { path = "../aether_manufacturing" }
 aether_model_registry = { path = "../aether_model_registry" }
 aether_fidelity = { path = "../aether_fidelity" }
+aether_design = { path = "../aether_design" }
+aether_agents = { path = "../aether_agents" }

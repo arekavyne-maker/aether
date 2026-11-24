@@ -1,0 +1,6 @@
+agent_id: agent-wingbox-designer
+role: designer
+tool: approve
+arguments:
+  subject: wingbox-baseline-b
+rationale: The model would like to approve its own release.

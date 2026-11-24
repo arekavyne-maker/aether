@@ -380,6 +380,10 @@ impl ReleasePackage {
     }
 }
 
+pub mod release;
+
+pub use release::{PreparedRelease, prepare_release};
+
 #[cfg(test)]
 mod tests {
     use super::*;

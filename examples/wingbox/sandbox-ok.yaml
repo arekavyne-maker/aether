@@ -1,0 +1,25 @@
+policy:
+  plugin_id: org.aether.reference.beam
+  working_directory: /plugins/beam
+  read_paths: [/plugins/beam]
+  write_paths: [/scratch]
+  env_allowlist: [PATH, HOME, LANG, LC_ALL, TMPDIR, PYTHONPATH, CCX_BIN]
+  network: deny
+  limits:
+    timeout_seconds: 3600
+    max_memory_mib: 8192
+    max_cpu_seconds: 7200
+    max_processes: 64
+    max_open_files: 1024
+request:
+  working_directory: /plugins/beam
+  read_paths: [/plugins/beam]
+  write_paths: [/scratch]
+  env: [PATH, HOME]
+  network: deny
+  limits:
+    timeout_seconds: 600
+    max_memory_mib: 2048
+    max_cpu_seconds: 1800
+    max_processes: 8
+    max_open_files: 256

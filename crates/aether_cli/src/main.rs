@@ -261,6 +261,31 @@ enum Command {
         #[command(subcommand)]
         action: FidelityCommand,
     },
+    /// Design-space exploration and candidate feasibility.
+    Design {
+        #[command(subcommand)]
+        action: DesignCommand,
+    },
+    /// AI agent tool proposals and permission decisions.
+    Agent {
+        #[command(subcommand)]
+        action: AgentCommand,
+    },
+    /// Typed quantity and frame checks for solver submissions.
+    Units {
+        #[command(subcommand)]
+        action: UnitsCommand,
+    },
+    /// Plugin sandbox policy checks.
+    Sandbox {
+        #[command(subcommand)]
+        action: SandboxCommand,
+    },
+    /// Release-package preparation and approval.
+    Release {
+        #[command(subcommand)]
+        action: ReleaseCommand,
+    },
 }
 
 #[derive(Subcommand, Debug)]
@@ -375,6 +400,51 @@ enum ModelCommand {
 enum FidelityCommand {
     /// Explain a deterministic fidelity selection and escalation path.
     Plan { file: PathBuf },
+}
+
+#[derive(Subcommand, Debug)]
+enum DesignCommand {
+    /// Evaluate a candidate against the ordered feasibility pipeline.
+    Evaluate { file: PathBuf },
+    /// Validate candidate lineage.
+    Lineage { file: PathBuf },
+}
+
+#[derive(Subcommand, Debug)]
+enum AgentCommand {
+    /// Evaluate an agent tool proposal against the permission matrix.
+    Check { file: PathBuf },
+}
+
+#[derive(Subcommand, Debug)]
+enum UnitsCommand {
+    /// Validate quantities and frame points against a solver contract.
+    Check { file: PathBuf },
+}
+
+#[derive(Subcommand, Debug)]
+enum SandboxCommand {
+    /// Check a plugin sandbox request against a policy.
+    Check { file: PathBuf },
+    /// Spawn a command under an explicit sandbox policy.
+    Run {
+        #[arg(long)]
+        policy: PathBuf,
+        #[arg(last = true)]
+        command: Vec<String>,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+enum ReleaseCommand {
+    /// Build a release package; approve only when every gate passes.
+    Prepare {
+        file: PathBuf,
+        #[arg(long)]
+        approver: Option<String>,
+        #[arg(long)]
+        output: Option<PathBuf>,
+    },
 }
 
 #[derive(Subcommand, Debug)]
@@ -892,6 +962,34 @@ fn main() -> Result<()> {
         },
         Command::Fidelity { action } => match action {
             FidelityCommand::Plan { file } => aether3_commands::cmd_fidelity_plan(file, mode),
+        },
+        Command::Design { action } => match action {
+            DesignCommand::Evaluate { file } => aether3_commands::cmd_design_evaluate(file, mode),
+            DesignCommand::Lineage { file } => aether3_commands::cmd_design_lineage(file, mode),
+        },
+        Command::Agent { action } => match action {
+            AgentCommand::Check { file } => aether3_commands::cmd_agent_check(file, mode),
+        },
+        Command::Units { action } => match action {
+            UnitsCommand::Check { file } => aether3_commands::cmd_units_check(file, mode),
+        },
+        Command::Sandbox { action } => match action {
+            SandboxCommand::Check { file } => aether3_commands::cmd_sandbox_check(file, mode),
+            SandboxCommand::Run { policy, command } => {
+                let mut parts = command.into_iter();
+                let program = parts
+                    .next()
+                    .ok_or_else(|| anyhow::anyhow!("usage: aether sandbox run -- <command> [args...]"))?;
+                let args: Vec<String> = parts.collect();
+                aether3_commands::cmd_sandbox_run(policy, program, args, mode)
+            }
+        },
+        Command::Release { action } => match action {
+            ReleaseCommand::Prepare {
+                file,
+                approver,
+                output,
+            } => aether3_commands::cmd_release_prepare(file, approver, output, mode),
         },
     }
 }

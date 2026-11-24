@@ -38,6 +38,18 @@ and an evidence artifact. A requirement without a test is not done.
 | A3-REQ-028 Solver adapters consume quantities | A3-I04, A3-I16 | `crates/aether_quantities` + adapters | solver-submit rejection test | planned |
 | A3-REQ-029 Evidence-native release workflow | A3-I02, A3-I03 | evidence + ASM + registry | signed release package produced by CLI | planned |
 
+| A3-REQ-030 Solver-submission unit/frame check | A3-I04, A3-I16 | `aether_quantities::validate_submission` | `phase1-units-frames.sh` | verified |
+| A3-REQ-031 Workflow branch/join/loop control flow | A3-I06, A3-I07 | `aether_workflow` | `phase4-control-flow.sh` | verified |
+| A3-REQ-032 Design feasibility and negative evidence | A3-I09, A3-I17 | `crates/aether_design` | `phase5-design-exploration.sh` | verified |
+| A3-REQ-033 Advisor-only agent permissions | A3-I05, A3-I13, A3-I21 | `crates/aether_agents` | `phase6-agents.sh` | verified |
+| A3-REQ-034 Sandbox policy enforcement at spawn | A3-I13 | `crates/aether_exec::spawn_sandboxed` | `phase7-sandbox.sh` | verified |
+| A3-REQ-035 Evidence-native release package | A3-I02, A3-I03, A3-I05 | `aether_evidence::prepare_release` | `phase2-release-package.sh` | verified |
+| A3-REQ-036 Signed plugin bundle verification | A3-I13, A3-I19 | `scripts/plugin-sign.py` | sign/verify round trip | verified |
+| A3-REQ-037 Kernel-level isolation | A3-I13 | seccomp/namespaces/cgroups adapter | real host hardening exercise | planned |
+| A3-REQ-038 Federation trust exchange | A3-I13, A3-I18 | TUF/federation adapter | two-site signed exchange | planned |
+| A3-REQ-039 Solver adapters call units check automatically | A3-I04, A3-I16 | `aether_exec` handler integration | adapter rejects bad submission test | planned |
+| A3-REQ-040 Physical validation of emerging structures | A3-I01, A3-I15 | test campaign | coupon/element/component evidence | planned |
+
 ## Evidence artifact conventions
 
 - Test output: `docs/verification/baseline/<date>/<suite>.txt`

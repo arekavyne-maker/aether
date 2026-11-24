@@ -1,0 +1,21 @@
+candidates:
+  - id: rib-candidate-017
+    parents: [rib-candidate-018]
+    representation: parametric
+    method: evolutionary
+    seed: 17
+    variables: {}
+    objectives: {}
+    constraints: {}
+    uncertainty: []
+    validity_envelope: {}
+  - id: rib-candidate-018
+    parents: [rib-candidate-017]
+    representation: parametric
+    method: generative
+    seed: 18
+    variables: {}
+    objectives: {}
+    constraints: {}
+    uncertainty: []
+    validity_envelope: {}

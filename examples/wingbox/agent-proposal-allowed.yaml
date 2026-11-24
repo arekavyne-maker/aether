@@ -1,0 +1,6 @@
+agent_id: agent-wingbox-explorer
+role: explorer
+tool: graph.query
+arguments:
+  type: Requirement
+rationale: Find the wing-box tip-deflection requirement before proposing a change.

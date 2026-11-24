@@ -10,4 +10,6 @@ description = "Evidence ledger, credibility records, release gates, and waivers"
 
 [dependencies]
 serde = { workspace = true }
+serde_json = { workspace = true }
+aether_asm = { path = "../aether_asm" }
 thiserror = { workspace = true }

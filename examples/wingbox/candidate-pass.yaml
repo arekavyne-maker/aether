@@ -1,0 +1,46 @@
+candidate:
+  id: rib-candidate-017
+  parents: []
+  representation: parametric
+  method: evolutionary
+  seed: 17
+  variables:
+    span_mm: 1200.0
+    thickness_mm: 3.0
+    min_feature_mm: 0.8
+    material_process_compatible: true
+    tool_accessible: true
+    independent_review: true
+    interfaces:
+      wingbox: true
+      rib07: true
+  objectives:
+    mass_kg: 2.41
+  constraints:
+    stress_ok: true
+    buckling_ok: true
+  uncertainty:
+    - class: material
+      description: Modulus scatter from the material allowables
+      magnitude: 3.5
+      unit: GPa
+      distribution: normal
+    - class: manufacturing
+      description: Pocket depth variation
+      magnitude: 0.15
+      unit: mm
+      distribution: uniform
+  validity_envelope:
+    span_mm: "500 .. 2000"
+    tip_load_kN: "1 .. 100"
+gates:
+  - schema
+  - geometric
+  - interface
+  - material_process
+  - feature_tolerance
+  - access
+  - preliminary_structural
+  - detailed_analysis
+  - robustness
+  - independent_review

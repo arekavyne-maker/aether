@@ -428,6 +428,13 @@ fn apply_vector(m: &[[f64; 4]; 4], v: [f64; 3]) -> [f64; 3] {
     ]
 }
 
+pub mod submission;
+
+pub use submission::{
+    FramePoint, SolverContract, SolverQuantity, SubmissionError, SubmissionReport,
+    ExpectedQuantity, check_quantity, dimension_of, validate_submission,
+};
+
 #[cfg(test)]
 mod tests {
     use super::*;

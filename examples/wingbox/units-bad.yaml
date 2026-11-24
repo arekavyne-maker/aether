@@ -1,0 +1,13 @@
+contract:
+  required:
+    - name: tip_load
+      unit: N
+    - name: span
+      unit: m
+quantities:
+  - name: tip_load
+    value: 40.0
+    unit: m
+  - name: span
+    value: 8000.0
+    unit: mm

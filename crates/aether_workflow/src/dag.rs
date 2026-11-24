@@ -56,6 +56,10 @@ pub struct StepInstance {
     pub parameters: Option<crate::awl::ParameterSpace>,
     /// Optional determinism class declaration.
     pub determinism: Option<String>,
+    /// Optional when-condition for branch steps.
+    pub when: Option<crate::awl::WhenCondition>,
+    /// Optional iteration count for loop steps.
+    pub max_iterations: Option<u32>,
 }
 
 impl From<&Step> for StepInstance {
@@ -73,6 +77,8 @@ impl From<&Step> for StepInstance {
             depends_on: s.depends_on.clone(),
             parameters: s.parameters.clone(),
             determinism: s.determinism.clone(),
+            when: s.when.clone(),
+            max_iterations: s.max_iterations,
         }
     }
 }

@@ -1,0 +1,13 @@
+policy:
+  plugin_id: org.aether.reference.beam
+  working_directory: /tmp
+  read_paths: [/tmp]
+  write_paths: [/tmp]
+  env_allowlist: [PATH]
+  network: deny
+  limits:
+    timeout_seconds: 60
+    max_memory_mib: 512
+    max_cpu_seconds: 60
+    max_processes: 4
+    max_open_files: 64

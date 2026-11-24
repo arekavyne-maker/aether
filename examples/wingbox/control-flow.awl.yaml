@@ -1,0 +1,25 @@
+awl: "1.3"
+study: wing-box control-flow
+description: Demonstrates branch, join, and bounded-loop semantics without a solver.
+inputs:
+  run_expensive: false
+steps:
+  - id: start
+    type: noop
+  - id: screening
+    type: noop
+    depends_on: [start]
+  - id: maybe_detailed
+    type: branch
+    when: { input: run_expensive, equals: true }
+    depends_on: [screening]
+  - id: join
+    type: join
+    depends_on: [screening, maybe_detailed]
+  - id: bounded
+    type: loop
+    max_iterations: 0
+    depends_on: [join]
+outputs:
+  - name: decision
+    description: Control-flow decisions for the study.

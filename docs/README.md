@@ -20,6 +20,7 @@ and the certification dossier.
 | Operator's guide (HPC backends) | `operator/hpc-backends.md` | Site operators |
 | Operator's guide (edge cells) | `operator/edge-cells.md` | Site operators |
 | Operator's guide (envman strict mode) | `operator/envman.md` | Site operators |
+| Operations runbook (release, restore, degraded modes) | `operator/runbook.md` | Site operators, release engineers |
 | Plugin author's guide | `plugin-author/getting-started.md` | Plugin authors |
 | Plugin author's guide (the contract surface) | `plugin-author/contract-surface.md` | Plugin authors |
 | Plugin author's guide (TUF-signed bundles) | `plugin-author/signed-bundles.md` | Plugin authors |

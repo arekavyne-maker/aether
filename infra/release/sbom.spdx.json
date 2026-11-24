@@ -1,7 +1,7 @@
 {
   "SPDXID": "SPDXRef-DOCUMENT",
   "creationInfo": {
-    "created": "2026-11-24T12:33:47.006480+00:00",
+    "created": "2026-11-24T13:16:17.338025+00:00",
     "creators": [
       "Tool: aether-fitness-pipeline-0.1.0"
     ]
@@ -10,6 +10,11 @@
   "documentNamespace": "https://aether.local/sbom/aether-platform-2026-11-24",
   "name": "aether-platform",
   "packages": [
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_agents",
+      "versionInfo": "0.1.0"
+    },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_artifacts",
@@ -33,6 +38,11 @@
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_contract_validate",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_design",
       "versionInfo": "0.1.0"
     },
     {

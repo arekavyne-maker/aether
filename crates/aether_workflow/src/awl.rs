@@ -265,6 +265,44 @@ pub struct Step {
     /// Optional step-level determinism class.
     #[serde(default)]
     pub determinism: Option<String>,
+    /// Optional when-condition for `branch` steps. The step runs only when
+    /// the referenced input is truthy.
+    #[serde(default)]
+    pub when: Option<WhenCondition>,
+    /// Optional iteration count for `loop` steps.
+    #[serde(default)]
+    pub max_iterations: Option<u32>,
+}
+
+/// A declarative when-condition for branch and loop steps.
+///
+/// The condition is intentionally small and deterministic: a named input
+/// must equal a declared value. Anything more expressive belongs in a
+/// contract-backed plugin, not in the workflow language.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct WhenCondition {
+    /// Input key to test.
+    pub input: String,
+    /// Required value. Numbers compare numerically; everything else
+    /// compares as JSON equality.
+    pub equals: serde_json::Value,
+}
+
+impl WhenCondition {
+    /// Evaluate the condition against a step's inputs.
+    pub fn evaluate(&self, inputs: &serde_json::Value) -> bool {
+        let actual = inputs.get(&self.input);
+        match (actual, &self.equals) {
+            (Some(serde_json::Value::Number(a)), serde_json::Value::Number(b)) => {
+                match (a.as_f64(), b.as_f64()) {
+                    (Some(a), Some(b)) => (a - b).abs() < f64::EPSILON,
+                    _ => false,
+                }
+            }
+            (Some(a), b) => a == b,
+            (None, _) => false,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -278,6 +316,12 @@ pub enum StepType {
     Gate,
     /// A no-op step (used for control flow).
     Noop,
+    /// A conditional branch: run only when the declared condition holds.
+    Branch,
+    /// A join point that waits for all declared dependencies.
+    Join,
+    /// A bounded loop with a termination condition.
+    Loop,
 }
 
 /// Resource requirement for a step.
@@ -514,5 +558,42 @@ steps:
         // AWL v1.0 documents are still accepted by the v1.x executor.
         let v10 = SAMPLE.replace("awl: \"1.0\"", "awl: \"1.0\"");
         let _ = Awl::parse(&v10).expect("v1.0 still works");
+    }
+
+    #[test]
+    fn branch_join_and_loop_parse() {
+        let doc = r#"
+awl: "1.3"
+steps:
+  - id: start
+    type: noop
+  - id: maybe
+    type: branch
+    when: { input: run_expensive, equals: true }
+    depends_on: [start]
+  - id: join
+    type: join
+    depends_on: [start, maybe]
+  - id: bounded
+    type: loop
+    max_iterations: 3
+    depends_on: [join]
+"#;
+        let awl = Awl::parse(doc).expect("branch/join/loop parse");
+        let compiled = crate::dag::CompiledWorkflow::from_awl(&awl).expect("compiles");
+        assert_eq!(compiled.topological_order.len(), 4);
+        assert_eq!(compiled.steps["maybe"].when.as_ref().unwrap().input, "run_expensive");
+        assert_eq!(compiled.steps["bounded"].max_iterations, Some(3));
+    }
+
+    #[test]
+    fn when_condition_compares_numbers_and_values() {
+        let when = WhenCondition {
+            input: "mode".to_string(),
+            equals: serde_json::json!(2.0),
+        };
+        assert!(when.evaluate(&serde_json::json!({ "mode": 2 })));
+        assert!(!when.evaluate(&serde_json::json!({ "mode": 3 })));
+        assert!(!when.evaluate(&serde_json::json!({})));
     }
 }

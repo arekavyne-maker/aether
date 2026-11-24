@@ -1,0 +1,28 @@
+contract:
+  required:
+    - name: tip_load
+      unit: N
+    - name: span
+      unit: m
+  frames: [wing]
+quantities:
+  - name: tip_load
+    value: 40.0
+    unit: kN
+  - name: span
+    value: 8000.0
+    unit: mm
+frames:
+  frames:
+    wing:
+      id: wing
+      parent: null
+      transform:
+        - [1.0, 0.0, 0.0, 0.0]
+        - [0.0, 1.0, 0.0, 0.0]
+        - [0.0, 0.0, 1.0, 0.0]
+        - [0.0, 0.0, 0.0, 1.0]
+      handedness: right
+points:
+  - frame: wing
+    point: [1.0, 2.0, 3.0]

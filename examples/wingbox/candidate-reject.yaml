@@ -1,0 +1,29 @@
+candidate:
+  id: rib-candidate-018
+  parents: [rib-candidate-017]
+  representation: parametric
+  method: generative
+  seed: 18
+  variables:
+    span_mm: 1250.0
+    thickness_mm: 2.1
+    min_feature_mm: 0.02
+    material_process_compatible: true
+    tool_accessible: true
+    independent_review: false
+  objectives:
+    mass_kg: 1.98
+  constraints:
+    stress_ok: true
+  uncertainty: []
+gates:
+  - schema
+  - geometric
+  - interface
+  - material_process
+  - feature_tolerance
+  - access
+  - preliminary_structural
+  - detailed_analysis
+  - robustness
+  - independent_review

@@ -677,6 +677,372 @@ pub fn cmd_fidelity_plan(file: PathBuf, mode: OutputMode) -> Result<()> {
     )
 }
 
+/// `aether design evaluate <file>` — run the ordered feasibility pipeline
+/// over a candidate and retain the rejection reason.
+pub fn cmd_design_evaluate(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let candidate: aether_design::Candidate =
+        serde_json::from_value(doc.get("candidate").cloned().unwrap_or_else(|| doc.clone()))
+            .context("parse candidate")?;
+    let gates: Vec<aether_design::Gate> = match doc.get("gates") {
+        Some(value) => serde_json::from_value(value.clone()).context("parse gates")?,
+        None => vec![
+            aether_design::Gate::Schema,
+            aether_design::Gate::Geometric,
+            aether_design::Gate::Interface,
+            aether_design::Gate::MaterialProcess,
+            aether_design::Gate::FeatureTolerance,
+            aether_design::Gate::Access,
+            aether_design::Gate::PreliminaryStructural,
+            aether_design::Gate::DetailedAnalysis,
+            aether_design::Gate::Robustness,
+            aether_design::Gate::IndependentReview,
+        ],
+    };
+    let report = aether_design::evaluate_feasibility(&candidate, &gates)
+        .map_err(|e| anyhow!("{e}"))?;
+    emit(
+        mode,
+        &json!({
+            "report": report,
+            "claim": "rejection reasons are retained as negative evidence",
+        }),
+    )?;
+    if !report.accepted {
+        std::process::exit(30);
+    }
+    Ok(())
+}
+
+/// `aether design lineage <file>` — validate candidate parentage.
+pub fn cmd_design_lineage(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let list = doc
+        .get("candidates")
+        .and_then(Value::as_array)
+        .ok_or_else(|| anyhow!("document must contain a `candidates` array"))?;
+    let candidates: Vec<aether_design::Candidate> =
+        serde_json::from_value(Value::Array(list.clone())).context("parse candidates")?;
+    aether_design::validate_lineage(&candidates).map_err(|e| anyhow!("{e}"))?;
+    let rows: Vec<Value> = candidates
+        .iter()
+        .map(|c| {
+            json!({
+                "id": c.id,
+                "parents": c.parents,
+                "method": c.method,
+                "content_hash": c.content_hash(),
+            })
+        })
+        .collect();
+    emit(
+        mode,
+        &json!({
+            "valid": true,
+            "candidates": rows,
+            "claim": "lineage is acyclic and every parent resolves",
+        }),
+    )
+}
+
+/// `aether agent check <file>` — evaluate an agent proposal against the
+/// deterministic permission matrix.
+pub fn cmd_agent_check(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let tool_label = doc
+        .get("tool")
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("agent proposal must declare `tool`"))?;
+    let tool = aether_agents::AgentTool::parse(tool_label)
+        .ok_or_else(|| anyhow!("unknown agent tool {tool_label:?}"))?;
+    let role_label = doc
+        .get("role")
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("agent proposal must declare `role`"))?;
+    let role = match role_label {
+        "explorer" => aether_agents::AgentRole::Explorer,
+        "designer" => aether_agents::AgentRole::Designer,
+        "analyst" => aether_agents::AgentRole::Analyst,
+        "reviewer" => aether_agents::AgentRole::Reviewer,
+        other => return Err(anyhow!("unknown agent role {other:?}")),
+    };
+    let proposal = aether_agents::AgentProposal {
+        agent_id: doc
+            .get("agent_id")
+            .and_then(Value::as_str)
+            .unwrap_or("agent:cli")
+            .to_string(),
+        role,
+        tool,
+        arguments: doc.get("arguments").cloned().unwrap_or_else(|| json!({})),
+        rationale: doc
+            .get("rationale")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_string(),
+    };
+    let decision = aether_agents::evaluate_proposal(&proposal).map_err(|e| anyhow!("{e}"))?;
+    emit(
+        mode,
+        &json!({
+            "decision": decision,
+            "claim": "advisor only; execution requires the authorized executor and any human approval",
+        }),
+    )?;
+    if !decision.allowed {
+        std::process::exit(30);
+    }
+    Ok(())
+}
+
+/// `aether units check <file>` — validate solver quantities and frames
+/// against a declared contract before submission.
+pub fn cmd_units_check(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let contract: aether_quantities::SolverContract =
+        serde_json::from_value(doc.get("contract").cloned().unwrap_or_else(|| json!({})))
+            .context("parse solver contract")?;
+    let quantities: Vec<aether_quantities::SolverQuantity> = doc
+        .get("quantities")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default()
+        .iter()
+        .map(|v| serde_json::from_value(v.clone()))
+        .collect::<std::result::Result<_, _>>()
+        .context("parse quantities")?;
+    let frames: Option<aether_quantities::FrameGraph> = match doc.get("frames") {
+        Some(Value::Object(map)) if map.contains_key("frames") => {
+            Some(serde_json::from_value(Value::Object(map.clone())).context("parse frame graph")?)
+        }
+        Some(value @ Value::Object(_)) => {
+            let wrapped = json!({ "frames": value });
+            Some(serde_json::from_value(wrapped).context("parse frame graph")?)
+        }
+        _ => None,
+    };
+    let points: Vec<aether_quantities::FramePoint> = doc
+        .get("points")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default()
+        .iter()
+        .map(|v| serde_json::from_value(v.clone()))
+        .collect::<std::result::Result<_, _>>()
+        .context("parse frame points")?;
+    let report =
+        aether_quantities::validate_submission(&contract, &quantities, frames.as_ref(), &points)
+            .map_err(|e| anyhow!("{e}"))?;
+    emit(
+        mode,
+        &json!({
+            "report": report,
+            "claim": "unit and frame mismatches fail before solver submission",
+        }),
+    )?;
+    if !report.valid {
+        std::process::exit(30);
+    }
+    Ok(())
+}
+
+/// `aether sandbox check <file>` — validate a plugin sandbox request
+/// against an explicit policy.
+pub fn cmd_sandbox_check(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let policy: aether_exec::SandboxPolicy =
+        serde_json::from_value(doc.get("policy").cloned().unwrap_or_else(|| json!({})))
+            .context("parse sandbox policy")?;
+    let request: aether_exec::SandboxRequest =
+        serde_json::from_value(doc.get("request").cloned().unwrap_or_else(|| json!({})))
+            .context("parse sandbox request")?;
+    let result = policy.check_request(&request);
+    let (valid, error) = match &result {
+        Ok(()) => (true, Value::Null),
+        Err(e) => (false, Value::String(e.to_string())),
+    };
+    emit(
+        mode,
+        &json!({
+            "valid": valid,
+            "policy": policy,
+            "error": error,
+            "claim": "the plugin process must be spawned under this policy, not merely checked",
+        }),
+    )?;
+    if !valid {
+        std::process::exit(30);
+    }
+    Ok(())
+}
+
+/// `aether release prepare <file>` — build a release package from a
+/// configuration snapshot and its evidence, then optionally approve it.
+pub fn cmd_release_prepare(
+    file: PathBuf,
+    approver: Option<String>,
+    output: Option<PathBuf>,
+    mode: OutputMode,
+) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let snapshot_path = doc
+        .get("snapshot")
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("release document must declare `snapshot` (path to a snapshot JSON)"))?;
+    let snapshot_raw = std::fs::read_to_string(snapshot_path)
+        .with_context(|| format!("read {snapshot_path}"))?;
+    let snapshot: aether_asm::ConfigurationSnapshot =
+        serde_json::from_str(&snapshot_raw).context("parse configuration snapshot")?;
+    let gate_value = doc
+        .get("gate")
+        .ok_or_else(|| anyhow!("release document must declare `gate`"))?;
+    let gate: aether_evidence::Gate =
+        serde_json::from_value(gate_value.clone()).context("parse gate")?;
+    let evidence: Vec<aether_evidence::EvidenceItem> = doc
+        .get("evidence")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default()
+        .iter()
+        .map(|v| serde_json::from_value(v.clone()))
+        .collect::<std::result::Result<_, _>>()
+        .context("parse evidence")?;
+    let parsed_credits: Vec<aether_evidence::CredibilityRecord> = doc
+        .get("credibility")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default()
+        .iter()
+        .map(|v| serde_json::from_value::<aether_evidence::CredibilityRecord>(v.clone()))
+        .collect::<std::result::Result<_, _>>()
+        .context("parse credibility records")?;
+    let credits: BTreeMap<String, aether_evidence::CredibilityRecord> = parsed_credits
+        .into_iter()
+        .map(|record| (record.id.clone(), record))
+        .collect();
+    let waiver: Option<aether_evidence::Waiver> = doc
+        .get("waiver")
+        .cloned()
+        .map(serde_json::from_value)
+        .transpose()
+        .with_context(|| "parse waiver")?;
+    let id = doc
+        .get("id")
+        .and_then(Value::as_str)
+        .unwrap_or("release-1");
+    let created_at = doc
+        .get("created_at")
+        .and_then(Value::as_str)
+        .unwrap_or("2026-11-24T00:00:00Z");
+    let mut prepared = aether_evidence::prepare_release(
+        id,
+        &snapshot,
+        &[gate],
+        &evidence,
+        waiver.as_ref(),
+        &credits,
+        created_at,
+    )
+    .map_err(|e| anyhow!("{e}"))?;
+    let mut approval: Value = json!({
+        "state": format!("{:?}", prepared.package.state).to_lowercase(),
+        "approved_by": prepared.package.approved_by,
+        "error": Value::Null,
+    });
+    if let Some(approver) = approver {
+        match prepared.approve(approver) {
+            Ok(()) => {
+                approval = json!({
+                    "state": "approved",
+                    "approved_by": prepared.package.approved_by,
+                    "error": Value::Null,
+                });
+            }
+            Err(e) => {
+                approval = json!({
+                    "state": format!("{:?}", prepared.package.state).to_lowercase(),
+                    "approved_by": prepared.package.approved_by,
+                    "error": e.to_string(),
+                });
+            }
+        }
+    }
+    if let Some(path) = &output {
+        let bytes = serde_json::to_vec_pretty(&prepared)?;
+        std::fs::write(path, &bytes)
+            .with_context(|| format!("write {}", path.display()))?;
+    }
+    emit(
+        mode,
+        &json!({
+            "release": prepared,
+            "approval": approval,
+            "gates_pass": prepared.gates_pass(),
+            "output": output.map(|p| p.display().to_string()),
+        }),
+    )?;
+    if !prepared.gates_pass() || approval["error"] != Value::Null {
+        std::process::exit(30);
+    }
+    Ok(())
+}
+
+/// `aether sandbox run -- <command> [args...]` — spawn a command under an
+/// explicit sandbox policy. The policy comes from `--policy`.
+pub fn cmd_sandbox_run(policy_path: PathBuf, command: String, args: Vec<String>, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&policy_path)
+        .with_context(|| format!("read {}", policy_path.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", policy_path.display()))?;
+    let policy: aether_exec::SandboxPolicy =
+        serde_json::from_value(doc.get("policy").cloned().unwrap_or_else(|| doc.clone()))
+            .context("parse sandbox policy")?;
+    let request = aether_exec::SandboxRequest {
+        working_directory: policy.working_directory.clone(),
+        read_paths: policy.read_paths.clone(),
+        write_paths: policy.write_paths.clone(),
+        env: policy.env_allowlist.clone(),
+        network: policy.network,
+        limits: policy.limits.clone(),
+    };
+    let program = command;
+    let mut child = aether_exec::spawn_sandboxed(&policy, &request, &program, &args)
+        .map_err(|e| anyhow!("{e}"))?;
+    let status = child.wait().with_context(|| format!("wait {program}"))?;
+    emit(
+        mode,
+        &json!({
+            "program": program,
+            "args": args,
+            "exit_code": status.code(),
+            "policy": policy.plugin_id,
+            "claim": "spawned under the declared sandbox policy",
+        }),
+    )?;
+    if !status.success() {
+        std::process::exit(status.code().unwrap_or(1));
+    }
+    Ok(())
+}
+
 /// Structured schema list result, used by tests.
 #[derive(Debug, Serialize)]
 pub struct SchemaSummary {

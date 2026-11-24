@@ -1,0 +1,6 @@
+agent_id: agent-wingbox-analyst
+role: analyst
+tool: workflow.run
+arguments:
+  workflow: workflows/wing-baseline.awl.yaml
+rationale: Re-run the baseline inside the approved envelope.

@@ -164,7 +164,24 @@ impl Executor {
                     bail!("step {step_id} not found in compiled workflow");
                 }
             };
-            if step.kind == StepType::Noop {
+            let skip_reason: Option<&str> = if step.kind == StepType::Noop {
+                Some("noop")
+            } else if step.kind == StepType::Join {
+                Some("join")
+            } else if step.kind == StepType::Branch
+                && step
+                    .when
+                    .as_ref()
+                    .map(|when| !when.evaluate(&step.inputs))
+                    .unwrap_or(true)
+            {
+                Some("branch_not_taken")
+            } else if step.kind == StepType::Loop && step.max_iterations.unwrap_or(0) == 0 {
+                Some("loop_zero_iterations")
+            } else {
+                None
+            };
+            if let Some(reason) = skip_reason {
                 let now = chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Millis, true);
                 let result = StepResult {
                     step_id: step_id.clone(),
@@ -176,11 +193,11 @@ impl Executor {
                     plugin_id: None,
                     plugin_version: None,
                     determinism_class: None,
-                    diagnostics: None,
+                    diagnostics: Some(serde_json::json!({ "skipped": reason })),
                 };
                 step_results.insert(step_id.clone(), result);
                 completed.insert(step_id.clone());
-                self.checkpoint(workflow_id, &step_results).context("checkpoint noop")?;
+                self.checkpoint(workflow_id, &step_results).context("checkpoint skipped step")?;
                 continue;
             }
             // Resolve a handler
@@ -437,5 +454,59 @@ steps:
         let r = ex.execute(&compiled).unwrap();
         assert!(!r.success());
         assert!(matches!(r.status, ExecutionStatus::Failed { .. }));
+    }
+
+    #[test]
+    fn branch_skipped_when_condition_is_false() {
+        let awl = Awl::parse(
+            r#"
+awl: "1.3"
+steps:
+  - id: start
+    type: noop
+  - id: maybe
+    type: branch
+    when: { input: run_expensive, equals: true }
+    depends_on: [start]
+  - id: join
+    type: join
+    depends_on: [start, maybe]
+"#,
+        )
+        .unwrap();
+        let compiled = CompiledWorkflow::from_awl(&awl).unwrap();
+        let mut ex = Executor::new(ExecutorConfig::default(), Box::new(InMemoryCheckpointStore::new()));
+        let r = ex.execute(&compiled).unwrap();
+        assert!(r.success(), "{:?}", r.status);
+        assert!(r.step_results.contains_key("join"));
+        // The branch is skipped and records why.
+        let maybe = &r.step_results["maybe"];
+        assert_eq!(
+            maybe.diagnostics.as_ref().and_then(|d| d.get("skipped")),
+            Some(&serde_json::json!("branch_not_taken"))
+        );
+    }
+
+    #[test]
+    fn zero_iteration_loop_is_skipped() {
+        let awl = Awl::parse(
+            r#"
+awl: "1.3"
+steps:
+  - id: bounded
+    type: loop
+    max_iterations: 0
+"#,
+        )
+        .unwrap();
+        let compiled = CompiledWorkflow::from_awl(&awl).unwrap();
+        let mut ex = Executor::new(ExecutorConfig::default(), Box::new(InMemoryCheckpointStore::new()));
+        let r = ex.execute(&compiled).unwrap();
+        assert!(r.success());
+        let bounded = &r.step_results["bounded"];
+        assert_eq!(
+            bounded.diagnostics.as_ref().and_then(|d| d.get("skipped")),
+            Some(&serde_json::json!("loop_zero_iterations"))
+        );
     }
 }

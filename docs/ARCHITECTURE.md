@@ -99,7 +99,7 @@ Everything above the kernel line knows contracts, not vendors. Cross-domain comm
 
 ## 4. The workspace: crates, roles, and sizes
 
-Nineteen crates, ~24.6k LOC of Rust source total — comfortably inside the kernel-boundary budget discipline (I-1). The kernel/Boundary LOC tracker counts the kernel and boundary crates, not the new domain libraries.
+Twenty-one crates, ~27.1k LOC of Rust source total — comfortably inside the kernel-boundary budget discipline (I-1). The kernel/Boundary LOC tracker counts the kernel and boundary crates, not the new domain libraries.
 
 | Crate | LOC | Role |
 |---|---|---|
@@ -118,6 +118,8 @@ Nineteen crates, ~24.6k LOC of Rust source total — comfortably inside the kern
 | `aether_manufacturing` | 430 | Manufacturing genealogy, as-built snapshots, disposition and revision-impact checks |
 | `aether_model_registry` | 430 | Model cards, role-gated promotion, hash-chained registry audit |
 | `aether_fidelity` | 430 | Deterministic multi-fidelity selection and escalation planning |
+| `aether_design` | 430 | Design-space feasibility pipeline, candidate lineage, and uncertainty classes |
+| `aether_agents` | 430 | Advisor-only agent tool permissions and human-approval gates |
 | `aether_compose` | 518 | Multiphysics coupling: participants, exchanges, coupling schemes, Broyden-style IQN-ILS, conservation checks |
 | `aether_contract_validate` | 475 | The Rust half of the two-implementation rule for contract validation |
 | `aether_kernel` | 195 | The transport substrate: spawn plugin process, exchange newline-delimited JSON-RPC 2.0, reap. Proves the boundary without absorbing domain logic |
