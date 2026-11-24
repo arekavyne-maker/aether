@@ -180,6 +180,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "aether_federation"
+version = "3.0.0"
+dependencies = [
+ "serde",
+ "sha2 0.10.9",
+ "thiserror",
+]
+
+[[package]]
 name = "aether_fidelity"
 version = "3.0.0"
 dependencies = [
@@ -212,6 +221,16 @@ dependencies = [
 
 [[package]]
 name = "aether_identity"
+version = "3.0.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "thiserror",
+]
+
+[[package]]
+name = "aether_job"
 version = "3.0.0"
 dependencies = [
  "serde",

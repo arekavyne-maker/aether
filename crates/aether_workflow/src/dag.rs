@@ -64,6 +64,16 @@ pub struct StepInstance {
     pub approver_role: Option<String>,
     /// For nested steps: path to the nested AWL document.
     pub nested_workflow: Option<String>,
+    /// Idempotency key for this step.
+    pub idempotency_key: Option<String>,
+    /// Compensating step id on failure.
+    pub on_failure: Option<String>,
+    /// Cache policy.
+    pub cache: Option<crate::awl::CachePolicy>,
+    /// Event trigger.
+    pub trigger: Option<crate::awl::TriggerSpec>,
+    /// Multi-fidelity transition.
+    pub fidelity: Option<crate::awl::FidelityTransition>,
 }
 
 impl From<&Step> for StepInstance {
@@ -85,6 +95,16 @@ impl From<&Step> for StepInstance {
             max_iterations: s.max_iterations,
             approver_role: s.approver_role.clone(),
             nested_workflow: s.nested_workflow.clone(),
+            idempotency_key: s.idempotency_key.clone().or_else(|| {
+                // Deterministic fallback derived from the step definition;
+                // retries then reuse the same key instead of duplicating work.
+                let canonical = serde_json::to_value(s).unwrap_or(serde_json::Value::Null);
+                Some(crate::provenance_key(&canonical))
+            }),
+            on_failure: s.on_failure.clone(),
+            cache: s.cache.clone(),
+            trigger: s.trigger.clone(),
+            fidelity: s.fidelity.clone(),
         }
     }
 }

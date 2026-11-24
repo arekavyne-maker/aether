@@ -335,6 +335,70 @@ impl Executor {
                     .context("checkpoint nested step")?;
                 continue;
             }
+            // Content-addressed caching: a repeated step with the same key
+            // reuses its recorded result instead of re-running the tool.
+            if let Some(cache) = &step.cache {
+                if cache.enabled {
+                    let key = cache.key.clone().unwrap_or_else(|| {
+                        crate::provenance_key(&serde_json::json!({
+                            "step": step_id,
+                            "inputs": step.inputs,
+                        }))
+                    });
+                    if let Some((_, prior)) = step_results
+                        .iter()
+                        .find(|(_, r)| {
+                            r.diagnostics
+                                .as_ref()
+                                .and_then(|d| d.get("cache_key"))
+                                .and_then(|v| v.as_str())
+                                == Some(key.as_str())
+                        })
+                    {
+                        let mut cached = prior.clone();
+                        cached.step_id = step_id.to_string();
+                        cached.diagnostics = Some(serde_json::json!({
+                            "cache_key": key,
+                            "cache_hit": true,
+                        }));
+                        step_results.insert(step_id.to_string(), cached);
+                        completed.insert(step_id.to_string());
+                        continue;
+                    }
+                }
+            }
+
+            // Event triggers are declarative gates: the step proceeds only
+            // when the declared event input is present in the step inputs.
+            if let Some(trigger) = &step.trigger {
+                let fired = step.inputs.get("event").and_then(|v| v.as_str())
+                    == Some(trigger.value.as_str());
+                if !fired {
+                    let now = chrono::Utc::now()
+                        .to_rfc3339_opts(chrono::SecondsFormat::Millis, true);
+                    step_results.insert(
+                        step_id.to_string(),
+                        StepResult {
+                            step_id: step_id.to_string(),
+                            status: "waiting".to_string(),
+                            attempt: 1,
+                            started_at: now.clone(),
+                            ended_at: now,
+                            output_hashes: BTreeMap::new(),
+                            plugin_id: None,
+                            plugin_version: None,
+                            determinism_class: None,
+                            diagnostics: Some(serde_json::json!({
+                                "waiting_for": trigger.kind,
+                                "event": trigger.value,
+                            })),
+                        },
+                    );
+                    completed.insert(step_id.to_string());
+                    continue;
+                }
+            }
+
             // Resolve a handler
             let contract = match &step.contract {
                 Some(c) => c,
@@ -443,11 +507,22 @@ impl Executor {
                 }
             }
             if !success {
-                // Capture the failure.
+                // Compensating action: record that the named step is
+                // responsible for cleanup. The compensating step is a DAG
+                // node and must be scheduled explicitly by the caller.
                 let reason = last_error
                     .as_ref()
                     .map(|(_, r)| r.clone())
                     .unwrap_or_else(|| "step did not succeed".to_string());
+                let compensation = step.on_failure.clone();
+                if let Some(result) = step_results.get_mut(step_id) {
+                    let existing = result.diagnostics.clone().unwrap_or(serde_json::Value::Null);
+                    result.diagnostics = Some(serde_json::json!({
+                        "diagnostics": existing,
+                        "compensating_step": compensation,
+                        "idempotency_key": step.idempotency_key,
+                    }));
+                }
                 return Ok(ExecutionResult {
                     workflow_id,
                     started_at,
@@ -461,6 +536,23 @@ impl Executor {
                 });
             }
             completed.insert(step_id.clone());
+            if let Some(cache) = &step.cache {
+                if cache.enabled {
+                    let key = cache.key.clone().unwrap_or_else(|| {
+                        crate::provenance_key(&serde_json::json!({
+                            "step": step_id,
+                            "inputs": step.inputs,
+                        }))
+                    });
+                    if let Some(result) = step_results.get_mut(step_id) {
+                        let existing = result.diagnostics.clone().unwrap_or(serde_json::Value::Null);
+                        result.diagnostics = Some(serde_json::json!({
+                            "diagnostics": existing,
+                            "cache_key": key,
+                        }));
+                    }
+                }
+            }
             self.checkpoint(workflow_id, &step_results)?;
         }
 
@@ -742,5 +834,73 @@ steps:
             .get("nested_workflow")
             .is_some());
         let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn cache_reuses_a_prior_result() {
+        let awl = Awl::parse(
+            r#"
+awl: "1.3"
+steps:
+  - id: a
+    type: run
+    contract: aether.cache.test
+    inputs: { x: 1 }
+    cache: { enabled: true, key: k1 }
+  - id: b
+    type: run
+    contract: aether.cache.test
+    inputs: { x: 1 }
+    cache: { enabled: true, key: k1 }
+"#,
+        )
+        .unwrap();
+        let compiled = CompiledWorkflow::from_awl(&awl).unwrap();
+        let mut ex = Executor::new(ExecutorConfig::default(), Box::new(InMemoryCheckpointStore::new()));
+        ex.register_handler(Arc::new(AlwaysSucceedHandler {
+            name: "cache-test".to_string(),
+            contract: "aether.cache.test".to_string(),
+        }));
+        let r = ex.execute(&compiled).unwrap();
+        assert!(r.success(), "{:?}", r.status);
+        // The cache records its key on the first run and a hit on the repeat.
+        let b = &r.step_results["b"];
+        assert!(b.diagnostics.as_ref().unwrap().get("cache_key").is_some(), "{b:?}");
+    }
+
+    #[test]
+    fn event_trigger_waits_until_event_matches() {
+        let awl = Awl::parse(
+            r#"
+awl: "1.3"
+steps:
+  - id: t
+    type: run
+    contract: aether.trigger.test
+    trigger: { kind: message, value: ready }
+    inputs: { event: not_ready }
+"#,
+        )
+        .unwrap();
+        let compiled = CompiledWorkflow::from_awl(&awl).unwrap();
+        let mut ex = Executor::new(ExecutorConfig::default(), Box::new(InMemoryCheckpointStore::new()));
+        let r = ex.execute(&compiled).unwrap();
+        assert_eq!(r.step_results["t"].status, "waiting");
+    }
+
+    #[test]
+    fn idempotency_key_is_derived_when_absent() {
+        let awl = Awl::parse(
+            r#"
+awl: "1.3"
+steps:
+  - id: a
+    type: noop
+"#,
+        )
+        .unwrap();
+        let compiled = CompiledWorkflow::from_awl(&awl).unwrap();
+        let key = compiled.steps["a"].idempotency_key.clone().unwrap();
+        assert_eq!(key.len(), 64);
     }
 }

@@ -30,6 +30,8 @@ members = [
     "crates/aether_classification",
     "crates/aether_observability",
     "crates/aether_identity",
+    "crates/aether_job",
+    "crates/aether_federation",
 ]
 
 [workspace.package]

@@ -1,0 +1,14 @@
+[package]
+name = "aether_federation"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Federation wire protocol and fail-closed transfer rules"
+
+[dependencies]
+serde = { workspace = true }
+sha2 = { workspace = true }
+thiserror = { workspace = true }

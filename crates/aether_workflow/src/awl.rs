@@ -278,6 +278,55 @@ pub struct Step {
     /// For `nested` steps: path to the nested AWL document.
     #[serde(default)]
     pub nested_workflow: Option<String>,
+    /// Idempotency key for remote/backended execution. Derived from the
+    /// step definition when absent so retries cannot duplicate work.
+    #[serde(default)]
+    pub idempotency_key: Option<String>,
+    /// Compensating step id to run when this step fails permanently.
+    #[serde(default)]
+    pub on_failure: Option<String>,
+    /// Cache policy keyed by the canonical input hash.
+    #[serde(default)]
+    pub cache: Option<CachePolicy>,
+    /// Event trigger for `trigger` steps.
+    #[serde(default)]
+    pub trigger: Option<TriggerSpec>,
+    /// Multi-fidelity escalation declaration.
+    #[serde(default)]
+    pub fidelity: Option<FidelityTransition>,
+}
+
+/// Cache policy for a step.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct CachePolicy {
+    /// Whether caching is enabled.
+    pub enabled: bool,
+    /// Optional explicit cache key; otherwise the canonical input hash is used.
+    #[serde(default)]
+    pub key: Option<String>,
+}
+
+/// An event trigger for a workflow step.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct TriggerSpec {
+    /// Event kind: `file`, `timer`, or `message`.
+    pub kind: String,
+    /// Trigger payload (path, interval, or topic).
+    pub value: String,
+}
+
+/// A multi-fidelity transition: run a low-fidelity step first, escalate to
+/// a higher-fidelity step when the declared condition holds.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct FidelityTransition {
+    /// Lower-fidelity step id.
+    pub from: String,
+    /// Higher-fidelity step id.
+    pub to: String,
+    /// Quantity of interest that drives escalation.
+    pub quantity: String,
+    /// Threshold that triggers escalation.
+    pub threshold: f64,
 }
 
 /// A declarative when-condition for branch and loop steps.

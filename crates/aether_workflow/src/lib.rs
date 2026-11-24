@@ -32,6 +32,16 @@ pub mod dag;
 pub mod execute;
 pub mod checkpoint;
 
+use sha2::{Digest, Sha256};
+
+/// Deterministic 64-hex key over a canonical JSON value.
+pub fn provenance_key(value: &serde_json::Value) -> String {
+    let bytes = serde_json::to_vec(value).unwrap_or_default();
+    let mut hasher = Sha256::new();
+    hasher.update(bytes);
+    format!("{:x}", hasher.finalize())
+}
+
 pub use awl::{Awl, AwlError, AwlResult, Step, StepType, ParameterSpace, PlacementHint};
 pub use dag::{CompiledWorkflow, StepInstance, StepStatus};
 pub use execute::{ExecutionResult, Executor, ExecutorConfig};
