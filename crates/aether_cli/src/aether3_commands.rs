@@ -1229,6 +1229,143 @@ pub fn cmd_loads_validate(file: PathBuf, mode: OutputMode) -> Result<()> {
     Ok(())
 }
 
+/// `aether model infer <file>` — run a governed model prediction.
+pub fn cmd_model_infer(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let card: aether_model_runtime::ModelCard =
+        serde_json::from_value(doc.get("model").cloned().unwrap_or_else(|| doc.clone()))
+            .context("parse model card")?;
+    let artifact_hash = doc
+        .get("artifact_hash")
+        .and_then(Value::as_str)
+        .unwrap_or(&card.artifact_hash)
+        .to_string();
+    let mut features = std::collections::BTreeMap::new();
+    if let Some(map) = doc.get("features").and_then(Value::as_object) {
+        for (key, value) in map {
+            if let Some(number) = value.as_f64() {
+                features.insert(key.clone(), number);
+            }
+        }
+    }
+    let prediction = aether_model_runtime::infer(&card, &features, &artifact_hash)
+        .map_err(|e| anyhow!("{e}"))?;
+    emit(
+        mode,
+        &json!({
+            "prediction": aether_model_runtime::prediction_to_value(&prediction),
+            "claim": "a prediction outside the declared envelope must not be used for a controlled decision",
+        }),
+    )
+}
+
+/// `aether agent run <file>` — evaluate an agent proposal and execute it
+/// when allowed and approved.
+pub fn cmd_agent_run(file: PathBuf, approved_by: Option<String>, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let tool_label = doc
+        .get("tool")
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("proposal must declare tool"))?;
+    let tool = match tool_label {
+        "graph.query" => aether_agent_runtime::Tool::GraphQuery,
+        "design.evaluate" => aether_agent_runtime::Tool::DesignEvaluate,
+        "analysis.run" => aether_agent_runtime::Tool::AnalysisRun,
+        "model.infer" => aether_agent_runtime::Tool::ModelInfer,
+        "propose.change" => aether_agent_runtime::Tool::ProposeChange,
+        other => return Err(anyhow!("unknown tool {other:?}")),
+    };
+    let role = match doc.get("role").and_then(Value::as_str).unwrap_or("explorer") {
+        "explorer" => aether_agent_runtime::AgentRole::Explorer,
+        "designer" => aether_agent_runtime::AgentRole::Designer,
+        "analyst" => aether_agent_runtime::AgentRole::Analyst,
+        other => return Err(anyhow!("unknown role {other:?}")),
+    };
+    let proposal = aether_agent_runtime::Proposal {
+        agent_id: doc
+            .get("agent_id")
+            .and_then(Value::as_str)
+            .unwrap_or("agent:cli")
+            .to_string(),
+        role,
+        tool,
+        arguments: doc.get("arguments").cloned().unwrap_or_else(|| json!({})),
+        rationale: doc
+            .get("rationale")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_string(),
+    };
+    let mut runtime = aether_agent_runtime::AgentRuntime::new();
+    runtime.register(std::sync::Arc::new(GraphQueryTool));
+    runtime.register(std::sync::Arc::new(ProposeChangeTool));
+    let decision = runtime.decide(&proposal);
+    let executed = runtime
+        .execute(&proposal, approved_by.as_deref())
+        .map_err(|e| anyhow!("{e:?}"))?;
+    let executed_flag = executed.is_some();
+    let output_value = executed.as_ref().map(|o| o.value.clone());
+    emit(
+        mode,
+        &json!({
+            "decision": decision,
+            "executed": executed_flag,
+            "output": output_value,
+            "audit": runtime.audit,
+        }),
+    )?;
+    if !decision.allowed || (decision.requires_human_approval && !executed_flag) {
+        std::process::exit(30);
+    }
+    Ok(())
+}
+
+/// A deterministic graph-query tool for the agent runtime.
+struct GraphQueryTool;
+
+impl aether_agent_runtime::DeterministicTool for GraphQueryTool {
+    fn name(&self) -> &'static str {
+        "graph.query"
+    }
+    fn run(
+        &self,
+        arguments: &Value,
+    ) -> std::result::Result<Value, aether_agent_runtime::AgentRuntimeError> {
+        // The tool is read-only and deterministic: it echoes the validated
+        // query shape. A production site binds this to the graph engine.
+        Ok(json!({
+            "query": arguments.get("type").cloned().unwrap_or(Value::Null),
+            "results": [],
+            "read_only": true,
+        }))
+    }
+}
+
+/// A deterministic propose-change tool. It never applies the change.
+struct ProposeChangeTool;
+
+impl aether_agent_runtime::DeterministicTool for ProposeChangeTool {
+    fn name(&self) -> &'static str {
+        "propose.change"
+    }
+    fn run(
+        &self,
+        arguments: &Value,
+    ) -> std::result::Result<Value, aether_agent_runtime::AgentRuntimeError> {
+        Ok(json!({
+            "proposal": arguments,
+            "applied": false,
+            "requires_human_approval": true,
+        }))
+    }
+}
+
 /// Structured schema list result, used by tests.
 #[derive(Debug, Serialize)]
 pub struct SchemaSummary {

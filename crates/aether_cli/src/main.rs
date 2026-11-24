@@ -296,7 +296,16 @@ enum Command {
         #[command(subcommand)]
         action: LoadsCommand,
     },
-    /// Release-package preparation and approval.
+    /// Run a governed model prediction.
+    Infer {
+        file: PathBuf,
+    },
+    /// Evaluate (and possibly execute) an agent proposal.
+    AgentRun {
+        file: PathBuf,
+        #[arg(long)]
+        approved_by: Option<String>,
+    },
     Release {
         #[command(subcommand)]
         action: ReleaseCommand,
@@ -1030,6 +1039,10 @@ fn main() -> Result<()> {
         Command::Loads { action } => match action {
             LoadsCommand::Validate { file } => aether3_commands::cmd_loads_validate(file, mode),
         },
+        Command::Infer { file } => aether3_commands::cmd_model_infer(file, mode),
+        Command::AgentRun { file, approved_by } => {
+            aether3_commands::cmd_agent_run(file, approved_by, mode)
+        }
         Command::Release { action } => match action {
             ReleaseCommand::Prepare {
                 file,

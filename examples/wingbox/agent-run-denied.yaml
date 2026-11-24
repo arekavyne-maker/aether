@@ -1,0 +1,6 @@
+agent_id: agent-wingbox-designer
+role: designer
+tool: analysis.run
+arguments:
+  workflow: workflows/wing-baseline.awl.yaml
+rationale: A designer may not run analyses.

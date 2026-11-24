@@ -25,6 +25,8 @@ members = [
     "crates/aether_vv",
     "crates/aether_materials",
     "crates/aether_loads",
+    "crates/aether_model_runtime",
+    "crates/aether_agent_runtime",
 ]
 
 [workspace.package]

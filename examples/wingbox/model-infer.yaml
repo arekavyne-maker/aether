@@ -1,0 +1,20 @@
+model:
+  id: surrogate-wingbox-deflection
+  version: 0.2.0
+  task: reduced_order_structural_response
+  state: approved
+  intended_use:
+    - preliminary-design-screening
+  prohibited_use:
+    - certification-credit
+  validity_envelope:
+    span_m: "0.5 .. 12.0"
+    tip_load_kN: "1 .. 100"
+  features: [span_m, tip_load_kN]
+  coefficients: [0.01, 0.005]
+  intercept: 0.1
+  artifact_hash: "0000000000000000000000000000000000000000000000000000000000000042"
+artifact_hash: "0000000000000000000000000000000000000000000000000000000000000042"
+features:
+  span_m: 8.0
+  tip_load_kN: 40.0

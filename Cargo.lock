@@ -3,6 +3,16 @@
 version = 3
 
 [[package]]
+name = "aether_agent_runtime"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "thiserror",
+]
+
+[[package]]
 name = "aether_agents"
 version = "0.1.0"
 dependencies = [
@@ -34,6 +44,7 @@ dependencies = [
 name = "aether_cli"
 version = "0.1.0"
 dependencies = [
+ "aether_agent_runtime",
  "aether_agents",
  "aether_artifacts",
  "aether_asm",
@@ -48,6 +59,7 @@ dependencies = [
  "aether_manufacturing",
  "aether_materials",
  "aether_model_registry",
+ "aether_model_runtime",
  "aether_policy",
  "aether_provenance",
  "aether_quantities",
@@ -230,6 +242,16 @@ dependencies = [
 
 [[package]]
 name = "aether_model_registry"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "thiserror",
+]
+
+[[package]]
+name = "aether_model_runtime"
 version = "0.1.0"
 dependencies = [
  "serde",
