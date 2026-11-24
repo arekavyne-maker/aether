@@ -52,3 +52,16 @@ This directory contains **Architecture Decision Records** for the Aether platfor
 2. Use the next free number with a zero-padded prefix
 3. Submit via PR; ARB review (§22.1) approves or rejects
 4. On approval, change status to `Accepted` and add to this index
+
+## Production-grade expansion (2026-11-24)
+
+| ADR | Title | Status |
+|---|---|---|
+| [0034](0034-model-inference-runtime.md) | Model inference runtime boundary | Accepted |
+| [0035](0035-agent-runtime-crate.md) | Agent runtime crate and bounded tool execution | Accepted |
+| [0036](0036-job-envelope-federation.md) | Job envelope and federated compute | Accepted |
+| [0037](0037-graph-access-control.md) | Graph access control | Accepted |
+| [0038](0038-research-promotion.md) | Research-to-production promotion gate | Accepted |
+| [0039](0039-key-management.md) | Key management and data classification | Accepted |
+| [0040](0040-benchmark-slo.md) | Benchmark and SLO methodology | Accepted |
+| [0041](0041-contract-migration.md) | Contract compatibility and migration | Accepted |

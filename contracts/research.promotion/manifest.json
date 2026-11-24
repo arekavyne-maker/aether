@@ -1,0 +1,28 @@
+{
+  "contract_id": "aether.research.promotion",
+  "version": "0.1.0",
+  "title": "Aether Research-to-Production Promotion",
+  "description": "Promotion gate for research methods: benchmark evidence, uncertainty, OOD, physical constraints, manufacturing feasibility, and named approval (ADR-0038).",
+  "methods": ["submit", "evaluate", "promote", "reject", "rollback"],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/research.promotion/schema/promotion.schema.json",
+      "path": "schema/promotion.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "promotion_state", "version": "0.1.0", "closed": true,
+      "values": ["research", "submitted", "benchmarked", "independently_validated", "approved", "rejected", "rolled_back"] }
+  ],
+  "invariants": [
+    "research methods never enter a production baseline without promotion",
+    "promotion requires grouped and external benchmark evidence",
+    "a method cannot approve its own promotion",
+    "rejection and rollback are retained in lineage"
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

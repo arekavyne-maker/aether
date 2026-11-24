@@ -1,6 +1,6 @@
 # ADR-0033: Agent runtime is bounded, proposal-only, and outside the kernel
 
-**Status:** Proposed
+**Status:** Superseded by ADR-0035
 **Date:** 2026-11-24
 
 ## Context

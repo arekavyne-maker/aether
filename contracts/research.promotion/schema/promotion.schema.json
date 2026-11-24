@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/research.promotion/schema/promotion.schema.json",
+  "title": "Aether Research Promotion Record",
+  "type": "object",
+  "required": ["method_id", "state", "reasons"],
+  "additionalProperties": false,
+  "properties": {
+    "method_id": {"type": "string"},
+    "state": {
+      "type": "string",
+      "enum": ["research", "submitted", "benchmarked", "independently_validated", "approved", "rejected", "rolled_back"]
+    },
+    "reasons": {"type": "array", "items": {"type": "string"}},
+    "evidence_ids": {"type": "array", "items": {"type": "string"}},
+    "approved_by": {"type": ["string", "null"]},
+    "rollback_version": {"type": ["string", "null"]}
+  }
+}

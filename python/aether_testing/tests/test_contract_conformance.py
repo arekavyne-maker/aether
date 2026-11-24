@@ -48,6 +48,7 @@ ALL_CONTRACTS = [
     "aether.evidence",
     "aether.model-card",
     "aether.vv",
+    "aether.research.promotion",
 ]
 
 

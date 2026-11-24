@@ -102,6 +102,16 @@ def run_interop_roundtrip() -> CheckResult:
     return check(REPO_ROOT)
 
 
+def run_adr_discipline() -> CheckResult:
+    from adr_discipline import check
+    return check(REPO_ROOT)
+
+
+def run_research_claim() -> CheckResult:
+    from research_claim import check
+    return check(REPO_ROOT)
+
+
 CHECKS = {
     "loc_budget": run_loc_budget,
     "token_scan": run_token_scan,
@@ -116,6 +126,8 @@ CHECKS = {
     "claim_scan": run_claim_scan,
     "toolchain": run_toolchain,
     "interop_roundtrip": run_interop_roundtrip,
+    "adr_discipline": run_adr_discipline,
+    "research_claim": run_research_claim,
 }
 
 

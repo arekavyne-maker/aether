@@ -1,6 +1,6 @@
 # ADR-0029: Model registry and model-card governance
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-11-24
 
 ## Context
