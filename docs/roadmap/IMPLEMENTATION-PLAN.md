@@ -181,6 +181,9 @@ P0 truth/cleanup
 
 ## Versioning
 
-Do not call the codebase `3.0.0` until Phase 7 evidence exists. Use
-`0.x` releases through the vertical slices; the architecture document is the
-target, not a maturity claim.
+The workspace is now `3.0.0`. That version reflects the Phase 0–7 vertical
+slices and their acceptance evidence, not a claim of certification. The
+remaining gaps (federation, kernel-level isolation hardening, physical
+validation, and Demonstrators C and E) are tracked in
+[`../verification/STATUS.md`](../verification/STATUS.md) and do not block
+the version, but they do bound what the version means.

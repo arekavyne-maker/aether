@@ -99,7 +99,7 @@ Everything above the kernel line knows contracts, not vendors. Cross-domain comm
 
 ## 4. The workspace: crates, roles, and sizes
 
-Twenty-one crates, ~27.1k LOC of Rust source total — comfortably inside the kernel-boundary budget discipline (I-1). The kernel/Boundary LOC tracker counts the kernel and boundary crates, not the new domain libraries.
+Twenty-nine crates, ~31.2k LOC of Rust source total — comfortably inside the kernel-boundary budget discipline (I-1). The kernel/Boundary LOC tracker counts the kernel and boundary crates, not the new domain libraries.
 
 | Crate | LOC | Role |
 |---|---|---|

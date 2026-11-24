@@ -50,6 +50,18 @@ and an evidence artifact. A requirement without a test is not done.
 | A3-REQ-039 Solver adapters call units check automatically | A3-I04, A3-I16 | `aether_exec` handler integration | adapter rejects bad submission test | planned |
 | A3-REQ-040 Physical validation of emerging structures | A3-I01, A3-I15 | test campaign | coupon/element/component evidence | planned |
 
+| A3-REQ-041 Composite laminate response | A3-I01, A3-I10 | `reference_plugins/composite-laminate` | CLT matches closed forms | verified |
+| A3-REQ-042 Architected lattice generation | A3-I11, A3-I15 | `reference_plugins/lattice-generator` | three topologies with honest homogenisation | verified |
+| A3-REQ-043 Data classification enforcement | A3-I13, A3-I20 | `crates/aether_classification` | export-controlled data blocked | verified |
+| A3-REQ-044 Short-lived identity tokens | A3-I13 | `crates/aether_identity` | expiry, revocation, audience | verified |
+| A3-REQ-045 Metrics carry no engineering content | A3-I13 | `crates/aether_observability` | engineering labels rejected | verified |
+| A3-REQ-046 Kernel-level isolation profile | A3-I13 | `crates/aether_exec::sandbox` | sandbox-exec profile generated | verified |
+| A3-REQ-047 Real compute backend honesty | A3-I18 | `crates/aether_exec::backends::slurm_real` | unavailable scheduler reported, not faked | verified |
+| A3-REQ-048 Interchange round-trip fidelity | A3-I08, A3-I19 | `python/aether_standards` | json/csv/hdf5/step round-trip | verified |
+| A3-REQ-049 QIF inspection plan | A3-I11 | `python/aether_standards/qif.py` | plan round-trip and validation | verified |
+| A3-REQ-050 Bounded model inference | A3-I01, A3-I10 | `crates/aether_model_runtime` | envelope and approval enforced | verified |
+| A3-REQ-051 Agent execution is advisor-only | A3-I05, A3-I21 | `crates/aether_agent_runtime` | self-approval denied | verified |
+
 ## Evidence artifact conventions
 
 - Test output: `docs/verification/baseline/<date>/<suite>.txt`

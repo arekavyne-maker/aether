@@ -1,7 +1,7 @@
 {
   "SPDXID": "SPDXRef-DOCUMENT",
   "creationInfo": {
-    "created": "2026-11-24T17:51:40.975158+00:00",
+    "created": "2026-11-24T17:58:55.760433+00:00",
     "creators": [
       "Tool: aether-fitness-pipeline-0.1.0"
     ]
@@ -13,147 +13,147 @@
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_agent_runtime",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_agents",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_artifacts",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_asm",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_classification",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_cli",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_compose",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_contract_validate",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_design",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_envman",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_evidence",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_exec",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_fidelity",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_graph",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_identity",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_kernel",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_loads",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_manufacturing",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_materials",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_model_registry",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_model_runtime",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_observability",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_policy",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_provenance",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_quantities",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_registry",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_sdk_ffi",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_vv",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_workflow",
-      "versionInfo": "0.1.0"
+      "versionInfo": "3.0.0"
     },
     {
       "downloadLocation": "NOASSERTION",

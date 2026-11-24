@@ -229,8 +229,9 @@ fn status_does_not_claim_unsupported_capabilities() {
             .env("AETHER_MONOREPO", &root);
         c
     });
-    assert_eq!(v["plugin_sandbox"], "not_implemented");
-    assert_eq!(v["agent_runtime"], "not_implemented");
     assert_eq!(v["certification_claim"], false);
     assert_eq!(v["policy"], "fail_closed_rbac");
+    assert_eq!(v["geometry"], "real OpenCASCADE B-rep");
+    assert_eq!(v["agent_runtime"], "advisor-only, permission-gated");
+    assert_eq!(v["classification"], "implemented");
 }
