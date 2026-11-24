@@ -1,0 +1,51 @@
+# Aether real OpenCASCADE geometry plugin manifest.
+_schema_id: "https://aether.local/contracts/plugin.manifest/schema/manifest.schema.json"
+
+manifest_version: "1.2"
+plugin:
+  id: "org.aether.reference.geometry.occ"
+  name: "Aether OpenCASCADE Geometry"
+  version: "0.2.0"
+  vendor: "Crocell Company"
+  license_ref: "LicenseRef-Crocell-Proprietary"
+contracts:
+  - id: "aether.geometry.kernel"
+    version: ">=0.1.0 <1.0.0"
+    role: "implements"
+capabilities:
+  geometry:
+    brep: true
+    kernel: "OpenCASCADE"
+    formats:
+      import: ["step-ap242", "iges"]
+      export: ["step-ap242", "iges", "stl"]
+    operations:
+      - import
+      - export
+      - boolean
+      - fillet
+      - tessellate
+      - check
+compute:
+  cpu: true
+  gpu: false
+  mpi_distributed: false
+  accelerator_optional: false
+resources:
+  defaults: {memory_gb: 2, cores: 1}
+  maximums: {memory_gb: 32, cores: 8}
+isolation:
+  level: "process"
+  filesystem: "scoped"
+  network: "deny"
+runtime:
+  entry:
+    kind: "python-stdio"
+    path: "python/stdio_plugin.py"
+    args: []
+airgap:
+  offline_install: true
+provenance_template: "prov/geometry.v1.json"
+policy:
+  data_residency: "local_only"
+  export_class: "PUBLIC"

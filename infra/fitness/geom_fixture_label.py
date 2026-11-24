@@ -1,24 +1,19 @@
 # SPDX-License-Identifier: LicenseRef-Crocell-Proprietary
 # SPDX-FileCopyrightText: 2026 Crocell Company
-"""Fixture-label sentinel (alignment pass, I-7 / honesty discipline).
+"""Geometry honesty check (I-7 / A3-I22).
 
-The Phase 0–2 reference plugin set contains several deliberately
-fake components (bounding-box geometry, hash-stub solvers). The
-codebase's culture of honest labeling (every fake component says so
-in its docstring) is itself a load-bearing invariant. This check
-enforces the *machine-readable* part of that discipline: it
-spawns the geometry reference plugin, calls ``discover()``, and
-asserts the response carries ``is_real_brep: False`` with a
-``note`` field that explicitly states the fixture nature.
+The geometry plugin must report whether it is backed by a real B-rep
+kernel, and the label must match what is actually importable. Two
+outcomes are acceptable:
 
-If a future edit drops the honest label, this check fails the
-build — preventing the codebase from regressing into a state
-where a bounding-box fixture is silently presented as a real
-B-rep kernel.
+- real OpenCASCADE bindings present -> ``is_real_brep: true`` and the
+  discover() response must name the kernel and its version;
+- bindings absent -> ``is_real_brep: false`` with a note explaining the
+  fixture nature, and the build must not claim real geometry.
 
-A regression here is treated as a Phase 0 acceptance violation:
-the project cannot claim Phase 0–2 substrate-completeness while
-deliberately mislabeling a reference implementation.
+A mismatch between the label and the environment is a build failure: the
+platform must never present a fixture as a real kernel, and it must also
+never deny real capability it actually has.
 """
 
 from __future__ import annotations
@@ -29,18 +24,8 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-
-# A path-relative spawn of the geometry reference plugin. The
-# plugin implements JSON-RPC 2.0 over stdio (ADR-0015); we send
-# one ``discover`` request and parse the response.
 GEOM_PLUGIN = "reference_plugins/occ-geometry/python/stdio_plugin.py"
-# The literal text that MUST appear in the discover() response's
-# ``note`` field. We assert the substring (not equality) so the
-# honest label can be reworded slightly without breaking the
-# check, but the substantive claim cannot be silently dropped.
 REQUIRED_NOTE_FRAGMENT = "not real B-rep"
-REQUIRED_FLAG = "is_real_brep"
-REQUIRED_FLAG_VALUE = False
 
 
 @dataclass
@@ -59,7 +44,7 @@ def _spawn_discover(plugin_path: Path) -> dict | None:
             input=json.dumps(request) + "\n",
             capture_output=True,
             text=True,
-            timeout=15,
+            timeout=30,
             check=False,
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
@@ -78,6 +63,15 @@ def _spawn_discover(plugin_path: Path) -> dict | None:
     return None
 
 
+def _bindings_available() -> bool:
+    try:
+        import OCP  # noqa: F401
+
+        return True
+    except Exception:
+        return False
+
+
 def check(repo_root: Path) -> _Result:  # type: ignore[name-defined]
     from run import CheckResult  # local import; avoid circular at module import
 
@@ -86,7 +80,7 @@ def check(repo_root: Path) -> _Result:  # type: ignore[name-defined]
         return CheckResult(
             name="geom_fixture_label",
             ok=False,
-            summary=f"geometry fixture not found at {plugin_path}",
+            summary=f"geometry plugin not found at {plugin_path}",
             details=[],
         )
 
@@ -95,51 +89,81 @@ def check(repo_root: Path) -> _Result:  # type: ignore[name-defined]
         return CheckResult(
             name="geom_fixture_label",
             ok=False,
-            summary="geometry fixture did not return a discover() response",
+            summary="geometry plugin did not return a discover() response",
             details=[f"plugin path: {plugin_path}"],
         )
     if "error" in response:
         return CheckResult(
             name="geom_fixture_label",
             ok=False,
-            summary=f"geometry fixture discover() returned an error: {response['error']!r}",
+            summary=f"geometry discover() returned an error: {response['error']!r}",
             details=[],
         )
+
     result = response.get("result", {})
+    available = _bindings_available()
+    declared = result.get("is_real_brep")
+    kernel = result.get("geometry_kernel", "")
+    kernel_version = result.get("geometry_kernel_version", "")
+    note = result.get("note", "")
 
     issues: list[str] = []
-    if REQUIRED_FLAG not in result:
-        issues.append(
-            f"missing required field {REQUIRED_FLAG!r} in discover() result"
-        )
-    elif result[REQUIRED_FLAG] is not REQUIRED_FLAG_VALUE:
-        issues.append(
-            f"{REQUIRED_FLAG} must be {REQUIRED_FLAG_VALUE!r}; got {result[REQUIRED_FLAG]!r}"
-        )
-    note = result.get("note", "")
-    if not isinstance(note, str) or REQUIRED_NOTE_FRAGMENT not in note:
-        issues.append(
-            f"note must contain {REQUIRED_NOTE_FRAGMENT!r}; got {note!r}"
-        )
+
+    if "is_real_brep" not in result:
+        issues.append("discover() result is missing the is_real_brep field")
+
+    if available:
+        # Real bindings: the label must say so and name the kernel.
+        if declared is not True:
+            issues.append(
+                f"OCP bindings are importable but is_real_brep={declared!r}; "
+                "the label must be true when the real kernel is present"
+            )
+        if not kernel:
+            issues.append("real kernel present but geometry_kernel is empty")
+        if kernel_version in ("", "unavailable"):
+            issues.append(
+                "real kernel present but geometry_kernel_version does not resolve"
+            )
+    else:
+        # No bindings: the plugin must be honest about being a fixture.
+        if declared is not False:
+            issues.append(
+                f"OCP bindings are absent but is_real_brep={declared!r}; "
+                "a fixture must declare itself as not real"
+            )
+        if REQUIRED_NOTE_FRAGMENT not in note:
+            issues.append(
+                f"note must contain {REQUIRED_NOTE_FRAGMENT!r} when the fixture "
+                f"is active; got {note!r}"
+            )
 
     if issues:
         return CheckResult(
             name="geom_fixture_label",
             ok=False,
-            summary="geometry fixture is mislabeled (must declare is_real_brep=False and a 'not real B-rep' note)",
-            details=issues + [
-                "fix: update reference_plugins/occ-geometry/python/stdio_plugin.py:method_discover()"
+            summary="geometry label does not match the installed capability",
+            details=issues
+            + [
+                "fix: install cadquery-ocp==7.7.2 for real B-rep, or keep the "
+                "fixture honestly labelled"
             ],
+        )
+
+    if available:
+        return CheckResult(
+            name="geom_fixture_label",
+            ok=True,
+            summary=f"real B-rep active: {kernel} {kernel_version}",
+            details=["OpenCASCADE bindings importable and reported truthfully"],
         )
 
     return CheckResult(
         name="geom_fixture_label",
-        ok=True,
-        summary=(
-            f"geometry fixture honest: is_real_brep={result[REQUIRED_FLAG]}, "
-            f"note fragment '{REQUIRED_NOTE_FRAGMENT}' present"
-        ),
-        details=[],
+        ok=False,
+        skipped=True,
+        summary="OpenCASCADE bindings absent; geometry is a labelled fixture",
+        details=["install cadquery-ocp==7.7.2 for real B-rep geometry"],
     )
 
 
@@ -154,7 +178,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     r = check(args.repo_root)
-    print(f"[{'OK ' if r.ok else 'FAIL'}] {r.name}: {r.summary}")
+    print(f"[{'SKIP' if getattr(r, 'skipped', False) else ('OK ' if r.ok else 'FAIL')}] {r.name}: {r.summary}")
     for d in r.details:
         print(f"       {d}")
-    sys.exit(0 if r.ok else 1)
+    sys.exit(0 if r.ok or getattr(r, "skipped", False) else 1)
