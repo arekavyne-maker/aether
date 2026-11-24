@@ -1687,7 +1687,16 @@ fn ccx_available() -> bool {
     if let Ok(path) = std::env::var("CCX_BIN") {
         return std::path::Path::new(&path).exists();
     }
+    // Vendored binary first (repo-local, air-gapped), then system paths.
+    if let Ok(root) = std::env::var("AETHER_MONOREPO") {
+        let vendored = std::path::Path::new(&root)
+            .join("vendor/bin/ccx_2.23");
+        if vendored.exists() {
+            return true;
+        }
+    }
     for candidate in [
+        "vendor/bin/ccx_2.23",
         "/opt/homebrew/bin/ccx_2.23",
         "/usr/bin/ccx",
         "/usr/local/bin/ccx",

@@ -79,10 +79,21 @@ PLUGIN_VERSION = "0.2.0"
 CONTRACT = "aether.physics.solver"
 
 # Path to the ccx_2.23 binary. The fitness check verifies this is
-# resolvable. The default matches the Homebrew install on this
-# machine; CCX_BIN env var allows site overrides.
-DEFAULT_CCX_BIN = "/opt/homebrew/bin/ccx_2.23"
+# resolvable. Resolution order: $CCX_BIN, then the vendored binary shipped
+# in this repository, then the Homebrew install.
+_REPO_ROOT = os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+DEFAULT_CCX_BIN = os.path.join(_REPO_ROOT, "vendor", "bin", "ccx_2.23")
 CCX_BIN = os.environ.get("CCX_BIN", DEFAULT_CCX_BIN)
+if not shutil.which(CCX_BIN) and os.path.exists("/opt/homebrew/bin/ccx_2.23"):
+    CCX_BIN = "/opt/homebrew/bin/ccx_2.23"
+
+# The vendored binary resolves its shared libraries relative to itself.
+if os.path.exists(os.path.join(_REPO_ROOT, "vendor", "lib")):
+    _vendor_lib = os.path.join(_REPO_ROOT, "vendor", "lib")
+    os.environ["DYLD_LIBRARY_PATH"] = (
+        _vendor_lib + ":" + os.environ.get("DYLD_LIBRARY_PATH", "")
+    ) if os.environ.get("DYLD_LIBRARY_PATH") else _vendor_lib
 
 # Validated case: LE1 cantilever. The contract surface accepts the
 # geometric / material / load parameters and constructs a deck for

@@ -68,3 +68,8 @@ secrets/
 
 # Local Aether state (graph DB, scratch)
 /.aether/
+
+# Vendored native binaries (fetched by scripts/fetch_calculix.sh, not committed).
+# They are platform-specific and large; the fetch script pins them by SHA-256.
+/vendor/bin/
+/vendor/lib/

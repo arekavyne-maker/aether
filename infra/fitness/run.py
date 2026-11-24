@@ -92,6 +92,11 @@ def run_claim_scan() -> CheckResult:
     return check(REPO_ROOT)
 
 
+def run_toolchain() -> CheckResult:
+    from toolchain_check import check
+    return check(REPO_ROOT)
+
+
 CHECKS = {
     "loc_budget": run_loc_budget,
     "token_scan": run_token_scan,
@@ -104,6 +109,7 @@ CHECKS = {
     "docs_links": run_docs_links,
     "traceability": run_traceability,
     "claim_scan": run_claim_scan,
+    "toolchain": run_toolchain,
 }
 
 
