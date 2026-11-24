@@ -1,0 +1,10 @@
+policy:
+  max_read: restricted
+  max_export: internal
+  max_federate: confidential
+objects:
+  public-report: public
+  internal-report: internal
+  controlled-part: export_controlled
+object: controlled-part
+handling: export

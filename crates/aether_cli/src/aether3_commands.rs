@@ -1366,6 +1366,111 @@ impl aether_agent_runtime::DeterministicTool for ProposeChangeTool {
     }
 }
 
+/// `aether classify check <file>` — check a handling operation.
+pub fn cmd_classify_check(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let mut policy = aether_classification::HandlingPolicy::default();
+    if let Some(map) = doc.get("policy").and_then(Value::as_object) {
+        if let Some(v) = map.get("max_read").and_then(Value::as_str) {
+            policy.max_read = parse_classification(v)?;
+        }
+        if let Some(v) = map.get("max_export").and_then(Value::as_str) {
+            policy.max_export = parse_classification(v)?;
+        }
+        if let Some(v) = map.get("max_federate").and_then(Value::as_str) {
+            policy.max_federate = parse_classification(v)?;
+        }
+    }
+    let mut registry = aether_classification::ClassificationRegistry::new();
+    if let Some(map) = doc.get("objects").and_then(Value::as_object) {
+        for (id, label) in map {
+            if let Some(label) = label.as_str() {
+                registry.classify(id, label).map_err(|e| anyhow!("{e}"))?;
+            }
+        }
+    }
+    let handling = match doc.get("handling").and_then(Value::as_str) {
+        Some("read") => aether_classification::Handling::Read,
+        Some("export") => aether_classification::Handling::Export,
+        Some("federate") => aether_classification::Handling::Federate,
+        other => return Err(anyhow!("handling must be read|export|federate; got {other:?}")),
+    };
+    let object = doc
+        .get("object")
+        .and_then(Value::as_str)
+        .ok_or_else(|| anyhow!("check requires an object id"))?;
+    let result = registry.check(&policy, object, handling);
+    let (valid, error) = match &result {
+        Ok(()) => (true, Value::Null),
+        Err(e) => (false, Value::String(e.to_string())),
+    };
+    emit(
+        mode,
+        &json!({
+            "valid": valid,
+            "object": object,
+            "handling": handling,
+            "classification": registry.get(object),
+            "error": error,
+        }),
+    )?;
+    if !valid {
+        std::process::exit(30);
+    }
+    Ok(())
+}
+
+fn parse_classification(label: &str) -> Result<aether_classification::Classification> {
+    aether_classification::Classification::parse(label)
+        .ok_or_else(|| anyhow!("unknown classification {label:?}"))
+}
+
+/// `aether metrics` — emit the local observability snapshot.
+pub fn cmd_metrics(mode: OutputMode) -> Result<()> {
+    let mut registry = aether_observability::Registry::new();
+    registry.increment("aether_invocations_total").map_err(|e| anyhow!("{e:?}"))?;
+    registry
+        .set_gauge("aether_uptime_seconds", 1.0)
+        .map_err(|e| anyhow!("{e:?}"))?;
+    emit(
+        mode,
+        &json!({
+            "metrics": registry.metrics,
+            "prometheus": registry.to_prometheus(),
+            "claim": "operational metrics only; engineering content never appears here",
+        }),
+    )
+}
+
+/// `aether token issue <file>` and `aether token verify <file>`.
+pub fn cmd_token_issue(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let secret = doc
+        .get("secret")
+        .and_then(Value::as_str)
+        .unwrap_or("aether-dev-secret")
+        .as_bytes()
+        .to_vec();
+    let service = aether_identity::IdentityService::new(&secret);
+    let claims = aether_identity::Claims {
+        sub: doc.get("sub").and_then(Value::as_str).unwrap_or("user:cli").to_string(),
+        role: doc.get("role").and_then(Value::as_str).unwrap_or("analyst").to_string(),
+        aud: doc.get("aud").and_then(Value::as_str).unwrap_or("project:demo").to_string(),
+        iat: doc.get("iat").and_then(Value::as_str).unwrap_or("2026-11-24T00:00:00Z").to_string(),
+        exp: doc.get("exp").and_then(Value::as_str).unwrap_or("2026-11-24T01:00:00Z").to_string(),
+        jti: doc.get("jti").and_then(Value::as_str).unwrap_or("token-1").to_string(),
+    };
+    let token = service.issue(claims);
+    emit(mode, &json!({ "token": token }))?;
+    Ok(())
+}
+
 /// Structured schema list result, used by tests.
 #[derive(Debug, Serialize)]
 pub struct SchemaSummary {

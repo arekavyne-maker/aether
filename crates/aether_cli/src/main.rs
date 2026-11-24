@@ -306,6 +306,18 @@ enum Command {
         #[arg(long)]
         approved_by: Option<String>,
     },
+    /// Check a data-handling operation against the classification policy.
+    Classify {
+        #[command(subcommand)]
+        action: ClassifyCommand,
+    },
+    /// Emit the local observability snapshot.
+    Metrics,
+    /// Issue a short-lived identity token.
+    Token {
+        #[command(subcommand)]
+        action: TokenCommand,
+    },
     Release {
         #[command(subcommand)]
         action: ReleaseCommand,
@@ -438,6 +450,18 @@ enum DesignCommand {
 enum AgentCommand {
     /// Evaluate an agent tool proposal against the permission matrix.
     Check { file: PathBuf },
+}
+
+#[derive(Subcommand, Debug)]
+enum ClassifyCommand {
+    /// Check a handling operation.
+    Check { file: PathBuf },
+}
+
+#[derive(Subcommand, Debug)]
+enum TokenCommand {
+    /// Issue a token.
+    Issue { file: PathBuf },
 }
 
 #[derive(Subcommand, Debug)]
@@ -1043,6 +1067,13 @@ fn main() -> Result<()> {
         Command::AgentRun { file, approved_by } => {
             aether3_commands::cmd_agent_run(file, approved_by, mode)
         }
+        Command::Classify { action } => match action {
+            ClassifyCommand::Check { file } => aether3_commands::cmd_classify_check(file, mode),
+        },
+        Command::Metrics => aether3_commands::cmd_metrics(mode),
+        Command::Token { action } => match action {
+            TokenCommand::Issue { file } => aether3_commands::cmd_token_issue(file, mode),
+        },
         Command::Release { action } => match action {
             ReleaseCommand::Prepare {
                 file,

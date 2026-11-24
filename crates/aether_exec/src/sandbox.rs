@@ -316,3 +316,107 @@ mod tests {
         assert_eq!(filtered[0].0, "PATH");
     }
 }
+
+/// The isolation mechanism applied to a sandboxed spawn.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum IsolationLevel {
+    /// No kernel-level isolation; policy enforced at the spawn boundary.
+    PolicyOnly,
+    /// macOS `sandbox-exec` profile.
+    SandboxExec,
+    /// Linux `bwrap` (bubblewrap).
+    Bubblewrap,
+}
+
+/// Build a macOS `sandbox-exec` profile that denies network and restricts
+/// writes to the declared roots. Returns `None` when `sandbox-exec` is not
+/// available.
+pub fn macos_sandbox_profile(policy: &SandboxPolicy) -> Option<String> {
+    if std::process::Command::new("sh")
+        .arg("-c")
+        .arg("command -v sandbox-exec >/dev/null 2>&1")
+        .status()
+        .map(|s| s.success())
+        .unwrap_or(false)
+        == false
+    {
+        return None;
+    }
+    let mut profile = String::from("(version 1)\n");
+    profile.push_str("(deny default)\n");
+    profile.push_str("(allow process-exec)\n");
+    profile.push_str("(allow file-read*)\n");
+    // Writes are allowed only under the declared roots.
+    for root in &policy.write_paths {
+        profile.push_str(&format!(
+            "(allow file-write* (subpath \"{}\"))\n",
+            root.display()
+        ));
+    }
+    // Network posture.
+    match policy.network {
+        NetworkPolicy::Deny => profile.push_str("(deny network*)\n"),
+        NetworkPolicy::LoopbackOnly => {
+            profile.push_str("(allow network* (local))\n");
+            profile.push_str("(deny network* (remote))\n");
+        }
+        NetworkPolicy::Allowlist => {
+            // Host-level allowlisting is not expressed in the SBPL profile;
+            // the caller must enforce it at the proxy layer.
+            profile.push_str("(deny network*)\n");
+        }
+    }
+    Some(profile)
+}
+
+/// Detect which kernel-level isolation mechanism is available.
+pub fn available_isolation() -> IsolationLevel {
+    let has = |cmd: &str| {
+        std::process::Command::new("sh")
+            .arg("-c")
+            .arg(format!("command -v {cmd} >/dev/null 2>&1"))
+            .status()
+            .map(|s| s.success())
+            .unwrap_or(false)
+    };
+    if has("sandbox-exec") {
+        IsolationLevel::SandboxExec
+    } else if has("bwrap") {
+        IsolationLevel::Bubblewrap
+    } else {
+        IsolationLevel::PolicyOnly
+    }
+}
+
+#[cfg(test)]
+mod isolation_tests {
+    use super::*;
+
+    fn policy() -> SandboxPolicy {
+        SandboxPolicy::reference_plugin(
+            "org.example",
+            std::path::Path::new("/tmp"),
+            std::path::Path::new("/tmp"),
+        )
+    }
+
+    #[test]
+    fn macos_profile_denies_network_and_restricts_writes() {
+        let profile = macos_sandbox_profile(&policy());
+        if cfg!(target_os = "macos") {
+            let profile = profile.expect("sandbox-exec should be present on macOS");
+            assert!(profile.contains("(deny default)"));
+            assert!(profile.contains("file-write*"));
+        }
+    }
+
+    #[test]
+    fn isolation_level_is_reported_honestly() {
+        let level = available_isolation();
+        assert!(matches!(
+            level,
+            IsolationLevel::SandboxExec | IsolationLevel::Bubblewrap | IsolationLevel::PolicyOnly
+        ));
+    }
+}

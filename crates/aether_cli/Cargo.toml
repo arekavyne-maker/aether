@@ -54,3 +54,6 @@ aether_materials = { path = "../aether_materials" }
 aether_loads = { path = "../aether_loads" }
 aether_model_runtime = { path = "../aether_model_runtime" }
 aether_agent_runtime = { path = "../aether_agent_runtime" }
+aether_classification = { path = "../aether_classification" }
+aether_observability = { path = "../aether_observability" }
+aether_identity = { path = "../aether_identity" }

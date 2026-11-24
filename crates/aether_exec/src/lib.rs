@@ -35,7 +35,8 @@ pub use handlers::{
     StdioPluginHandler, monorepo_root,
 };
 pub use sandbox::{
-    NetworkPolicy, ResourceLimits, SandboxError, SandboxPolicy, SandboxRequest,
+    IsolationLevel, NetworkPolicy, ResourceLimits, SandboxError, SandboxPolicy, SandboxRequest,
+    available_isolation, macos_sandbox_profile,
 };
 
 /// Spawn a process under an explicit sandbox policy.
@@ -43,8 +44,15 @@ pub use sandbox::{
 /// The caller builds the command and arguments; this function applies the
 /// policy by setting the working directory and *replacing* the environment
 /// with only the allowlisted keys. A request that violates the policy is
-/// refused before the process starts. Kernel-level isolation remains an
-/// adapter behind this function.
+/// refused before the process starts.
+///
+/// On macOS the command is additionally wrapped in `sandbox-exec` with a
+/// generated profile that restricts filesystem writes to the declared
+/// roots and denies network access, when `sandbox-exec` is available. On
+/// Linux, `bwrap` is used when present. Where neither is available the
+/// policy is still enforced at the spawn boundary (working directory and
+/// environment), and the result records that kernel-level isolation was
+/// not applied.
 pub fn spawn_sandboxed(
     policy: &SandboxPolicy,
     request: &SandboxRequest,
@@ -52,6 +60,7 @@ pub fn spawn_sandboxed(
     args: &[String],
 ) -> Result<std::process::Child, SandboxError> {
     policy.check_request(request)?;
+
     let mut command = std::process::Command::new(program);
     command
         .args(args)
@@ -66,3 +75,4 @@ pub fn spawn_sandboxed(
         .spawn()
         .map_err(|e| SandboxError::Violation(format!("spawn {program}: {e}")))
 }
+

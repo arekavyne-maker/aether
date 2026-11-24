@@ -41,6 +41,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "aether_classification"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "thiserror",
+]
+
+[[package]]
 name = "aether_cli"
 version = "0.1.0"
 dependencies = [
@@ -48,6 +56,7 @@ dependencies = [
  "aether_agents",
  "aether_artifacts",
  "aether_asm",
+ "aether_classification",
  "aether_compose",
  "aether_design",
  "aether_envman",
@@ -55,11 +64,13 @@ dependencies = [
  "aether_exec",
  "aether_fidelity",
  "aether_graph",
+ "aether_identity",
  "aether_loads",
  "aether_manufacturing",
  "aether_materials",
  "aether_model_registry",
  "aether_model_runtime",
+ "aether_observability",
  "aether_policy",
  "aether_provenance",
  "aether_quantities",
@@ -198,6 +209,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "aether_identity"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "thiserror",
+]
+
+[[package]]
 name = "aether_kernel"
 version = "0.1.0"
 dependencies = [
@@ -257,6 +278,15 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2 0.10.9",
+ "thiserror",
+]
+
+[[package]]
+name = "aether_observability"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
  "thiserror",
 ]
 

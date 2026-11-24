@@ -27,6 +27,9 @@ members = [
     "crates/aether_loads",
     "crates/aether_model_runtime",
     "crates/aether_agent_runtime",
+    "crates/aether_classification",
+    "crates/aether_observability",
+    "crates/aether_identity",
 ]
 
 [workspace.package]
