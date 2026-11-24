@@ -1,0 +1,38 @@
+{
+  "type_id": "ProcessParameterSet",
+  "version": "1.0.0",
+  "revisioned": false,
+  "immutable": true,
+  "allowed_states": [
+    "released",
+    "superseded"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status",
+      "parameters"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "active",
+          "released",
+          "superseded",
+          "retired"
+        ]
+      },
+      "parameters": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  }
+}

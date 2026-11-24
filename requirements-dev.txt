@@ -10,7 +10,7 @@
 #   python3 -m pip install -r requirements-dev.txt
 #
 # Versions are the ones verified on the wave-1 alignment machine
-# (Python 3.9.6, aarch64-apple-darwin, 2026-09-11); see README-EVAL.md.
+# (Python 3.9+, aarch64-apple-darwin, 2026-11-24); see README-EVAL.md.
 # jsonschema is given as a range (4.18..5) because it is not currently
 # installed on the alignment machine; any 4.x satisfies the conformance
 # suites. pynacl backs scripts/author_tuf_bundle.py (TUF bundle authoring
@@ -20,5 +20,5 @@ hypothesis==6.141.1
 pynacl==1.6.2
 jsonschema>=4.18,<5
 numpy==2.0.2
-pytest==8.4.2
+pytest==8.2.1
 scipy==1.13.1

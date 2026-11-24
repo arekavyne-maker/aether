@@ -1,0 +1,18 @@
+{
+  "type_id": "derived_from",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "Result",
+    "Model",
+    "SurrogateModel",
+    "ConfigurationSnapshot",
+    "CandidateDesign"
+  ],
+  "target_types": [
+    "SimulationRun",
+    "Model",
+    "ConfigurationSnapshot",
+    "Result"
+  ]
+}

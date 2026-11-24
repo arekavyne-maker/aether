@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/frames/schema/frame-graph.schema.json",
+  "title": "Aether Frame Graph",
+  "type": "object",
+  "required": ["frames"],
+  "additionalProperties": false,
+  "properties": {
+    "frames": {
+      "type": "array",
+      "items": {"$ref": "frame.schema.json"}
+    }
+  }
+}

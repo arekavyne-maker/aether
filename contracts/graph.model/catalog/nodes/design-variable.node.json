@@ -1,0 +1,39 @@
+{
+  "type_id": "DesignVariable",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": false,
+  "allowed_states": [
+    "draft",
+    "released",
+    "superseded"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status",
+      "bounds"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "active",
+          "released",
+          "superseded",
+          "retired"
+        ]
+      },
+      "bounds": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  }
+}

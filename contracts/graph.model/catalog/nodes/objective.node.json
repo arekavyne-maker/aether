@@ -1,0 +1,42 @@
+{
+  "type_id": "Objective",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": false,
+  "allowed_states": [
+    "draft",
+    "released",
+    "superseded"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status",
+      "sense"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "active",
+          "released",
+          "superseded",
+          "retired"
+        ]
+      },
+      "sense": {
+        "type": "string",
+        "enum": [
+          "minimize",
+          "maximize"
+        ]
+      }
+    }
+  }
+}

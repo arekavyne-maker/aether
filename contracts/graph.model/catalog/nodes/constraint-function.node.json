@@ -1,0 +1,46 @@
+{
+  "type_id": "ConstraintFunction",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": false,
+  "allowed_states": [
+    "draft",
+    "released",
+    "superseded"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status",
+      "bound"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "active",
+          "released",
+          "superseded",
+          "retired"
+        ]
+      },
+      "bound": {
+        "type": "number"
+      },
+      "sense": {
+        "type": "string",
+        "enum": [
+          "<=",
+          ">=",
+          "=="
+        ]
+      }
+    }
+  }
+}

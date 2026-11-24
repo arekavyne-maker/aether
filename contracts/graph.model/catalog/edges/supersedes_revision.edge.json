@@ -1,0 +1,15 @@
+{
+  "type_id": "supersedes_revision",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "ConfigurationSnapshot",
+    "ConfigurationBaseline",
+    "AsBuiltConfiguration"
+  ],
+  "target_types": [
+    "ConfigurationSnapshot",
+    "ConfigurationBaseline",
+    "AsBuiltConfiguration"
+  ]
+}

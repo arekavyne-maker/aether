@@ -1,0 +1,45 @@
+snapshot: wingbox-baseline-a
+author: phase2-acceptance
+objects:
+  - id: wingbox
+    kind: assembly
+    name: Wing-box subassembly
+    revision: 1
+    state: released
+    content:
+      span_m: 8.0
+      material: Al-2024-T3
+  - id: rib-07
+    kind: part
+    name: Rib station 7
+    revision: 1
+    state: released
+    content:
+      thickness_mm: 3.0
+      material: Al-2024-T3
+  - id: skin-panel-upper
+    kind: part
+    name: Upper skin panel
+    revision: 1
+    state: released
+    content:
+      thickness_mm: 2.4
+      material: Al-2024-T3
+  - id: load-case-le1
+    kind: environment_case
+    name: Tip load 40 kN
+    revision: 1
+    state: released
+    content:
+      kind: mechanical
+      tip_load_kN: 40.0
+      frame: wing
+interfaces:
+  - id: if-wingbox-rib07
+    provider: wingbox
+    consumer: rib-07
+    direction: provides
+    provides:
+      - {name: attachment_load, quantity: force, unit: N, frame: wing}
+    requires:
+      - {name: attachment_load, quantity: force, unit: N, frame: wing}

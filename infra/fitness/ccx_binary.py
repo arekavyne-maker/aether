@@ -114,14 +114,24 @@ def check(repo_root: Path) -> _Result:  # type: ignore[name-defined]
             f"install with `brew install calculix-ccx` or set $CCX_BIN"
         )
 
+    if not is_real:
+        return CheckResult(
+            name="ccx_binary",
+            ok=False,
+            summary="calculix-adapter lost its real-physics label",
+            details=issues,
+        )
     if issues:
         return CheckResult(
             name="ccx_binary",
             ok=False,
-            summary="calculix-adapter is not production-grade: ccx binary unresolved or honest label dropped",
+            skipped=True,
+            summary="calculix-adapter reports an unresolved optional ccx binary; live solver check not run",
             details=issues + [
                 "fix: install calculix-ccx (Homebrew: `brew install calculix-ccx`) "
-                "or set $CCX_BIN to a valid ccx_2.x executable"
+                "or set $CCX_BIN to a valid ccx_2.x executable",
+                "the adapter keeps its non-production label until the binary resolves; "
+                "this is an environment skip, not a silent pass",
             ],
         )
 

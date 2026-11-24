@@ -10,7 +10,7 @@
 
 use std::path::PathBuf;
 
-use aether_cli::{commands, g3_commands, g4_commands, g7_commands, spine, tuf};
+use aether_cli::{aether3_commands, commands, g3_commands, g4_commands, g7_commands, spine, tuf};
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
 
@@ -24,6 +24,10 @@ struct Cli {
     /// (SDP §15.1).
     #[arg(long, global = true)]
     json: bool,
+
+    /// Output format: `text` (default) or `json`. `--json` remains an alias.
+    #[arg(long, global = true, value_name = "FORMAT")]
+    format: Option<String>,
 }
 
 #[derive(Subcommand, Debug)]
@@ -201,6 +205,112 @@ enum Command {
     },
     /// Dark-build smoke (Phase 0).
     DarkBuildCheck,
+    /// Contract and graph-catalog discovery.
+    Schema {
+        #[command(subcommand)]
+        action: SchemaCommand,
+    },
+    /// Honest capability and project status.
+    Status {
+        /// Project root (defaults to the current directory).
+        #[arg(long, default_value = ".")]
+        project: PathBuf,
+    },
+    /// Policy decision explanation.
+    Policy {
+        #[command(subcommand)]
+        action: PolicyCommand,
+    },
+    /// Provenance lineage explanation.
+    Provenance {
+        #[command(subcommand)]
+        action: ProvenanceCommand,
+    },
+    /// Verification and validation reporting.
+    Validation {
+        #[command(subcommand)]
+        action: ValidationCommand,
+    },
+    /// Workflow plan explanation.
+    Plan {
+        #[command(subcommand)]
+        action: PlanCommand,
+    },
+    /// ASM configuration snapshots.
+    Config {
+        #[command(subcommand)]
+        action: ConfigCommand,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+enum SchemaCommand {
+    /// List contract packages and graph node/edge types.
+    List {
+        #[arg(long, default_value = ".")]
+        project: PathBuf,
+    },
+    /// Show a contract, node type, or edge type by id.
+    Show {
+        id: String,
+        #[arg(long, default_value = ".")]
+        project: PathBuf,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+enum PolicyCommand {
+    /// Explain a policy decision for a subject/action pair.
+    Explain {
+        /// Action, e.g. `graph.mutate`.
+        action: String,
+        #[arg(long, default_value = "analyst")]
+        role: String,
+        #[arg(long, default_value = "user:cli")]
+        subject: String,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+enum ProvenanceCommand {
+    /// Explain an object's lineage and the graph chain status.
+    Explain {
+        object_id: String,
+        #[arg(long, default_value = ".")]
+        project: PathBuf,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+enum ValidationCommand {
+    /// Report requirement verification coverage.
+    Report {
+        #[arg(long, default_value = ".")]
+        project: PathBuf,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+enum PlanCommand {
+    /// Compile an AWL document and explain the resulting DAG.
+    Explain {
+        workflow: PathBuf,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+enum ConfigCommand {
+    /// Capture an immutable configuration snapshot from an ASM object set.
+    Snapshot {
+        file: PathBuf,
+        #[arg(long)]
+        output: Option<PathBuf>,
+    },
+    /// Verify an object set against a recorded snapshot.
+    Verify {
+        snapshot: PathBuf,
+        file: PathBuf,
+    },
 }
 
 #[derive(Subcommand, Debug)]
@@ -211,6 +321,11 @@ enum EvidenceCommand {
         /// Project root (defaults to the current directory).
         #[arg(long, default_value = ".")]
         project: PathBuf,
+    },
+    /// Evaluate a release gate over an evidence file.
+    Gate {
+        /// Gate + evidence document (YAML).
+        file: PathBuf,
     },
 }
 
@@ -451,7 +566,7 @@ enum EnvmanCommand {
 fn main() -> Result<()> {
     init_tracing();
     let cli = Cli::parse();
-    let mode = if cli.json {
+    let mode = if cli.json || cli.format.as_deref() == Some("json") {
         commands::OutputMode::Json
     } else {
         commands::OutputMode::Text
@@ -465,6 +580,7 @@ fn main() -> Result<()> {
         Command::Experiment { file, project } => spine::cmd_experiment_run(project, file, mode),
         Command::Evidence { action } => match action {
             EvidenceCommand::Export { project } => spine::cmd_evidence_export(project, mode),
+            EvidenceCommand::Gate { file } => aether3_commands::cmd_evidence_gate(file, mode),
         },
         Command::Export { output, project } => spine::cmd_export(project, output, mode),
         Command::Replay { bundle } => spine::cmd_replay(bundle, mode),
@@ -580,6 +696,43 @@ fn main() -> Result<()> {
             Ok(())
         }
         Command::DarkBuildCheck => dark_build_check(),
+        Command::Schema { action } => match action {
+            SchemaCommand::List { project } => aether3_commands::cmd_schema_list(project, mode),
+            SchemaCommand::Show { id, project } => {
+                aether3_commands::cmd_schema_show(project, id, mode)
+            }
+        },
+        Command::Status { project } => aether3_commands::cmd_status(project, mode),
+        Command::Policy { action } => match action {
+            PolicyCommand::Explain {
+                action,
+                role,
+                subject,
+            } => aether3_commands::cmd_policy_explain(action, role, subject, mode),
+        },
+        Command::Provenance { action } => match action {
+            ProvenanceCommand::Explain { object_id, project } => {
+                aether3_commands::cmd_provenance_explain(project, object_id, mode)
+            }
+        },
+        Command::Validation { action } => match action {
+            ValidationCommand::Report { project } => {
+                aether3_commands::cmd_validation_report(project, mode)
+            }
+        },
+        Command::Plan { action } => match action {
+            PlanCommand::Explain { workflow } => {
+                aether3_commands::cmd_plan_explain(workflow, mode)
+            }
+        },
+        Command::Config { action } => match action {
+            ConfigCommand::Snapshot { file, output } => {
+                aether3_commands::cmd_config_snapshot(file, output, mode)
+            }
+            ConfigCommand::Verify { snapshot, file } => {
+                aether3_commands::cmd_config_verify(snapshot, file, mode)
+            }
+        },
     }
 }
 

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/asm/schema/snapshot.schema.json",
+  "title": "Aether Configuration Snapshot",
+  "description": "An immutable manifest that pins every in-scope object revision and content hash. Runs bind to this id.",
+  "type": "object",
+  "required": ["id", "created_at", "author", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string"},
+    "author": {"type": "string"},
+    "entries": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["id", "kind", "revision", "content_hash"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string"},
+          "kind": {"type": "string"},
+          "revision": {"type": "integer", "minimum": 1},
+          "content_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    }
+  }
+}

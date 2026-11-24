@@ -1,0 +1,14 @@
+{
+  "type_id": "allocated_to",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "Requirement"
+  ],
+  "target_types": [
+    "Product",
+    "Assembly",
+    "Part",
+    "System"
+  ]
+}

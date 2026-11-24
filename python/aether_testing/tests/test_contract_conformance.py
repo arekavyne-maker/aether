@@ -42,6 +42,11 @@ ALL_CONTRACTS = [
     "aether.manufacturing.process",
     "aether.inspection.device",
     "aether.test.rig",
+    "aether.quantities",
+    "aether.frames",
+    "aether.asm",
+    "aether.evidence",
+    "aether.model-card",
 ]
 
 

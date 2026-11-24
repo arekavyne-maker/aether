@@ -7,7 +7,7 @@ name = "aether-sdk"
 version = "0.1.0"
 description = "Aether Python SDK — first-class plugin author toolkit (ADR-0014)"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 license = "LicenseRef-Crocell-Proprietary"
 authors = [{ name = "Aether Platform Team" }]
 dependencies = [
@@ -28,14 +28,14 @@ include = ["aether_sdk*"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py39"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "N", "S", "C4", "PT", "RET", "SIM"]
 ignore = ["S101"]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.9"
 strict = true
 warn_unused_ignores = true
 warn_redundant_casts = true

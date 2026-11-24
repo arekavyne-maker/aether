@@ -2,7 +2,7 @@
 
 **Status:** reference document · **Date:** 2026-09-12 · **Scope:** the platform as actually built (Phases 0–2 substrate, golden path, scientific loop) — not the full SDP vision.
 
-This document describes the Aether architecture as it exists in this repository: the crates, contracts, plugins, protocols, and enforcement machinery, with honest labels for what is real and what is a fixture. For status claims and their verification commands see [`README-EVAL.md`](../README-EVAL.md); for open items see [`workflows/paper-run/gaps.md`](../workflows/paper-run/gaps.md); for the normative full vision see `SDP.md`.
+This document describes the Aether architecture as it exists in this repository: the crates, contracts, plugins, protocols, and enforcement machinery, with honest labels for what is real and what is a fixture. For status claims and their verification commands see [`docs/verification/STATUS.md`](verification/STATUS.md); for open items see [`workflows/paper-run/gaps.md`](../workflows/paper-run/gaps.md); for the normative target architecture see [`docs/architecture/AETHER-3.0.md`](architecture/AETHER-3.0.md).
 
 ---
 
@@ -99,7 +99,7 @@ Everything above the kernel line knows contracts, not vendors. Cross-domain comm
 
 ## 4. The workspace: crates, roles, and sizes
 
-Twelve crates, ~17.3k LOC of Rust source total — comfortably inside the kernel-boundary budget discipline (I-1).
+Sixteen crates, ~22.8k LOC of Rust source total — comfortably inside the kernel-boundary budget discipline (I-1).
 
 | Crate | LOC | Role |
 |---|---|---|
@@ -110,7 +110,11 @@ Twelve crates, ~17.3k LOC of Rust source total — comfortably inside the kernel
 | `aether_provenance` | 857 | Provenance records, Merkle chain, PROV-O export, canonical hashing |
 | `aether_registry` | 613 | Plugin discovery, capability matching, semver range filtering, Ed25519 signing/verification |
 | `aether_envman` | 543 | Environment Manifest: pinned versions + content hashes for plugins, environments, inputs |
-| `aether_policy` | 530 | Role catalog + RBAC action matrix, CEL decision surface |
+| `aether_policy` | 607 | Fail-closed RBAC role catalog and decision point; unknown roles/actions denied |
+| `aether_quantities` | 430 | Typed quantities, SI canonical conversion, dimensional checking, coordinate-frame graph |
+| `aether_artifacts` | 250 | Content-addressed artifact store: SHA-256, atomic writes, dedupe, scoped handles |
+| `aether_asm` | 430 | ASM lifecycle, revision lineage, interface compatibility, configuration snapshots |
+| `aether_evidence` | 430 | Evidence classes, credibility records, release gates, waivers, release packages |
 | `aether_compose` | 518 | Multiphysics coupling: participants, exchanges, coupling schemes, Broyden-style IQN-ILS, conservation checks |
 | `aether_contract_validate` | 475 | The Rust half of the two-implementation rule for contract validation |
 | `aether_kernel` | 195 | The transport substrate: spawn plugin process, exchange newline-delimited JSON-RPC 2.0, reap. Proves the boundary without absorbing domain logic |
@@ -136,7 +140,7 @@ The chain is real cryptography over real canonicalization:
 
 ### 5.2 The schema catalog is data, not code
 
-26 node types and 18 edge types — `Requirement`, `System`, `Part`, `PhysicalPart`, `GeometryRevision`, `Mesh`, `LoadCase`, `SimulationStudy`, `SimulationRun`, `Result`, `Evidence`, `Decision`, `OptimizationStudy`, `SurrogateModel`, `PhysicsModel`, `MeasurementDataset`, `InspectionRecord`, `TestRun`, `ProcessPlan`, `ProcessStep`, `Machine`, `Tooling`, `Material`, `Workflow`, `PluginInstance`, `Model` — are loaded at runtime from `contracts/graph.model/catalog/{nodes,edges}/*.json`. The engine's mechanics (validation, revisioning, indexing) are generic over any registered type: adding a domain concept is adding a JSON file, not recompiling the platform (I-2, ADR-0016 "contracts as data"). Duplicate type IDs are a `ContractViolation`, not a warning.
+61 node types and 32 edge types — including the original 26 nodes (`Requirement`, `System`, `Part`, `GeometryRevision`, `Mesh`, `LoadCase`, `SimulationStudy`, `SimulationRun`, `Result`, `Evidence`, `Decision`, `OptimizationStudy`, `SurrogateModel`, `PhysicsModel`, `MeasurementDataset`, `InspectionRecord`, `TestRun`, `ProcessPlan`, `ProcessStep`, `Machine`, `Tooling`, `Material`, `Workflow`, `PluginInstance`, `Model`, `PhysicalPart`) plus the Aether 3.0 ASM/manufacturing/lifecycle set (`Program`, `AircraftConfiguration`, `Product`, `Assembly`, `Interface`, `Variant`, `ConfigurationBaseline`, `ConfigurationSnapshot`, `ChangeRequest`, `Effectivity`, `CoordinateFrame`, `Datum`, `MaterialAssignment`, `EnvironmentCase`, `VerificationCase`, `ValidationCase`, `ComplianceFinding`, `ReviewDecision`, `MaterialBatch`, `BuildRecord`, `ProcessParameterSet`, `OperatorQualificationReference`, `InspectionPlan`, `Nonconformance`, `RepairDisposition`, `AsBuiltConfiguration`, `Sensor`, `Measurement`, `MaintenanceEvent`, `DamageEvent`, `DigitalTwinState`, `DesignVariable`, `Objective`, `ConstraintFunction`, `CandidateDesign`) — are loaded at runtime from `contracts/graph.model/catalog/{nodes,edges}/*.json`. The engine's mechanics (validation, revisioning, indexing) are generic over any registered type: adding a domain concept is adding a JSON file, not recompiling the platform (I-2, ADR-0016 "contracts as data"). Duplicate type IDs are a `ContractViolation`, not a warning.
 
 The edge vocabulary encodes the engineering closed loop itself: `satisfies`, `traces_to`, `realized_as`, `simulated_by`, `executed_on`, `verifies`, `measured_by`, `updates`, `supersedes`, `decomposes`, `subject_to`, `optimized_by`, `planned_by`, `produced_by`, …
 
@@ -309,18 +313,21 @@ The loop's epistemology is uniform: **classification (REFERENCE/SYNTHETIC) and v
 
 ## 16. Enforcement machinery — how the architecture stays true
 
-### 16.1 Fitness pipeline (8 checks)
+### 16.1 Fitness pipeline (11 checks)
 
 | Check | Enforces |
 |---|---|
-| `loc_budget` | I-1 — kernel/boundary LOC within budget (currently ~15% of the kernel cap) |
+| `loc_budget` | I-1 — kernel/boundary LOC within budget (currently ~16.6% of the kernel cap) |
 | `token_scan` | I-3 — no prohibited coupling tokens (`if solver == X` and friends) |
-| `schema_semver` | I-11 — 19 contracts / 37 schemas, all valid, semver discipline |
+| `schema_semver` | I-11 — 24 contracts / 48 schemas, all valid, semver discipline |
 | `sbom` | Supply chain — SPDX 2.3 SBOM emitted per run |
 | `geom_fixture_label` | I-12 — the geometry fixture *must* self-label `is_real_brep: false` or the build fails |
-| `ccx_binary` | The CalculiX adapter must resolve the real binary and reproduce LE1 within tolerance |
-| `rosetta_cross_arch` | MVR-04 equivalence substrate — aarch64 native ≡ x86_64 Rosetta cas_hash |
-| `fuzz_contracts` | I-12 — hypothesis fuzzing of the JSON contract-validation parser (200 × 19 adversarial inputs, zero unhandled exceptions) |
+| `ccx_binary` | The CalculiX adapter must resolve the real binary and reproduce LE1 within tolerance; absent optional tooling is reported as `SKIP`, never a silent pass |
+| `rosetta_cross_arch` | MVR-04 equivalence substrate — aarch64 native ≡ x86_64 Rosetta cas_hash; `SKIP` when Rosetta is unavailable |
+| `fuzz_contracts` | I-12 — hypothesis fuzzing of the JSON contract-validation parser (200 × 24 adversarial inputs, zero unhandled exceptions) |
+| `docs_links` | Documentation truth — every relative Markdown link resolves |
+| `traceability` | Every traceability row has an owner, test/evidence reference, and valid status |
+| `claim_scan` | No stale or unsupported capability claim in current-facing docs |
 
 ### 16.2 Dark-build (24 steps, egress-free)
 
@@ -369,10 +376,14 @@ Every one of these is visible in the artifacts themselves (`is_real_brep: false`
 
 ## 19. Document map
 
-- [`SDP.md`](../SDP.md) — normative full vision: architecture, contract catalog, phased plan
+- [`docs/architecture/AETHER-3.0.md`](architecture/AETHER-3.0.md) — target architecture and implementation brief
+- [`docs/architecture/AS-IS.md`](architecture/AS-IS.md) — repository-grounded inventory
+- [`docs/architecture/GAP-MATRIX.md`](architecture/GAP-MATRIX.md) — capability maturity mapping
+- [`docs/roadmap/IMPLEMENTATION-PLAN.md`](roadmap/IMPLEMENTATION-PLAN.md) — phased plan and acceptance gates
+- [`docs/verification/STATUS.md`](verification/STATUS.md) — current counts and gate verdicts
 - [`specs/invariants.md`](../specs/invariants.md) — the twelve invariants and their enforcement
-- [`specs/adr/`](../specs/adr/) — ADR-0000…0024, the reasoning behind every major decision
-- [`README-EVAL.md`](../README-EVAL.md) — line-by-line status with verification commands
+- [`specs/adr/`](../specs/adr/) — ADR-0000…0033, the reasoning behind every major decision
+- [`docs/history/`](history/) — historical evaluations and alignment changelogs
 - [`workflows/paper-run/gaps.md`](../workflows/paper-run/gaps.md) — the living gap log with phase mapping
 - [`infra/fitness/`](../infra/fitness/) — the enforcement pipeline itself
 - [`crates/`](../crates/), [`contracts/`](../contracts/), [`reference_plugins/`](../reference_plugins/) — the code this document describes

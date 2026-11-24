@@ -1,0 +1,27 @@
+{
+  "contract_id": "aether.quantities",
+  "version": "0.1.0",
+  "title": "Aether Typed Quantities",
+  "description": "Physical quantities with SI canonical storage, unit conversion, and dimensional checking (ADR-0025).",
+  "methods": ["parse", "convert", "check_dimension", "combine"],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/quantities/schema/quantity.schema.json",
+      "path": "schema/quantity.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/quantities/schema/conversion.schema.json",
+      "path": "schema/conversion.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "dimension", "version": "0.1.0", "closed": false },
+    { "namespace": "unit_symbol", "version": "0.1.0", "closed": false }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

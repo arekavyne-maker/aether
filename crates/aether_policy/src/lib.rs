@@ -7,9 +7,10 @@
 //! surface; full CEL expression evaluation lands in G2 (when the
 //! `cel-rust` crate or an equivalent is added as a kernel dependency).
 //!
-//! The Phase 0 kernel treats every actor as `allow` by default; G1 adds
-//! the explicit role check. The principle is **fail-closed**: an
-//! unrecognized role is denied; an unrecognized action is denied.
+//! Evaluation is **fail-closed**: an unrecognized role is denied, an
+//! unrecognized action is denied, and `deny_all` takes precedence. Role
+//! permissions come from the canonical catalog; site-specific expression
+//! bundles can be layered on later without moving the decision point.
 
 #![deny(unsafe_code)]
 #![warn(missing_docs)]

@@ -1,0 +1,14 @@
+{
+  "type_id": "inspected_by",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "BuildRecord",
+    "Part",
+    "AsBuiltConfiguration"
+  ],
+  "target_types": [
+    "InspectionRecord",
+    "InspectionPlan"
+  ]
+}

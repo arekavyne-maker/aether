@@ -1,0 +1,42 @@
+{
+  "type_id": "EnvironmentCase",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": false,
+  "allowed_states": [
+    "draft",
+    "released",
+    "superseded"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status",
+      "kind"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "active",
+          "released",
+          "superseded",
+          "retired"
+        ]
+      },
+      "kind": {
+        "type": "string"
+      },
+      "envelope": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  }
+}

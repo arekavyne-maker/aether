@@ -1,0 +1,53 @@
+{
+  "type_id": "ReviewDecision",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": false,
+  "allowed_states": [
+    "draft",
+    "released",
+    "superseded"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status",
+      "decision",
+      "decided_by"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "active",
+          "released",
+          "superseded",
+          "retired"
+        ]
+      },
+      "decision": {
+        "type": "string",
+        "enum": [
+          "approve",
+          "reject",
+          "defer"
+        ]
+      },
+      "decided_by": {
+        "type": "string"
+      },
+      "evidence": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

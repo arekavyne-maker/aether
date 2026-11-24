@@ -1,0 +1,27 @@
+program: proj-atlas
+configuration: atlas-baseline-a
+objects:
+  - id: wingbox
+    kind: assembly
+    name: Wing-box subassembly
+    revision: 3
+    state: released
+  - id: rib-07
+    kind: part
+    name: Rib station 7
+    revision: 2
+    state: released
+  - id: skin-panel-upper
+    kind: part
+    name: Upper skin panel
+    revision: 4
+    state: released
+interfaces:
+  - id: if-wingbox-rib07
+    provider: wingbox
+    consumer: rib-07
+    direction: provides
+    provides:
+      - {name: attachment_load, quantity: force, unit: N, frame: wing}
+    requires:
+      - {name: attachment_load, quantity: force, unit: N, frame: wing}

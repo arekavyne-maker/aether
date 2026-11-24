@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/evidence/schema/evidence-item.schema.json",
+  "title": "Aether Evidence Item",
+  "type": "object",
+  "required": ["id", "class", "subject", "subject_revision", "artifact_hash", "status", "issued_by", "issued_at"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "class": {
+      "type": "string",
+      "enum": [
+        "analytical", "verification", "validation", "coupon", "element",
+        "component", "full_scale", "process_qualification", "inspection",
+        "operational", "independent_review"
+      ]
+    },
+    "subject": {"type": "string", "minLength": 1},
+    "subject_revision": {"type": "integer", "minimum": 1},
+    "artifact_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "status": {"type": "string", "enum": ["current", "stale", "revoked"]},
+    "issued_by": {"type": "string", "minLength": 1},
+    "issued_at": {"type": "string"},
+    "credibility": {"type": "string", "description": "Credibility record id, when required by a gate."}
+  }
+}

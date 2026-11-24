@@ -1,0 +1,48 @@
+{
+  "type_id": "VerificationCase",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": false,
+  "allowed_states": [
+    "draft",
+    "released",
+    "superseded"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status",
+      "method"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "active",
+          "released",
+          "superseded",
+          "retired"
+        ]
+      },
+      "method": {
+        "type": "string",
+        "enum": [
+          "analysis",
+          "test",
+          "inspection",
+          "demonstration",
+          "similarity"
+        ]
+      },
+      "requirement": {
+        "type": "string"
+      }
+    }
+  }
+}

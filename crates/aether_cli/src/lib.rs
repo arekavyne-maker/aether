@@ -19,6 +19,7 @@ pub mod workflow_cmd;
 pub mod g3_commands;
 pub mod g4_commands;
 pub mod g7_commands;
+pub mod aether3_commands;
 
 pub use tuf::verify::{
     canonical_json, canonical_payload, verify_bundle, Check, Metadata, SignatureEntry, VerifySummary,

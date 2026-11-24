@@ -1,6 +1,6 @@
 # Aether — Implementation Plan (Reference)
 
-This document is a local reference; the authoritative source is [SDP.md](../../../../SDP.md) (in the project root). This file exists so that the plan lives with the code that implements it, and so that contributors can navigate from ADRs and contracts to the phase plan and back.
+This document is a local reference; the authoritative source is [SDP.md](../SDP.md) (in the project root). This file exists so that the plan lives with the code that implements it, and so that contributors can navigate from ADRs and contracts to the phase plan and back.
 
 ## Phased sequence (§18)
 
@@ -31,7 +31,7 @@ P0 contracts ─► P1 core/graph ─► P2 plugins/exec/prov ─► P3 geometry
 
 ## Phase 0 — Complete (G0)
 
-See [../../README.md](../../README.md) for the Phase 0 (G0) deliverables list.
+See [../README.md](../README.md) for the Phase 0 (G0) deliverables list.
 
 ## G0 acceptance (G0 review)
 
@@ -72,9 +72,9 @@ registry + Rust half of the two-impl rule:
 
 ## See also
 
-- `../invariants.md` — the twelve non-negotiable invariants
-- `../adr/` — the ADR set
-- `../threat-model/` — threat model (v1)
-- `../../contracts/` — contract packages
-- `../../reference_plugins/` — reference implementations
-- `../../infra/fitness/` — fitness pipeline
+- `invariants.md` — the twelve non-negotiable invariants
+- `adr/` — the ADR set
+- `threat-model/` — threat model (v1)
+- `../contracts/` — contract packages
+- `../reference_plugins/` — reference implementations
+- `../infra/fitness/` — fitness pipeline

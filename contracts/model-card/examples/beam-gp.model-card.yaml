@@ -1,0 +1,27 @@
+id: beam-deflection-gp
+version: 0.1.0
+kind: surrogate
+intended_use: Early-stage tip-deflection screening for metallic cantilever beams within the declared envelope.
+prohibited_use:
+  - Certification evidence
+  - Composite failure prediction
+  - Post-buckling response
+validity_envelope:
+  span_m: "0.5 .. 6.0"
+  tip_load_N: "10 .. 5000"
+  youngs_modulus_GPa: "60 .. 220"
+training_lineage:
+  data_hash: "0000000000000000000000000000000000000000000000000000000000000010"
+  data_rights: internal
+  code_hash: "0000000000000000000000000000000000000000000000000000000000000011"
+  weight_hash: "0000000000000000000000000000000000000000000000000000000000000012"
+metrics:
+  - {name: r2, value: 0.997, dataset: beam-doe-v1}
+  - {name: max_rel_error, value: 0.021, unit: "1", dataset: beam-holdout-v1, tolerance: 0.05}
+uncertainty_method: GP posterior variance
+ood_method: Mahalanobis distance on normalized inputs
+fallback: aether-physics-beam
+lifecycle: benchmarked
+rollback_version: 0.0.9
+evidence:
+  - ev-benchmark-beam-gp

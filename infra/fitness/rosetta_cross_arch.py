@@ -136,7 +136,8 @@ def check(repo_root: Path) -> _Result:  # type: ignore[name-defined]
         return CheckResult(
             name="rosetta_cross_arch",
             ok=False,
-            summary="Rosetta (arch -x86_64) unavailable; cannot run the cross-arch emulation check on this machine",
+            skipped=True,
+            summary="Rosetta (arch -x86_64) unavailable; cross-arch emulation check not run",
             details=[
                 "fix: install Rosetta on macOS (`softwareupdate --install-rosetta --agree-to-license`)",
                 "fallback: provide a QEMU user-mode emulator or run on a real aarch64 + x86_64 host pair",

@@ -1,0 +1,17 @@
+{
+  "type_id": "validated_by",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "Product",
+    "Assembly",
+    "Part",
+    "PhysicsModel",
+    "Model"
+  ],
+  "target_types": [
+    "ValidationCase",
+    "TestRun",
+    "Evidence"
+  ]
+}

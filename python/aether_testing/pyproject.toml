@@ -7,7 +7,7 @@ name = "aether-testing"
 version = "0.1.0"
 description = "Aether testing harness — conformance runner and contract validator"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.9"
 license = "LicenseRef-Crocell-Proprietary"
 authors = [{ name = "Aether Platform Team" }]
 dependencies = [

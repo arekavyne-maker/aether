@@ -40,3 +40,7 @@ aether_compose = { path = "../aether_compose" }
 aether_registry = { path = "../aether_registry" }
 aether_policy = { path = "../aether_policy" }
 aether_envman = { path = "../aether_envman" }
+aether_quantities = { path = "../aether_quantities" }
+aether_artifacts = { path = "../aether_artifacts" }
+aether_asm = { path = "../aether_asm" }
+aether_evidence = { path = "../aether_evidence" }

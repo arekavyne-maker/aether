@@ -1,0 +1,15 @@
+[package]
+name = "aether_asm"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Aerospace Systems Model semantic helpers: lifecycle, interfaces, snapshots"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+thiserror = { workspace = true }

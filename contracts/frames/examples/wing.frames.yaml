@@ -1,0 +1,15 @@
+frames:
+  - id: aircraft
+    handedness: right
+    transform: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+    provenance: "aircraft datum, rev A"
+  - id: wing
+    parent: aircraft
+    handedness: right
+    transform: [[1, 0, 0, 8.0], [0, 1, 0, 0], [0, 0, 1, -1.2], [0, 0, 0, 1]]
+    provenance: "wing reference plane, rev B"
+  - id: rib-07
+    parent: wing
+    handedness: right
+    transform: [[1, 0, 0, 4.5], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+    provenance: "rib station 7, rev C"

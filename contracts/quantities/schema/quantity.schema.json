@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/quantities/schema/quantity.schema.json",
+  "title": "Aether Quantity",
+  "description": "A physical quantity. The canonical value is SI; the display value and unit are preserved for provenance.",
+  "type": "object",
+  "required": ["value", "unit", "dimension"],
+  "additionalProperties": false,
+  "properties": {
+    "value": {"type": "number"},
+    "unit": {"type": "string", "minLength": 1},
+    "dimension": {
+      "type": "object",
+      "required": ["exponents"],
+      "additionalProperties": false,
+      "properties": {
+        "exponents": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": {"type": "integer", "minimum": -12, "maximum": 12},
+          "description": "Exponents over [length, mass, time, temperature, current, amount, luminous intensity]."
+        }
+      }
+    },
+    "si_value": {"type": "number", "description": "Canonical SI value, if materialized."},
+    "frame": {"type": "string", "description": "Coordinate frame id for spatially resolved quantities."}
+  }
+}

@@ -3,15 +3,38 @@
 version = 3
 
 [[package]]
+name = "aether_artifacts"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "sha2 0.10.9",
+ "thiserror",
+]
+
+[[package]]
+name = "aether_asm"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "thiserror",
+]
+
+[[package]]
 name = "aether_cli"
 version = "0.1.0"
 dependencies = [
+ "aether_artifacts",
+ "aether_asm",
  "aether_compose",
  "aether_envman",
+ "aether_evidence",
  "aether_exec",
  "aether_graph",
  "aether_policy",
  "aether_provenance",
+ "aether_quantities",
  "aether_registry",
  "aether_workflow",
  "anyhow",
@@ -72,6 +95,14 @@ dependencies = [
  "tempfile",
  "thiserror",
  "tracing",
+]
+
+[[package]]
+name = "aether_evidence"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "thiserror",
 ]
 
 [[package]]
@@ -151,6 +182,15 @@ dependencies = [
  "sha2 0.10.9",
  "thiserror",
  "uuid",
+]
+
+[[package]]
+name = "aether_quantities"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror",
 ]
 
 [[package]]

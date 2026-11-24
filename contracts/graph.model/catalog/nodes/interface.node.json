@@ -1,0 +1,36 @@
+{
+  "type_id": "Interface",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": false,
+  "allowed_states": [
+    "draft",
+    "released",
+    "superseded"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "provider",
+      "consumer",
+      "direction"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "provider": {
+        "type": "string"
+      },
+      "consumer": {
+        "type": "string"
+      },
+      "direction": {
+        "type": "string",
+        "enum": [
+          "provides",
+          "consumes",
+          "bidirectional"
+        ]
+      }
+    }
+  }
+}

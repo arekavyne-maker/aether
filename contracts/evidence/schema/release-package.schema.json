@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/evidence/schema/release-package.schema.json",
+  "title": "Aether Release Package",
+  "type": "object",
+  "required": ["id", "snapshot", "verdicts", "state", "created_at"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "snapshot": {"type": "string", "minLength": 1},
+    "verdicts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["gate", "passed", "missing", "stale", "unverified"],
+        "additionalProperties": false,
+        "properties": {
+          "gate": {"type": "string"},
+          "passed": {"type": "boolean"},
+          "missing": {"type": "array", "items": {"type": "string"}},
+          "stale": {"type": "array", "items": {"type": "string"}},
+          "unverified": {"type": "array", "items": {"type": "string"}},
+          "waived_by": {"type": "string"}
+        }
+      }
+    },
+    "approved_by": {"type": "string"},
+    "state": {"type": "string", "enum": ["draft", "approved", "rejected"]},
+    "created_at": {"type": "string"}
+  }
+}

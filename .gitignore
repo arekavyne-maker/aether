@@ -62,3 +62,9 @@ infra/run/_mvr05/
 *.p12
 secrets/
 .hypothesis/
+
+# Local agent metadata
+.freebuff/
+
+# Local Aether state (graph DB, scratch)
+/.aether/

@@ -1,0 +1,41 @@
+{
+  "contract_id": "aether.evidence",
+  "version": "0.1.0",
+  "title": "Aether Evidence and Release Gates",
+  "description": "Evidence classes, credibility records, gate definitions, waivers, and release packages (ADR-0028).",
+  "methods": ["record", "evaluate_gate", "waive", "approve_release", "verify_release"],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/evidence/schema/evidence-item.schema.json",
+      "path": "schema/evidence-item.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/evidence/schema/gate.schema.json",
+      "path": "schema/gate.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/evidence/schema/release-package.schema.json",
+      "path": "schema/release-package.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    {
+      "namespace": "evidence_class",
+      "version": "0.1.0",
+      "closed": true,
+      "values": [
+        "analytical", "verification", "validation", "coupon", "element",
+        "component", "full_scale", "process_qualification", "inspection",
+        "operational", "independent_review"
+      ]
+    },
+    { "namespace": "evidence_status", "version": "0.1.0", "closed": true, "values": ["current", "stale", "revoked"] }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

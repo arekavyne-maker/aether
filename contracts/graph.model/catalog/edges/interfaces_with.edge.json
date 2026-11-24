@@ -1,0 +1,17 @@
+{
+  "type_id": "interfaces_with",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "Product",
+    "Assembly",
+    "Part",
+    "System"
+  ],
+  "target_types": [
+    "Product",
+    "Assembly",
+    "Part",
+    "System"
+  ]
+}

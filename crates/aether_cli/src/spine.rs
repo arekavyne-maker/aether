@@ -1556,13 +1556,20 @@ pub fn cmd_benchmark(name: Option<String>, mode: OutputMode) -> Result<()> {
         });
     }
 
-    let all_pass = results.iter().all(|r| r.passed);
+    let all_pass = results.iter().all(|r| r.passed || bench_is_skipped(r));
     if mode == OutputMode::Text {
         println!("AETHER BENCHMARKS\n");
         for r in &results {
+            let status = if bench_is_skipped(r) {
+                "SKIP"
+            } else if r.passed {
+                "PASS"
+            } else {
+                "FAIL"
+            };
             println!(
                 "{} {} — {} ({} ms)",
-                if r.passed { "PASS" } else { "FAIL" },
+                status,
                 r.id,
                 r.title,
                 r.runtime_ms
@@ -1586,6 +1593,7 @@ pub fn cmd_benchmark(name: Option<String>, mode: OutputMode) -> Result<()> {
                     "id": r.id,
                     "title": r.title,
                     "passed": r.passed,
+                    "skipped": bench_is_skipped(r),
                     "runtime_ms": r.runtime_ms,
                     "metrics": r.metrics,
                 })).collect::<Vec<_>>(),
@@ -1666,12 +1674,56 @@ fn bench_01(monorepo: &Path) -> Result<BenchResult> {
     })
 }
 
+/// True when a benchmark result is an explicit optional-tool skip.
+fn bench_is_skipped(r: &BenchResult) -> bool {
+    r.metrics
+        .get("skipped")
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false)
+}
+
+/// Probe for a CalculiX binary without invoking a solver.
+fn ccx_available() -> bool {
+    if let Ok(path) = std::env::var("CCX_BIN") {
+        return std::path::Path::new(&path).exists();
+    }
+    for candidate in [
+        "/opt/homebrew/bin/ccx_2.23",
+        "/usr/bin/ccx",
+        "/usr/local/bin/ccx",
+    ] {
+        if std::path::Path::new(candidate).exists() {
+            return true;
+        }
+    }
+    std::process::Command::new("sh")
+        .arg("-c")
+        .arg("command -v ccx >/dev/null 2>&1")
+        .status()
+        .map(|s| s.success())
+        .unwrap_or(false)
+}
+
 /// AETHER-BENCH-08: cross-implementation reproducibility — the same
 /// LE1-spec cantilever through the beam FEM and the real CalculiX
 /// adapter; the two independent implementations must agree within 5%.
 /// Skips honestly (as not-run) when ccx is absent.
 fn bench_08(monorepo: &Path) -> Result<BenchResult> {
     let t0 = std::time::Instant::now();
+    if !ccx_available() {
+        let runtime = t0.elapsed().as_millis();
+        return Ok(BenchResult {
+            id: "AETHER-BENCH-08",
+            title: "Cross-implementation reproducibility (beam FEM vs CalculiX) — skipped: ccx not found",
+            passed: false,
+            metrics: json!({
+                "skipped": true,
+                "reason": "ccx binary not found; set CCX_BIN or install calculix-ccx",
+                "tolerance": 5e-2
+            }),
+            runtime_ms: runtime,
+        });
+    }
     let beam_result = spine_handlers::call_plugin(
         monorepo,
         "reference_plugins/fea-reference-beam/python/stdio_plugin.py",

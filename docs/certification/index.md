@@ -42,7 +42,7 @@ directory of the release tag.
 
 A site is production-ready when:
 
-1. The dark-build is green (all 21 steps pass).
+1. The dark-build is green (all 24 steps pass).
 2. The S-rollups for the target version are signed.
 3. The site's envman StrictVerifier reports `all_resolved: true`.
 4. The site has run a smoke workflow end-to-end.

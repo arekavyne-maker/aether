@@ -92,7 +92,9 @@ python3 -m pytest \
 log "[20/24] G7 CLI smoke: deploy / envman"
 "$REPO_ROOT/target/debug/aether" deploy plan \
     workflows/wing-rib-closed-loop-ga2.awl.yaml --json 2>&1 | head -1
-"$REPO_ROOT/target/debug/aether" envman verify /tmp/test-env.yaml --json 2>&1 | head -1 || true
+"$REPO_ROOT/target/debug/aether" envman verify \
+    "$REPO_ROOT/infra/fixtures/env/minimal.env.yaml" \
+    --artifact-root "$REPO_ROOT/infra/fixtures/env/artifacts" --json 2>&1 | head -1
 
 log "[20b/24] golden-path regression: doctor / demo / init --profile / run / explain / evidence / benchmark"
 cargo test -p aether_cli --test golden_path 2>&1 | tail -5

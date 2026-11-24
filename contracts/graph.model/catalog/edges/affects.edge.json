@@ -1,0 +1,17 @@
+{
+  "type_id": "affects",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "ChangeRequest",
+    "Nonconformance",
+    "DamageEvent"
+  ],
+  "target_types": [
+    "Product",
+    "Assembly",
+    "Part",
+    "ProcessPlan",
+    "ConfigurationSnapshot"
+  ]
+}

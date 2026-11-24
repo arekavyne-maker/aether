@@ -1,0 +1,35 @@
+snapshot: atlas-baseline-a
+gate:
+  id: wingbox-release
+  description: Wing-box subassembly release gate
+  waiver_allowed: true
+  requirements:
+    - {class: verification, min_count: 1, require_credibility: false}
+    - {class: validation, min_count: 1, require_credibility: true}
+    - {class: inspection, min_count: 1, require_credibility: false}
+evidence:
+  - id: ev-ver-01
+    class: verification
+    subject: wingbox
+    subject_revision: 3
+    artifact_hash: "0000000000000000000000000000000000000000000000000000000000000001"
+    status: current
+    issued_by: analyst
+    issued_at: 2026-11-24T00:00:00Z
+  - id: ev-val-01
+    class: validation
+    subject: wingbox
+    subject_revision: 3
+    artifact_hash: "0000000000000000000000000000000000000000000000000000000000000002"
+    status: current
+    issued_by: test-engineer
+    issued_at: 2026-11-24T00:00:00Z
+    credibility: cred-wingbox-01
+  - id: ev-insp-01
+    class: inspection
+    subject: wingbox
+    subject_revision: 3
+    artifact_hash: "0000000000000000000000000000000000000000000000000000000000000003"
+    status: current
+    issued_by: quality-auditor
+    issued_at: 2026-11-24T00:00:00Z

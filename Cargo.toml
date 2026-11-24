@@ -13,6 +13,10 @@ members = [
     "crates/aether_cli",
     "crates/aether_sdk_ffi",
     "crates/aether_contract_validate",
+    "crates/aether_quantities",
+    "crates/aether_artifacts",
+    "crates/aether_asm",
+    "crates/aether_evidence",
 ]
 
 [workspace.package]

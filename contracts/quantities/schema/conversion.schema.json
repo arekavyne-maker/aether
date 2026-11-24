@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/quantities/schema/conversion.schema.json",
+  "title": "Aether Unit Conversion Result",
+  "description": "The result of an explicit unit conversion. Dimension mismatches are errors, never silent coercions.",
+  "type": "object",
+  "required": ["input", "output", "ok"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {"$ref": "quantity.schema.json"},
+    "output": {"$ref": "quantity.schema.json"},
+    "ok": {"type": "boolean"},
+    "error": {"type": "string"},
+    "tolerance": {"type": "number", "exclusiveMinimum": 0}
+  }
+}

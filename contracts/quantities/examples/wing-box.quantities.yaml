@@ -1,0 +1,17 @@
+quantities:
+  - name: wing_span
+    value: 34.0
+    unit: m
+    dimension: [1, 0, 0, 0, 0, 0, 0]
+  - name: skin_thickness
+    value: 2.4
+    unit: mm
+    dimension: [1, 0, 0, 0, 0, 0, 0]
+  - name: ultimate_stress
+    value: 310.0
+    unit: MPa
+    dimension: [-1, 1, -2, 0, 0, 0, 0]
+  - name: cure_temperature
+    value: 180.0
+    unit: degC
+    dimension: [0, 0, 0, 1, 0, 0, 0]

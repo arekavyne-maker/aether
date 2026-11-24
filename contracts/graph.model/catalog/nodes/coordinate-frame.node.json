@@ -1,0 +1,47 @@
+{
+  "type_id": "CoordinateFrame",
+  "version": "1.0.0",
+  "revisioned": false,
+  "immutable": true,
+  "allowed_states": [
+    "released",
+    "superseded"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status",
+      "handedness"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "active",
+          "released",
+          "superseded",
+          "retired"
+        ]
+      },
+      "handedness": {
+        "type": "string",
+        "enum": [
+          "right",
+          "left"
+        ]
+      },
+      "parent": {
+        "type": "string"
+      },
+      "provenance": {
+        "type": "string"
+      }
+    }
+  }
+}

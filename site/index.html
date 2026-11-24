@@ -1,0 +1,1327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aether — Infrastructure for Aerostructures</title>
+<meta name="description" content="Aether is the air-gapped, vendor-neutral engineering fabric for aerostructures. One Engineering Graph, one bidirectional digital thread, and evidence for every decision." />
+<meta property="og:title" content="Aether — One graph. Every discipline." />
+<meta property="og:description" content="Modern infrastructure for aerostructures. Requirements, CAD, simulation, optimization, manufacturing, and test in one traceable digital thread." />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#050505" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#050505;
+    --bg-2:#0a0a0b;
+    --bg-3:#101012;
+    --ink:#f4f2ec;
+    --muted:#9a9a94;
+    --dim:#686864;
+    --line:rgba(244,242,236,.14);
+    --line-soft:rgba(244,242,236,.075);
+    --cyan:#8fe9ff;
+    --violet:#b9a4ff;
+    --amber:#ffc78a;
+    --serif:"Instrument Serif","Iowan Old Style","Palatino Linotype",Georgia,serif;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    --mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+    --max:1320px;
+    --pad:clamp(20px,4vw,40px);
+    --radius:26px;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-weight:400;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    background:
+      radial-gradient(900px 600px at 72% 8%, rgba(143,233,255,.045), transparent 65%),
+      radial-gradient(800px 700px at 8% 55%, rgba(185,164,255,.035), transparent 70%);
+  }
+  a{color:inherit;text-decoration:none}
+  img,svg{display:block;max-width:100%}
+  button,input,select,textarea{font:inherit}
+  ::selection{background:var(--cyan);color:#050505}
+
+  .skip{
+    position:absolute;left:-9999px;top:12px;z-index:100;
+    background:var(--ink);color:#050505;padding:10px 16px;border-radius:999px;
+  }
+  .skip:focus{left:16px}
+
+  .container{max-width:var(--max);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad);position:relative;z-index:1}
+  .section{padding:clamp(80px,10vw,140px) 0;border-top:1px solid var(--line-soft);position:relative}
+  .section-label{
+    display:flex;align-items:center;gap:14px;
+    font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);
+    margin-bottom:34px;
+  }
+  .bars{display:flex;gap:3px;align-items:flex-end}
+  .bars span{width:3px;height:12px;background:var(--ink);opacity:.35}
+  .bars span:nth-child(2){height:8px;opacity:.55}
+  .bars span:nth-child(3){height:14px;opacity:.8}
+  .bars span:nth-child(4){height:10px;opacity:.45}
+
+  .h2{
+    margin:0;
+    font-size:clamp(2.5rem,5.2vw,5.4rem);
+    line-height:1.02;
+    letter-spacing:-.04em;
+    font-weight:400;
+    max-width:1150px;
+  }
+  .h2 em{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.015em}
+  .lede{
+    margin:28px 0 0;
+    max-width:720px;
+    color:var(--muted);
+    font-size:clamp(15px,1.35vw,18px);
+    line-height:1.65;
+    font-weight:300;
+  }
+
+  /* NAV */
+  .nav{
+    position:fixed;inset:0 0 auto 0;z-index:60;
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    padding:18px var(--pad);
+    transition:background .35s ease,border-color .35s ease,backdrop-filter .35s ease;
+    border-bottom:1px solid transparent;
+  }
+  .nav.scrolled{
+    background:rgba(5,5,5,.82);
+    border-bottom-color:var(--line-soft);
+    backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+  }
+  .brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
+  .brand-mark{width:30px;height:30px;flex:none}
+  .brand-text{display:flex;flex-direction:column;line-height:1}
+  .brand-name{font-size:15px;letter-spacing:.26em;font-weight:500}
+  .brand-sub{font-size:7px;letter-spacing:.2em;color:var(--dim);margin-top:6px;text-transform:uppercase}
+  .nav-links{display:flex;align-items:center;gap:clamp(16px,2.4vw,34px)}
+  .nav-links a{
+    font-size:12px;color:var(--muted);letter-spacing:.02em;
+    transition:color .2s ease;
+  }
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links .menu-only{display:none}
+  .nav-cta{display:flex;align-items:center;gap:12px}
+  .menu-toggle{
+    display:none;background:none;border:1px solid var(--line);color:var(--ink);
+    border-radius:999px;padding:9px 14px;font-size:11px;letter-spacing:.08em;cursor:pointer;
+  }
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:12px;
+    border:1px solid var(--line);border-radius:999px;
+    padding:15px 24px;font-size:13px;line-height:1;letter-spacing:.01em;
+    color:var(--ink);background:transparent;cursor:pointer;
+    transition:transform .25s ease,background .25s ease,color .25s ease,border-color .25s ease;
+    white-space:nowrap;
+  }
+  .btn:hover{transform:translateY(-2px);border-color:rgba(244,242,236,.34)}
+  .btn-primary{background:var(--ink);color:#050505;border-color:var(--ink)}
+  .btn-primary:hover{background:#fff;border-color:#fff}
+  .btn .arrow{width:14px;height:14px;transition:transform .25s ease}
+  .btn:hover .arrow{transform:translate(2px,-2px)}
+  .btn-sm{padding:11px 18px;font-size:11px}
+
+  /* HERO */
+  .hero{
+    min-height:100svh;
+    padding:118px 0 56px;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:stretch;
+  }
+  .hero .container{width:100%}
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.06fr .94fr;
+    grid-template-rows:auto 1fr auto;
+    min-height:calc(100svh - 190px);
+    gap:24px 28px;
+    position:relative;
+  }
+  .hero-quote{
+    grid-column:1;grid-row:1;
+    max-width:560px;
+    margin:0;
+    color:var(--muted);
+    font-size:clamp(15px,1.35vw,19px);
+    line-height:1.62;
+    font-weight:300;
+    position:relative;
+    z-index:2;
+  }
+  .hero-quote .qmark{color:var(--dim);font-family:var(--serif);font-size:1.2em;line-height:0}
+  .hero-attrib{
+    display:flex;align-items:center;gap:10px;margin-top:20px;
+    font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
+  }
+  .hero-attrib::before{content:"";width:22px;height:1px;background:var(--line)}
+  .hero-visual{
+    grid-column:2;grid-row:1 / span 3;
+    align-self:center;justify-self:center;
+    width:min(100%,680px);
+    position:relative;
+    z-index:1;
+    transform:translateY(4px);
+  }
+  .hero-visual::before{
+    content:"";position:absolute;inset:4%;
+    background:radial-gradient(circle at 50% 46%, rgba(143,233,255,.10), rgba(185,164,255,.05) 38%, transparent 68%);
+    filter:blur(30px);z-index:-1;
+  }
+  .hero-visual svg{width:100%;height:auto;overflow:visible}
+  .hero-fig{
+    position:absolute;right:4%;bottom:1%;
+    display:flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  }
+  .hero-fig::before{content:"";width:26px;height:1px;background:var(--line)}
+  .hero-bottom{grid-column:1 / -1;grid-row:3;align-self:end;position:relative;z-index:2;padding-bottom:8px;max-width:1060px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--cyan);
+    margin-bottom:20px;
+  }
+  .eyebrow::before{content:"";width:24px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+  .hero h1{
+    margin:0;
+    font-size:clamp(3.2rem,6.4vw,6.8rem);
+    line-height:.94;
+    letter-spacing:-.055em;
+    font-weight:400;
+  }
+  .hero h1 .line{display:block}
+  .hero h1 .serif{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.02em}
+  .hero-copy{
+    max-width:560px;margin:26px 0 0;
+    color:var(--muted);font-size:clamp(14px,1.2vw,16px);line-height:1.65;font-weight:300;
+  }
+  .hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+  .hero-micro{
+    display:flex;align-items:center;gap:8px;margin-top:18px;
+    font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
+  }
+  .dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+  .hero-scroll{
+    position:absolute;right:0;bottom:4px;z-index:2;
+    display:flex;align-items:center;gap:10px;
+    font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
+    writing-mode:vertical-rl;
+  }
+  .hero-scroll::after{content:"";width:1px;height:52px;background:linear-gradient(var(--line),transparent)}
+
+  /* ABOUT */
+  .about-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(32px,5vw,72px);align-items:start}
+  .about-grid .h2{font-size:clamp(2.1rem,3.8vw,4rem);line-height:1.06}
+  .about-copy p{margin:0 0 20px;color:var(--muted);font-size:clamp(15px,1.3vw,18px);line-height:1.7;font-weight:300}
+  .about-copy p:last-child{margin-bottom:0}
+  .about-copy strong{color:var(--ink);font-weight:500}
+  .status-note{
+    margin-top:34px;padding:18px 0 18px 20px;
+    border-left:1px solid rgba(143,233,255,.5);
+    color:var(--dim);font-size:11px;line-height:1.7;letter-spacing:.01em;
+    max-width:620px;
+  }
+  .status-note b{color:var(--muted);font-weight:500;letter-spacing:.08em;text-transform:uppercase;font-size:9px;display:block;margin-bottom:6px}
+
+  /* STATS */
+  .stats{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+    margin-top:clamp(48px,7vw,88px);
+  }
+  .stat{
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px;min-height:280px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    background:linear-gradient(180deg,rgba(255,255,255,.022),transparent 62%);
+    position:relative;overflow:hidden;
+    transition:border-color .3s ease,transform .3s ease;
+  }
+  .stat:hover{border-color:rgba(244,242,236,.28);transform:translateY(-3px)}
+  .stat::after{
+    content:"";position:absolute;width:180px;height:180px;right:-80px;top:-80px;
+    background:radial-gradient(circle,rgba(143,233,255,.09),transparent 68%);
+    opacity:0;transition:opacity .4s ease;
+  }
+  .stat:hover::after{opacity:1}
+  .stat-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-size:11px;color:var(--muted)}
+  .stat-top .arrow{color:var(--dim);font-size:14px;line-height:1}
+  .stat-mid{display:flex;flex-direction:column;gap:6px;margin-top:auto}
+  .stat-num{font-size:clamp(3.1rem,5.4vw,5.5rem);line-height:.9;letter-spacing:-.07em;font-weight:400}
+  .stat-label{font-size:13px;letter-spacing:.01em;color:var(--ink)}
+  .stat-desc{margin-top:10px;font-size:11px;line-height:1.55;color:var(--dim);max-width:210px}
+
+  /* PLATFORM */
+  .cards-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:clamp(40px,6vw,72px)}
+  .card{
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:clamp(24px,3vw,34px);
+    background:var(--bg-2);
+    position:relative;overflow:hidden;
+    transition:border-color .35s ease,background .35s ease;
+    min-height:380px;
+    display:flex;flex-direction:column;
+  }
+  .card::before{
+    content:"";position:absolute;width:260px;height:260px;right:-120px;bottom:-140px;
+    background:radial-gradient(circle,rgba(185,164,255,.09),transparent 66%);
+    opacity:.55;transition:opacity .4s ease,transform .6s ease;
+  }
+  .card:hover{border-color:rgba(244,242,236,.28);background:#0c0c0e}
+  .card:hover::before{opacity:1;transform:scale(1.15)}
+  .card-top{display:flex;justify-content:space-between;align-items:center;gap:16px;position:relative;z-index:1}
+  .card-num{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--dim)}
+  .card-glyph{width:34px;height:34px;color:var(--dim)}
+  .card h3{
+    margin:clamp(36px,5vw,64px) 0 16px;
+    font-size:clamp(1.5rem,2.2vw,1.9rem);line-height:1.08;letter-spacing:-.025em;font-weight:400;
+    position:relative;z-index:1;
+  }
+  .card p{margin:0;color:var(--muted);font-size:13px;line-height:1.68;font-weight:300;position:relative;z-index:1;max-width:520px}
+  .feature-list{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:0;position:relative;z-index:1}
+  .feature-list li{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 0;border-top:1px solid var(--line-soft);
+    font-size:11px;color:var(--dim);
+  }
+  .feature-list li::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--cyan);opacity:.75;flex:none}
+  .contract-strip{
+    display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:start;
+    margin-top:20px;padding:18px 0;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .contract-strip-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding-top:3px}
+  .contract-strip-list{display:flex;flex-wrap:wrap;gap:6px 0;font-family:var(--mono);font-size:10px;line-height:1.8;color:var(--muted)}
+  .contract-strip-list span{white-space:nowrap}
+  .contract-strip-list span:not(:last-child)::after{content:"·";color:var(--dim);margin:0 9px}
+
+  /* LOOP */
+  .loop-wrap{margin-top:clamp(40px,6vw,64px);position:relative}
+  .loop{
+    display:flex;gap:0;overflow-x:auto;padding:0 0 18px;
+    scrollbar-width:none;-ms-overflow-style:none;
+    border-top:1px solid var(--line);
+  }
+  .loop::-webkit-scrollbar{display:none}
+  .loop-step{
+    flex:1 0 104px;min-width:104px;position:relative;
+    padding:22px 12px 0 0;
+  }
+  .loop-step::before{
+    content:"";position:absolute;top:-4px;left:0;width:7px;height:7px;border-radius:50%;
+    background:var(--ink);box-shadow:0 0 0 4px var(--bg);
+  }
+  .loop-step:last-child::before{background:var(--cyan);box-shadow:0 0 14px rgba(143,233,255,.65)}
+  .loop-step .idx{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--dim)}
+  .loop-step .name{display:block;margin-top:26px;font-size:12px;color:var(--muted);letter-spacing:.01em}
+  .loop-step:last-child .name{color:var(--ink)}
+  .loop-arrow{
+    position:absolute;right:4px;top:16px;color:var(--dim);font-size:11px;
+  }
+  .loop-step:last-child .loop-arrow{color:var(--cyan)}
+  .loop-caption{margin-top:16px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+
+  /* RUNS */
+  .runs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:clamp(40px,6vw,72px)}
+  .run{
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:clamp(22px,2.6vw,30px);
+    background:linear-gradient(180deg,rgba(255,255,255,.028),transparent 46%);
+    display:flex;flex-direction:column;min-height:520px;
+    position:relative;overflow:hidden;
+    transition:border-color .35s ease,transform .35s ease;
+  }
+  .run:hover{border-color:rgba(244,242,236,.28);transform:translateY(-3px)}
+  .run::after{
+    content:"";position:absolute;inset:auto -40% -55% -40%;height:70%;
+    background:radial-gradient(ellipse at 50% 100%,rgba(143,233,255,.07),transparent 65%);
+    opacity:0;transition:opacity .4s ease;
+  }
+  .run:hover::after{opacity:1}
+  .run-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--cyan);position:relative;z-index:1}
+  .run-glyph{
+    position:absolute;top:24px;right:24px;width:64px;height:64px;
+    color:var(--dim);opacity:.65;transition:color .35s ease,opacity .35s ease;
+  }
+  .run:hover .run-glyph{color:var(--cyan);opacity:1}
+  .run h3{
+    margin:clamp(38px,4vw,56px) 0 16px;
+    font-size:clamp(1.35rem,1.9vw,1.62rem);line-height:1.14;letter-spacing:-.02em;font-weight:400;
+    position:relative;z-index:1;
+  }
+  .run p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.7;font-weight:300;position:relative;z-index:1}
+  .run-meta{margin-top:auto;padding-top:26px;display:grid;gap:0;position:relative;z-index:1}
+  .run-meta div{
+    display:flex;justify-content:space-between;gap:14px;
+    padding:9px 0;border-top:1px solid var(--line-soft);
+    font-size:10px;
+  }
+  .run-meta dt{color:var(--dim);white-space:nowrap}
+  .run-meta dd{margin:0;color:var(--muted);text-align:right}
+
+  /* EVIDENCE */
+  .evidence{margin-top:clamp(36px,5vw,56px);border-top:1px solid var(--line)}
+  .evidence-row{
+    display:grid;grid-template-columns:56px 1.05fr 1.35fr 104px;
+    gap:clamp(16px,3vw,42px);align-items:start;
+    padding:clamp(22px,3vw,32px) 0;
+    border-bottom:1px solid var(--line);
+  }
+  .evidence-row .num{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--dim);line-height:1.2}
+  .evidence-row h3{margin:0;font-size:clamp(1.05rem,1.55vw,1.35rem);line-height:1.25;letter-spacing:-.015em;font-weight:400}
+  .evidence-row p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.68;font-weight:300}
+  .evidence-row code,.tier li code{
+    font-family:var(--mono);font-size:.86em;color:var(--cyan);
+    background:rgba(143,233,255,.06);border:1px solid rgba(143,233,255,.12);
+    padding:1px 5px;border-radius:4px;white-space:nowrap;
+  }
+  .tag-pill{
+    justify-self:end;align-self:start;
+    border:1px solid var(--line);border-radius:999px;padding:6px 10px;
+    font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--dim);white-space:nowrap;
+  }
+
+  /* DISCIPLINES */
+  .team{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:clamp(40px,6vw,68px)}
+  .member{
+    border:1px solid var(--line);border-radius:22px;
+    padding:18px;min-height:300px;
+    display:flex;flex-direction:column;
+    background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 55%);
+    transition:border-color .3s ease,transform .3s ease;
+  }
+  .member:hover{border-color:rgba(244,242,236,.26);transform:translateY(-3px)}
+  .monogram{
+    width:56px;height:56px;border-radius:50%;
+    display:grid;place-items:center;
+    font-size:11px;letter-spacing:.1em;color:var(--ink);
+    border:1px solid var(--line);
+    background:radial-gradient(circle at 32% 28%,rgba(143,233,255,.22),rgba(185,164,255,.07) 48%,transparent 72%);
+    flex:none;
+  }
+  .member h3{margin:auto 0 0;font-size:15px;font-weight:400;line-height:1.25;letter-spacing:-.01em}
+  .member p{margin:10px 0 0;font-size:11px;line-height:1.62;color:var(--dim);font-weight:300}
+
+  /* BUILD */
+  .build-band{
+    margin-top:clamp(40px,6vw,70px);
+    border:1px solid var(--line);border-radius:clamp(26px,3vw,38px);
+    padding:clamp(28px,5vw,58px);
+    background:
+      radial-gradient(700px 340px at 86% 10%,rgba(143,233,255,.08),transparent 62%),
+      radial-gradient(600px 340px at 8% 100%,rgba(185,164,255,.06),transparent 65%),
+      var(--bg-2);
+    display:grid;grid-template-columns:1.18fr .82fr;gap:clamp(28px,5vw,64px);align-items:end;
+    position:relative;overflow:hidden;
+  }
+  .build-band h2{margin:0;font-size:clamp(2.1rem,4.3vw,4.4rem);line-height:1.02;letter-spacing:-.04em;font-weight:400}
+  .build-band h2 em{font-family:var(--serif);font-style:italic;letter-spacing:-.01em}
+  .build-band p{margin:22px 0 0;color:var(--muted);font-size:14px;line-height:1.7;font-weight:300;max-width:620px}
+  .build-side{display:flex;flex-direction:column;gap:0;align-items:flex-start}
+  .build-list{list-style:none;margin:0 0 26px;padding:0;width:100%}
+  .build-list li{
+    padding:11px 0;border-top:1px solid var(--line-soft);
+    font-size:11.5px;color:var(--muted);display:flex;gap:10px;align-items:flex-start;
+  }
+  .build-list li::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--cyan);margin-top:6px;flex:none}
+
+  /* ENGAGEMENT */
+  .tiers{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:clamp(40px,6vw,68px)}
+  .tier{
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:clamp(24px,3.2vw,38px);
+    display:flex;flex-direction:column;
+    background:var(--bg-2);
+    position:relative;overflow:hidden;
+  }
+  .tier.featured{
+    background:
+      radial-gradient(500px 260px at 80% 0%,rgba(143,233,255,.10),transparent 62%),
+      var(--bg-2);
+    border-color:rgba(143,233,255,.28);
+  }
+  .tier-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+  .tier-name{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .tier-price{font-size:clamp(2.2rem,4vw,3.6rem);letter-spacing:-.055em;line-height:1;margin:30px 0 8px}
+  .tier-sub{font-size:13px;color:var(--muted);margin:0}
+  .tier ul{list-style:none;margin:28px 0 32px;padding:0;display:grid;gap:0}
+  .tier li{
+    display:flex;gap:10px;align-items:flex-start;
+    padding:10px 0;border-top:1px solid var(--line-soft);
+    font-size:12px;color:var(--muted);line-height:1.5;
+  }
+  .tier li::before{content:"✓";color:var(--cyan);font-size:10px;line-height:1.7;flex:none}
+  .tier .btn{margin-top:auto;width:100%}
+  .tier-note{margin-top:18px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);text-align:center}
+
+  /* QUESTIONS */
+  .questions{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,40px);margin-top:clamp(40px,6vw,68px)}
+  .question{border-top:1px solid var(--line);padding-top:26px}
+  .question blockquote{
+    margin:0 0 18px;font-family:var(--serif);font-style:italic;
+    font-size:clamp(1.5rem,2.4vw,2.1rem);line-height:1.14;letter-spacing:-.015em;
+  }
+  .question p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.7;font-weight:300}
+  .question code{
+    font-family:var(--mono);font-size:.86em;color:var(--cyan);
+    background:rgba(143,233,255,.06);border:1px solid rgba(143,233,255,.12);
+    padding:1px 5px;border-radius:4px;
+  }
+
+  /* CONTACT */
+  .contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(36px,6vw,88px);align-items:start}
+  .contact-copy p{margin:22px 0 0;color:var(--muted);font-size:15px;line-height:1.7;font-weight:300;max-width:460px}
+  .contact-micro{margin-top:28px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);line-height:1.7}
+  .form{display:grid;grid-template-columns:1fr 1fr;gap:18px 20px}
+  .field{display:flex;flex-direction:column;gap:8px}
+  .field.full{grid-column:1/-1}
+  .field label{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+  .field input,.field select,.field textarea{
+    width:100%;background:transparent;border:0;border-bottom:1px solid var(--line);
+    border-radius:0;color:var(--ink);padding:11px 0;font-size:14px;font-weight:300;
+    outline:none;transition:border-color .2s ease;
+    -webkit-appearance:none;appearance:none;
+  }
+  .field select{
+    background-image:linear-gradient(45deg,transparent 50%,var(--dim) 50%),linear-gradient(135deg,var(--dim) 50%,transparent 50%);
+    background-position:calc(100% - 10px) 18px,calc(100% - 5px) 18px;
+    background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+  }
+  .field select option{background:var(--bg-2);color:var(--ink)}
+  .field input:focus,.field select:focus,.field textarea:focus{border-bottom-color:var(--cyan)}
+  .field textarea{min-height:96px;resize:vertical}
+  .form .btn{grid-column:1/-1;justify-self:start;margin-top:6px}
+  .form-status{grid-column:1/-1;min-height:18px;font-size:11px;color:var(--cyan);letter-spacing:.02em}
+  .form-note{grid-column:1/-1;font-size:10px;color:var(--dim);line-height:1.6}
+
+  /* FOOTER */
+  .footer{border-top:1px solid var(--line);padding:clamp(52px,7vw,80px) 0 28px;position:relative;z-index:1}
+  .footer-grid{display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr;gap:clamp(28px,5vw,60px)}
+  .footer-brand .brand-name{font-size:18px}
+  .footer-tagline{margin:18px 0 0;color:var(--muted);font-size:14px;line-height:1.6;max-width:300px;font-weight:300}
+  .footer-line{margin:22px 0 0;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);line-height:1.9}
+  .footer h4{margin:0 0 16px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);font-weight:500}
+  .footer-col a{display:block;padding:5px 0;font-size:12px;color:var(--muted);transition:color .2s ease}
+  .footer-col a:hover{color:var(--ink)}
+  .footer-bottom{
+    display:flex;justify-content:space-between;gap:24px;align-items:flex-start;
+    margin-top:clamp(40px,6vw,64px);padding-top:22px;border-top:1px solid var(--line-soft);
+    font-size:10px;color:var(--dim);line-height:1.7;
+  }
+  .footer-bottom .legal{max-width:680px}
+
+  /* REVEAL */
+  [data-reveal]{opacity:0;transform:translateY(18px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+  [data-reveal].in{opacity:1;transform:none}
+  [data-reveal][data-delay="1"]{transition-delay:.08s}
+  [data-reveal][data-delay="2"]{transition-delay:.16s}
+  [data-reveal][data-delay="3"]{transition-delay:.24s}
+
+  @keyframes dash{to{stroke-dashoffset:-220}}
+  @keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .thread-anim{stroke-dasharray:9 13;animation:dash 16s linear infinite}
+  .node-pulse{animation:pulse 4.5s ease-in-out infinite}
+  .orb-float{animation:float 12s ease-in-out infinite}
+
+  /* RESPONSIVE */
+  @media (max-width:1100px){
+    .hero-grid{grid-template-columns:1fr .9fr}
+    .team{grid-template-columns:repeat(3,1fr)}
+    .member:nth-child(4),.member:nth-child(5){min-height:260px}
+    .evidence-row{grid-template-columns:44px 1fr 1.25fr 88px}
+  }
+  @media (max-width:960px){
+    .nav-links{
+      position:fixed;left:var(--pad);right:var(--pad);top:72px;
+      background:rgba(10,10,11,.97);border:1px solid var(--line);border-radius:20px;
+      padding:18px;display:none;flex-direction:column;align-items:flex-start;gap:14px;
+      box-shadow:0 30px 80px rgba(0,0,0,.5);
+    }
+    .nav-links.open{display:flex}
+    .nav-links a{font-size:14px}
+    .nav-links .menu-only{display:block;color:var(--ink);margin-top:4px;padding-top:14px;border-top:1px solid var(--line-soft);width:100%}
+    .menu-toggle{display:inline-flex}
+    .nav-cta .btn{display:none}
+    .hero{padding-top:104px;min-height:auto}
+    .hero h1{font-size:clamp(3.3rem,9vw,5.6rem)}
+    .hero-grid{grid-template-columns:1fr;grid-template-rows:auto auto auto;min-height:0;gap:20px}
+    .hero-quote{grid-column:1;grid-row:1;max-width:620px}
+    .hero-visual{grid-column:1;grid-row:2;width:min(100%,560px);margin:0 auto;transform:none}
+    .hero-bottom{grid-column:1;grid-row:3;padding-bottom:0}
+    .hero-scroll{display:none}
+    .about-grid{grid-template-columns:1fr;gap:34px}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .stat{min-height:230px}
+    .cards-2{grid-template-columns:1fr}
+    .card{min-height:0}
+    .contract-strip{grid-template-columns:1fr;gap:10px}
+    .runs{grid-template-columns:1fr}
+    .run{min-height:0}
+    .run h3{margin-top:32px}
+    .evidence-row{grid-template-columns:36px 1fr;gap:10px 16px}
+    .evidence-row p{grid-column:2}
+    .evidence-row .tag-pill{grid-column:2;justify-self:start;margin-top:6px}
+    .team{grid-template-columns:repeat(2,1fr)}
+    .build-band{grid-template-columns:1fr;align-items:start}
+    .tiers{grid-template-columns:1fr}
+    .questions{grid-template-columns:1fr;gap:28px}
+    .contact-grid{grid-template-columns:1fr;gap:44px}
+    .footer-grid{grid-template-columns:1.4fr 1fr 1fr}
+    .footer-brand{grid-column:1/-1}
+  }
+  @media (max-width:600px){
+    .brand-sub{display:none}
+    .hero h1{font-size:clamp(2.9rem,13.4vw,4.6rem)}
+    .hero-quote{font-size:14px}
+    .stats{grid-template-columns:1fr}
+    .stat{min-height:200px}
+    .team{grid-template-columns:1fr}
+    .member{min-height:230px}
+    .form{grid-template-columns:1fr}
+    .field.full,.form .btn,.form-status,.form-note{grid-column:1}
+    .footer-grid{grid-template-columns:1fr 1fr}
+    .footer-bottom{flex-direction:column}
+    .footer-col:last-child{grid-column:1/-1}
+    .section{padding:70px 0}
+    .h2{font-size:clamp(2.1rem,9vw,3.2rem)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+    [data-reveal]{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="Aether home">
+    <svg class="brand-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+      <path d="M20 3 35 11.5v17L20 37 5 28.5v-17L20 3Z" stroke="currentColor" stroke-opacity=".55"/>
+      <path d="M20 9.5 29.5 15v10L20 30.5 10.5 25V15L20 9.5Z" stroke="currentColor" stroke-opacity=".28"/>
+      <circle cx="20" cy="20" r="2.2" fill="#8FE9FF"/>
+      <circle cx="20" cy="9.5" r="1.2" fill="currentColor" fill-opacity=".65"/>
+      <circle cx="29.5" cy="25" r="1.2" fill="currentColor" fill-opacity=".65"/>
+      <circle cx="10.5" cy="25" r="1.2" fill="currentColor" fill-opacity=".65"/>
+    </svg>
+    <span class="brand-text">
+      <span class="brand-name">AETHER</span>
+      <span class="brand-sub">Infrastructure for aerostructures</span>
+    </span>
+  </a>
+
+  <nav class="nav-links" id="nav-links" aria-label="Primary">
+    <a href="#platform">Platform</a>
+    <a href="#contracts">Contracts</a>
+    <a href="#thread">Thread</a>
+    <a href="#proof">Proof</a>
+    <a href="#deployment">Deployment</a>
+    <a href="#contact">Contact</a>
+    <a class="menu-only" href="#contact">Request access ↗</a>
+  </nav>
+
+  <div class="nav-cta">
+    <a class="btn btn-sm" href="#contact">Request access <span aria-hidden="true">↗</span></a>
+    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" id="top">
+    <div class="container">
+      <div class="hero-grid">
+        <blockquote class="hero-quote" data-reveal>
+          <span class="qmark">“</span>An engineering result is not a number. It is a number, its inputs, its toolchain, its uncertainty, and the chain of decisions that produced it. Aether exists to make that chain the default — not an afterthought.<span class="qmark">”</span>
+          <div class="hero-attrib">Aether platform principle</div>
+        </blockquote>
+
+        <div class="hero-visual" aria-hidden="true">
+          <svg class="orb-float" viewBox="0 0 800 800" role="presentation">
+            <defs>
+              <radialGradient id="sphere" cx="36%" cy="30%" r="72%">
+                <stop offset="0%" stop-color="#1b1b1f"/>
+                <stop offset="46%" stop-color="#0c0c0e"/>
+                <stop offset="100%" stop-color="#050505"/>
+              </radialGradient>
+              <linearGradient id="threadGrad" x1="80" y1="300" x2="700" y2="520" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#8FE9FF"/>
+                <stop offset="45%" stop-color="#B9A4FF"/>
+                <stop offset="100%" stop-color="#FFC78A"/>
+              </linearGradient>
+              <linearGradient id="rim" x1="100" y1="120" x2="700" y2="680" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#8FE9FF" stop-opacity=".95"/>
+                <stop offset="42%" stop-color="#B9A4FF" stop-opacity=".25"/>
+                <stop offset="100%" stop-color="#FFC78A" stop-opacity=".75"/>
+              </linearGradient>
+              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="7" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="2.5"/>
+              </filter>
+            </defs>
+
+            <!-- sphere body -->
+            <circle cx="400" cy="400" r="308" fill="url(#sphere)" stroke="rgba(244,242,236,.09)"/>
+            <circle cx="400" cy="400" r="308" fill="none" stroke="url(#rim)" stroke-width="1.1" opacity=".55"/>
+
+            <!-- orbital rings -->
+            <g stroke="rgba(244,242,236,.065)" fill="none">
+              <ellipse cx="400" cy="400" rx="308" ry="112" transform="rotate(-17 400 400)"/>
+              <ellipse cx="400" cy="400" rx="308" ry="196" transform="rotate(31 400 400)"/>
+              <ellipse cx="400" cy="400" rx="196" ry="308" transform="rotate(12 400 400)"/>
+              <ellipse cx="400" cy="400" rx="112" ry="308" transform="rotate(-38 400 400)"/>
+              <circle cx="400" cy="400" r="230"/>
+              <circle cx="400" cy="400" r="158"/>
+            </g>
+
+            <!-- graph edges -->
+            <g stroke="rgba(143,233,255,.13)" stroke-width="1">
+              <path d="M172 300 260 214 390 176 516 218 626 306"/>
+              <path d="M172 300 238 420 330 512 462 548 604 470 626 306"/>
+              <path d="M260 214 238 420M390 176 330 512M516 218 462 548M626 306 604 470"/>
+              <path d="M238 420 400 400 604 470M260 214 400 400 516 218M330 512 400 400 462 548"/>
+            </g>
+
+            <!-- wing rib section -->
+            <g fill="none" stroke="rgba(244,242,236,.34)" stroke-width="1.15">
+              <path d="M244 455C298 366 466 338 566 408c-44 60-214 92-322 47Z"/>
+              <path d="M276 447C322 384 452 360 536 410" stroke="rgba(244,242,236,.18)"/>
+              <path d="M296 438 286 392M334 430 327 376M374 424 369 365M414 421 411 359M454 421 453 359M494 425 496 365M530 432 536 380" stroke="rgba(244,242,236,.16)"/>
+              <path d="M268 410 548 410" stroke="rgba(244,242,236,.12)" stroke-dasharray="3 7"/>
+            </g>
+
+            <!-- digital thread -->
+            <path class="thread-anim" d="M132 326C218 238 306 286 346 382c38 92 128 154 232 132 54-11 92-42 116-78" fill="none" stroke="url(#threadGrad)" stroke-width="2.6" stroke-linecap="round" filter="url(#glow)"/>
+            <path d="M132 326C218 238 306 286 346 382c38 92 128 154 232 132" fill="none" stroke="rgba(143,233,255,.16)" stroke-width="10" stroke-linecap="round" filter="url(#soft)"/>
+
+            <!-- nodes -->
+            <g fill="#F4F2EC">
+              <circle cx="172" cy="300" r="3.2"/><circle cx="260" cy="214" r="2.6"/>
+              <circle cx="390" cy="176" r="2.8"/><circle cx="516" cy="218" r="2.6"/>
+              <circle cx="626" cy="306" r="3.2"/><circle cx="604" cy="470" r="2.6"/>
+              <circle cx="462" cy="548" r="2.8"/><circle cx="330" cy="512" r="2.6"/>
+              <circle cx="238" cy="420" r="2.4"/><circle cx="400" cy="400" r="3.6"/>
+            </g>
+            <g fill="#8FE9FF">
+              <circle cx="132" cy="326" r="4.4" filter="url(#glow)"/>
+              <circle cx="694" cy="436" r="4.4" filter="url(#glow)"/>
+            </g>
+            <g class="node-pulse" fill="#8FE9FF">
+              <circle cx="346" cy="382" r="3"/>
+              <circle cx="578" cy="514" r="3"/>
+            </g>
+
+            <!-- return path -->
+            <path d="M690 486C610 598 452 638 330 596 244 566 186 506 154 436" fill="none" stroke="rgba(255,199,138,.34)" stroke-width="1" stroke-dasharray="2 7" stroke-linecap="round"/>
+            <path d="M154 436l-8-11 13 3" fill="none" stroke="rgba(255,199,138,.6)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+            <!-- rim accents -->
+            <path d="M124 246A308 308 0 0 1 568 110" fill="none" stroke="url(#rim)" stroke-width="2.4" stroke-linecap="round" filter="url(#glow)" opacity=".9"/>
+            <path d="M676 540A308 308 0 0 1 486 696" fill="none" stroke="url(#rim)" stroke-width="1.2" stroke-linecap="round" opacity=".45"/>
+          </svg>
+          <div class="hero-fig">Fig. 01 — The engineering graph</div>
+        </div>
+
+        <div class="hero-bottom">
+          <div class="eyebrow">Infrastructure for aerostructures</div>
+          <h1>
+            <span class="line serif">One graph.</span>
+            <span class="line">Every discipline.</span>
+          </h1>
+          <p class="hero-copy">Aether is modern infrastructure for aerostructures: an air-gapped, hardware-agnostic, vendor-neutral engineering fabric. One Engineering Graph connects the requirement, the geometry, the simulation, the factory plan, the inspection, and the test. One bidirectional digital thread carries the evidence between them.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#platform">Explore the platform
+              <svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M6 4h6v6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="btn" href="#proof">See the proof <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="hero-micro"><span class="dot"></span> Runs offline. Verifies offline. Replays offline.</div>
+        </div>
+
+        <div class="hero-scroll" aria-hidden="true">Scroll to the loop</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-label" data-reveal><span class="bars"><span></span><span></span><span></span><span></span></span> About Aether</div>
+      <div class="about-grid">
+        <h2 class="h2" data-reveal>Aerostructures are not designed by one tool. They are designed by a chain of them — and the chain is where truth gets lost.</h2>
+        <div class="about-copy" data-reveal data-delay="1">
+          <p>Requirements live in one system. Geometry in another. Load cases in a spreadsheet. Meshes in a scratch directory. Results in a report. Manufacturing intent in a PDF. Test evidence in someone's inbox. By the time the aircraft is built, the answer to <strong>“why is this number what it is?”</strong> depends on who is still at the company.</p>
+          <p>Aether replaces that patchwork with <strong>one Engineering Graph</strong> and <strong>one bidirectional digital thread</strong>. It is not a CAD system, a solver, a PLM suite, or a notebook. It runs no production physics engine of its own. It is the connective, governing, and reproducibility layer that makes the tools you already trust interchangeable parts of one auditable engineering process.</p>
+          <div class="status-note">
+            <b>Current build</b>
+            Substrate-complete for Phases 0–2, with the golden path and scientific loop working end to end. Production integrations are the next phase, delivered with design partners. Every capability claim here is tied to a run, a test, or a named open item.
+          </div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <article class="stat" data-reveal>
+          <div class="stat-top"><span>I.</span><span class="arrow">↗</span></div>
+          <div class="stat-mid">
+            <div class="stat-num">19</div>
+            <div class="stat-label">Versioned contracts</div>
+            <div class="stat-desc">Each with a schema, examples, and a conformance suite.</div>
+          </div>
+        </article>
+        <article class="stat" data-reveal data-delay="1">
+          <div class="stat-top"><span>II.</span><span class="arrow">↗</span></div>
+          <div class="stat-mid">
+            <div class="stat-num">12</div>
+            <div class="stat-label">Enforced invariants</div>
+            <div class="stat-desc">Each with a named mechanism that fails the build.</div>
+          </div>
+        </article>
+        <article class="stat" data-reveal data-delay="2">
+          <div class="stat-top"><span>III.</span><span class="arrow">↗</span></div>
+          <div class="stat-mid">
+            <div class="stat-num">11</div>
+            <div class="stat-label">Benchmarks</div>
+            <div class="stat-desc">Every number from actual execution; absent tools skip explicitly.</div>
+          </div>
+        </article>
+        <article class="stat" data-reveal data-delay="3">
+          <div class="stat-top"><span>IV.</span><span class="arrow">↗</span></div>
+          <div class="stat-mid">
+            <div class="stat-num">0</div>
+            <div class="stat-label">Mandatory cloud dependencies</div>
+            <div class="stat-desc">No egress required to build, verify, or replay.</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="platform">
+    <div class="container">
+      <div class="section-label" data-reveal><span class="bars"><span></span><span></span><span></span><span></span></span> The platform</div>
+      <h2 class="h2" data-reveal>Four layers. <em>One source of truth.</em></h2>
+      <p class="lede" data-reveal data-delay="1">Aether is deliberately small at the center and open at the edges. The kernel knows identity, content-addressed storage, graph mechanics, workflow execution, provenance, policy, and plugin lifecycle. Everything domain-specific arrives as a contract-bound plugin.</p>
+
+      <div class="cards-2">
+        <article class="card" data-reveal>
+          <div class="card-top">
+            <span class="card-num">01 / GRAPH</span>
+            <svg class="card-glyph" viewBox="0 0 34 34" fill="none" aria-hidden="true"><circle cx="17" cy="17" r="3" fill="currentColor"/><circle cx="7" cy="8" r="2" stroke="currentColor"/><circle cx="27" cy="8" r="2" stroke="currentColor"/><circle cx="7" cy="26" r="2" stroke="currentColor"/><circle cx="27" cy="26" r="2" stroke="currentColor"/><path d="M9 9.5 15 15M25 9.5 19 15M9 24.5 15 19M25 24.5 19 19" stroke="currentColor" stroke-opacity=".5"/></svg>
+          </div>
+          <h3>Engineering Graph</h3>
+          <p>One typed, event-sourced graph for requirements, systems, parts, geometry revisions, meshes, load cases, results, decisions, process plans, inspections, and tests. Not a folder tree. Not a file share. A queryable record of how the aircraft came to be.</p>
+          <ul class="feature-list">
+            <li>Typed nodes and edges</li>
+            <li>Append-only event log</li>
+            <li>AS-OF replay</li>
+            <li>AQL queries</li>
+          </ul>
+        </article>
+
+        <article class="card" data-reveal data-delay="1">
+          <div class="card-top">
+            <span class="card-num">02 / CONTRACTS</span>
+            <svg class="card-glyph" viewBox="0 0 34 34" fill="none" aria-hidden="true"><rect x="6" y="6" width="9" height="9" rx="1.5" stroke="currentColor"/><rect x="19" y="6" width="9" height="9" rx="1.5" stroke="currentColor"/><rect x="6" y="19" width="9" height="9" rx="1.5" stroke="currentColor"/><rect x="19" y="19" width="9" height="9" rx="1.5" stroke="currentColor"/><path d="M15 10.5h4M10.5 15v4M23.5 15v4M15 23.5h4" stroke="currentColor" stroke-opacity=".5"/></svg>
+          </div>
+          <h3>Contract-bound plugins</h3>
+          <p>Every solver, CAD kernel, mesher, optimizer, and factory system sits behind a versioned contract. Swap the implementation without touching the graph schema or the workflow. The same AWL program runs against whichever plugin satisfies the contract.</p>
+          <ul class="feature-list">
+            <li>19 versioned contracts</li>
+            <li>JSON-RPC over stdio</li>
+            <li>Two-implementation rule</li>
+            <li>Language-agnostic SDK</li>
+          </ul>
+        </article>
+
+        <article class="card" data-reveal>
+          <div class="card-top">
+            <span class="card-num">03 / PROVENANCE</span>
+            <svg class="card-glyph" viewBox="0 0 34 34" fill="none" aria-hidden="true"><path d="M7 24V10l5-3 5 3 5-3 5 3v14l-5 3-5-3-5 3-5-3Z" stroke="currentColor"/><path d="M12 7v14M22 10v14" stroke="currentColor" stroke-opacity=".4"/><circle cx="17" cy="17" r="2" fill="currentColor"/></svg>
+          </div>
+          <h3>Provenance by construction</h3>
+          <p>Every contract call emits a provenance record: actor, tool version, input and output hashes, placement, and the authorization decision that admitted it. Records chain into a SHA-256 Merkle log. Export as PROV-O, or replay the whole project offline.</p>
+          <ul class="feature-list">
+            <li>Hash-chained audit log</li>
+            <li>Environment manifests</li>
+            <li>Signed offline bundles</li>
+            <li>Deterministic replay</li>
+          </ul>
+        </article>
+
+        <article class="card" data-reveal data-delay="1">
+          <div class="card-top">
+            <span class="card-num">04 / EXECUTION</span>
+            <svg class="card-glyph" viewBox="0 0 34 34" fill="none" aria-hidden="true"><rect x="6" y="8" width="22" height="18" rx="2" stroke="currentColor"/><path d="M11 14h4M11 18h7M11 22h3M21 14h2M21 18h2M21 22h2" stroke="currentColor" stroke-opacity=".55"/><path d="M17 4v4M17 26v4" stroke="currentColor" stroke-opacity=".4"/></svg>
+          </div>
+          <h3>Air-gapped execution</h3>
+          <p>Built for restricted networks, sovereign programmes, and factory floors without a cloud. No sockets, no daemon, no telemetry. A plugin is a child process whose entire world is stdin and stdout — which is exactly what survives on a locked-down HPC node.</p>
+          <ul class="feature-list">
+            <li>Egress-free dark build</li>
+            <li>Local, HPC, and edge backends</li>
+            <li>Ed25519 signing</li>
+            <li>TUF-adapted offline trust</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="contract-strip" id="contracts" data-reveal>
+        <div class="contract-strip-label">Contract surface</div>
+        <div class="contract-strip-list">
+          <span>graph.model</span><span>plugin.manifest</span><span>compute.backend</span><span>io.format</span><span>requirement</span><span>geometry.kernel</span><span>geometry.recipe</span><span>mesh.engine</span><span>field.model</span><span>physics.solver</span><span>physics.composable</span><span>uq.method</span><span>si.governor</span><span>optimizer</span><span>surrogate</span><span>twin.estimator</span><span>manufacturing.process</span><span>inspection.device</span><span>test.rig</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="thread">
+    <div class="container">
+      <div class="section-label" data-reveal><span class="bars"><span></span><span></span><span></span><span></span></span> The digital thread</div>
+      <h2 class="h2" data-reveal>From requirement to evidence — <em>and back.</em></h2>
+      <p class="lede" data-reveal data-delay="1">The graph is not a filing cabinet. It is a loop. Measured data from inspection and test flows back as a model update, and the update is linked to the evidence that justified it.</p>
+
+      <div class="loop-wrap" data-reveal>
+        <div class="loop" role="list" aria-label="The engineering closed loop">
+          <div class="loop-step" role="listitem"><span class="idx">01</span><span class="name">Requirement</span><span class="loop-arrow">→</span></div>
+          <div class="loop-step" role="listitem"><span class="idx">02</span><span class="name">System</span><span class="loop-arrow">→</span></div>
+          <div class="loop-step" role="listitem"><span class="idx">03</span><span class="name">Part</span><span class="loop-arrow">→</span></div>
+          <div class="loop-step" role="listitem"><span class="idx">04</span><span class="name">Geometry</span><span class="loop-arrow">→</span></div>
+          <div class="loop-step" role="listitem"><span class="idx">05</span><span class="name">Mesh</span><span class="loop-arrow">→</span></div>
+          <div class="loop-step" role="listitem"><span class="idx">06</span><span class="name">Simulation</span><span class="loop-arrow">→</span></div>
+          <div class="loop-step" role="listitem"><span class="idx">07</span><span class="name">Result</span><span class="loop-arrow">→</span></div>
+          <div class="loop-step" role="listitem"><span class="idx">08</span><span class="name">Optimization</span><span class="loop-arrow">→</span></div>
+          <div class="loop-step" role="listitem"><span class="idx">09</span><span class="name">Manufacture</span><span class="loop-arrow">→</span></div>
+          <div class="loop-step" role="listitem"><span class="idx">10</span><span class="name">Inspection</span><span class="loop-arrow">→</span></div>
+          <div class="loop-step" role="listitem"><span class="idx">11</span><span class="name">Test</span><span class="loop-arrow">→</span></div>
+          <div class="loop-step" role="listitem"><span class="idx">12</span><span class="name">Model update</span><span class="loop-arrow">↺</span></div>
+        </div>
+        <div class="loop-caption">Every link is a typed node or edge. Every transition carries provenance.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="proof">
+    <div class="container">
+      <div class="section-label" data-reveal><span class="bars"><span></span><span></span><span></span><span></span></span> Reference runs</div>
+      <h2 class="h2" data-reveal>The closed loop, <em>not a slide.</em></h2>
+      <p class="lede" data-reveal data-delay="1">Aether is proven by runs, not claims. These reference loops execute offline on the bundled implementations. Every number is produced by the code that just ran.</p>
+
+      <div class="runs">
+        <article class="run" data-reveal>
+          <div class="run-tag">01 / UAV WING RIB</div>
+          <svg class="run-glyph" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+            <path d="M10 48c8-16 36-23 60-10-8 16-42 24-60 10Z" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M22 46l-3-10M32 43l-3-11M42 41l-2-12M52 41l1-12M62 44l2-11" stroke="currentColor" stroke-opacity=".45"/>
+            <path d="M10 48C28 29 52 25 70 38" stroke="currentColor" stroke-opacity=".3" stroke-dasharray="2 4"/>
+            <circle cx="10" cy="48" r="2" fill="currentColor"/><circle cx="70" cy="38" r="2" fill="currentColor"/>
+          </svg>
+          <h3>Requirement to model update, in one chain.</h3>
+          <p>R-STR-011 requires the rib to sustain 1.5 limit load factor across −1g to +4g with no failure. The run traces requirement → system → part → geometry revision → material → load case → simulation → result → optimization → process plan → physical part → inspection → test → measurement dataset → model update → evidence. Nothing is re-keyed. Nothing is orphaned.</p>
+          <dl class="run-meta">
+            <div><dt>Domain</dt><dd>UAV wing rib</dd></div>
+            <div><dt>Chain</dt><dd>14 artifacts</dd></div>
+            <div><dt>Verdict</dt><dd>graph-recorded</dd></div>
+          </dl>
+        </article>
+
+        <article class="run" data-reveal data-delay="1">
+          <div class="run-tag">02 / STRUCTURAL SIZING</div>
+          <svg class="run-glyph" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+            <path d="M10 62h16v-9h16v-9h18" stroke="currentColor" stroke-width="1.2"/>
+            <circle cx="10" cy="62" r="2" fill="currentColor"/><circle cx="26" cy="53" r="2" fill="currentColor"/><circle cx="42" cy="44" r="2" fill="currentColor"/><circle cx="60" cy="35" r="2" fill="#8FE9FF"/>
+            <path d="M58 18l12 12M70 18 58 30" stroke="currentColor" stroke-opacity=".45"/>
+          </svg>
+          <h3>Fidelity that escalates when it must.</h3>
+          <p>The SI governor reads uncertainty, margin proximity, and decision sensitivity, then decides whether to stay or escalate. When it escalates, the workflow re-executes the quantity of interest at the next fidelity rung and records the measured model-form difference — not an assumed one.</p>
+          <dl class="run-meta">
+            <div><dt>Contract</dt><dd>si.governor</dd></div>
+            <div><dt>Decision</dt><dd>graph node</dd></div>
+            <div><dt>Verdict</dt><dd>measured difference</dd></div>
+          </dl>
+        </article>
+
+        <article class="run" data-reveal data-delay="2">
+          <div class="run-tag">03 / AS-BUILT TWIN</div>
+          <svg class="run-glyph" viewBox="0 0 80 80" fill="none" aria-hidden="true">
+            <path d="M12 62V40M20 62V52M28 62V38M36 62V30M44 62V42M52 62V26M60 62V46M68 62V34" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10 66h60" stroke="currentColor" stroke-opacity=".3"/>
+            <circle cx="20" cy="52" r="3" fill="#8FE9FF"/>
+          </svg>
+          <h3>A twin that finds the weak station.</h3>
+          <p>An 8-station spanwise stiffness distribution is estimated over a real beam FEM. The observation matrix is measured by finite differences, not asserted. A localized root-region deficit is recovered to 2.4/3.8% while healthy stations return to ~1.0 — 3.4× tighter than any uniform scale factor.</p>
+          <dl class="run-meta">
+            <div><dt>Domain</dt><dd>Digital twin</dd></div>
+            <div><dt>Data</dt><dd>SYNTHETIC, labeled</dd></div>
+            <div><dt>Verdict</dt><dd>3.4× better than scalar</dd></div>
+          </dl>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="evidence">
+    <div class="container">
+      <div class="section-label" data-reveal><span class="bars"><span></span><span></span><span></span><span></span></span> What the build enforces</div>
+      <h2 class="h2" data-reveal>Evidence, <em>not adjectives.</em></h2>
+      <p class="lede" data-reveal data-delay="1">Aether treats its own architectural claims as testable. These are not principles on a wall. They are checks that fail the build.</p>
+
+      <div class="evidence">
+        <div class="evidence-row" data-reveal>
+          <div class="num">I.</div>
+          <h3>Two implementations, or it isn't a contract.</h3>
+          <p>No contract is stable until two independent implementations pass the same conformance suite. Three real physics implementations are verified today, and two are cross-checked against each other. One implementation only proves a vendor's accident.</p>
+          <span class="tag-pill">ADR-0022</span>
+        </div>
+        <div class="evidence-row" data-reveal>
+          <div class="num">II.</div>
+          <h3>No network. No exceptions.</h3>
+          <p>A 24-step dark build compiles, tests, and verifies the entire substrate with zero egress. Air-gap is not a deployment option; it is the build environment.</p>
+          <span class="tag-pill">I-5</span>
+        </div>
+        <div class="evidence-row" data-reveal>
+          <div class="num">III.</div>
+          <h3>Fidelity is a field, not a claim.</h3>
+          <p>Every result carries <code>fidelity_class</code> and <code>uncertainty</code>. A solver that cannot verify convergence cannot label a result high-fidelity.</p>
+          <span class="tag-pill">I-7</span>
+        </div>
+        <div class="evidence-row" data-reveal>
+          <div class="num">IV.</div>
+          <h3>The log is the audit.</h3>
+          <p>Every event carries the authorization decision that admitted it and a SHA-256 link to the event before it. Tamper with history and the chain says so.</p>
+          <span class="tag-pill">I-8</span>
+        </div>
+        <div class="evidence-row" data-reveal>
+          <div class="num">V.</div>
+          <h3>Reproducibility is executable.</h3>
+          <p>Export a sovereign bundle, move it to an air-gapped machine, replay it. The recorded results re-execute from pinned inputs and tool versions.</p>
+          <span class="tag-pill">I-9</span>
+        </div>
+        <div class="evidence-row" data-reveal>
+          <div class="num">VI.</div>
+          <h3>Failure is loud.</h3>
+          <p>Typed errors. Fatal contract violations. Divergence aborts. A silently wrong answer is the only unacceptable outcome.</p>
+          <span class="tag-pill">I-12</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="disciplines">
+    <div class="container">
+      <div class="section-label" data-reveal><span class="bars"><span></span><span></span><span></span><span></span></span> The disciplines</div>
+      <h2 class="h2" data-reveal>Small kernel. <em>Serious surface.</em></h2>
+      <p class="lede" data-reveal data-delay="1">Aether is built by a small platform team and an expanding contract surface. These are the disciplines that keep it honest.</p>
+
+      <div class="team">
+        <article class="member" data-reveal>
+          <div class="monogram">KR</div>
+          <h3>Kernel &amp; runtime</h3>
+          <p>Identity, content-addressed storage, graph mechanics, workflow execution, and plugin lifecycle. The center stays under budget so the edges can grow.</p>
+        </article>
+        <article class="member" data-reveal data-delay="1">
+          <div class="monogram">CC</div>
+          <h3>Contracts &amp; conformance</h3>
+          <p>Versioned schemas, conformance suites, and the two-implementation rule. The contract is the product.</p>
+        </article>
+        <article class="member" data-reveal data-delay="2">
+          <div class="monogram">PN</div>
+          <h3>Physics &amp; numerics</h3>
+          <p>Reference solvers, uncertainty quantification, optimization, surrogates, and twins — checked against closed-form solutions before they are trusted.</p>
+        </article>
+        <article class="member" data-reveal data-delay="3">
+          <div class="monogram">PS</div>
+          <h3>Provenance &amp; security</h3>
+          <p>Hash chains, Ed25519 signing, policy decisions recorded on the events they admit, and an offline trust model that never phones home.</p>
+        </article>
+        <article class="member" data-reveal data-delay="3">
+          <div class="monogram">CO</div>
+          <h3>Certification &amp; operations</h3>
+          <p>Evidence dossiers, environment manifests, site installs, and replay. The work of making a result defensible years later.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="build">
+    <div class="container">
+      <div class="section-label" data-reveal><span class="bars"><span></span><span></span><span></span><span></span></span> Build on Aether</div>
+      <div class="build-band" data-reveal>
+        <div>
+          <h2>Bring your solver. <em>Keep your truth.</em></h2>
+          <p>Aether is designed to be extended, not adopted wholesale. If you build a CAD connector, a solver, a factory cell, a certification workflow, or a surrogate model, the contract surface is where you plug in. Your implementation can be replaced. That is the point — and it is also the guarantee that your work is judged on capability, not lock-in.</p>
+        </div>
+        <div class="build-side">
+          <ul class="build-list">
+            <li>Reference plugins are Python today. The protocol is language-blind.</li>
+            <li>Signed bundles install offline.</li>
+            <li>Conformance is the entry ticket.</li>
+          </ul>
+          <a class="btn btn-primary" href="#contact">Request the plugin SDK
+            <svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M6 4h6v6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="deployment">
+    <div class="container">
+      <div class="section-label" data-reveal><span class="bars"><span></span><span></span><span></span><span></span></span> Engagement</div>
+      <h2 class="h2" data-reveal>Start with a run, <em>not a slide deck.</em></h2>
+      <p class="lede" data-reveal data-delay="1">Aether is deployed as a site capability, not a seat license. Every engagement begins with an offline run on your problem and a verifiable evidence bundle.</p>
+
+      <div class="tiers">
+        <article class="tier" data-reveal>
+          <div class="tier-top"><span class="tier-name">Evaluate</span><span class="tag-pill">01</span></div>
+          <div class="tier-price">Offline</div>
+          <p class="tier-sub">For a first honest run.</p>
+          <ul>
+            <li>Install and <code>aether doctor</code></li>
+            <li>Five deterministic demos</li>
+            <li>Benchmark suite, 11 (explicit skips)</li>
+            <li>Evidence export with graph-chain verdict</li>
+            <li>Architecture review session</li>
+          </ul>
+          <a class="btn" href="#contact">Request an evaluation <span aria-hidden="true">↗</span></a>
+        </article>
+
+        <article class="tier featured" data-reveal data-delay="1">
+          <div class="tier-top"><span class="tier-name">Deploy</span><span class="tag-pill">02</span></div>
+          <div class="tier-price">Site-scoped</div>
+          <p class="tier-sub">For a site that needs its own truth.</p>
+          <ul>
+            <li>Air-gapped site install</li>
+            <li>Environment manifest and strict verification</li>
+            <li>Policy, RBAC, and signed plugin bundles</li>
+            <li>Design-partner integrations: CAD, solver, factory, test</li>
+            <li>Certification evidence workflow</li>
+          </ul>
+          <a class="btn btn-primary" href="#contact">Scope a deployment
+            <svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M6 4h6v6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </article>
+      </div>
+      <div class="tier-note">From a single workstation to an HPC allocation. Pricing follows scope, not seats.</div>
+    </div>
+  </section>
+
+  <section class="section" id="questions">
+    <div class="container">
+      <div class="section-label" data-reveal><span class="bars"><span></span><span></span><span></span><span></span></span> The three questions</div>
+      <h2 class="h2" data-reveal>What a result <em>has to survive.</em></h2>
+
+      <div class="questions">
+        <article class="question" data-reveal>
+          <blockquote>“Can I reproduce it?”</blockquote>
+          <p>Export the project, move it to an air-gapped machine, replay it. The recorded results re-execute from pinned inputs and tool versions.</p>
+        </article>
+        <article class="question" data-reveal data-delay="1">
+          <blockquote>“Why should I trust this number?”</blockquote>
+          <p><code>aether explain</code> returns the value, units, analytical reference, relative error, fidelity class, validation status, and the plugin that produced it.</p>
+        </article>
+        <article class="question" data-reveal data-delay="2">
+          <blockquote>“Can I replace this tool?”</blockquote>
+          <p>The graph schema and the workflow definition do not change when the implementation does. That is what the contract is for.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="section-label" data-reveal><span class="bars"><span></span><span></span><span></span><span></span></span> Let's connect</div>
+      <div class="contact-grid">
+        <div class="contact-copy" data-reveal>
+          <h2 class="h2">Start <em>the thread.</em></h2>
+          <p>Tell us what you are building, what tools you cannot replace, and what your deployment constraint is. We will reply with a technical path — not a brochure.</p>
+          <div class="contact-micro">No newsletter. No drip sequence.<br />A person who has read the architecture.</div>
+        </div>
+
+        <form class="form" id="contact-form" data-reveal data-delay="1" novalidate>
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="email">Work email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="field full">
+            <label for="org">Organisation</label>
+            <input id="org" name="org" type="text" autocomplete="organization" />
+          </div>
+          <div class="field">
+            <label for="discipline">Discipline</label>
+            <select id="discipline" name="discipline">
+              <option value="">Select</option>
+              <option>Airframe</option>
+              <option>Structures</option>
+              <option>Aerodynamics</option>
+              <option>Manufacturing</option>
+              <option>Test</option>
+              <option>Certification</option>
+              <option>Platform</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="deployment-select">Deployment</label>
+            <select id="deployment-select" name="deployment">
+              <option value="">Select</option>
+              <option>Air-gapped</option>
+              <option>On-prem</option>
+              <option>HPC</option>
+              <option>Edge</option>
+              <option>Cloud-adjacent</option>
+              <option>Not sure</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="message">What needs to connect?</label>
+            <textarea id="message" name="message" rows="3" placeholder="Tools, disciplines, deployment constraints…"></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">Start the thread
+            <svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M6 4h6v6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+          <div class="form-note">This design preview does not transmit data. Connect the form endpoint before launch.</div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer" id="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="#top" aria-label="Aether home">
+          <svg class="brand-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+            <path d="M20 3 35 11.5v17L20 37 5 28.5v-17L20 3Z" stroke="currentColor" stroke-opacity=".55"/>
+            <path d="M20 9.5 29.5 15v10L20 30.5 10.5 25V15L20 9.5Z" stroke="currentColor" stroke-opacity=".28"/>
+            <circle cx="20" cy="20" r="2.2" fill="#8FE9FF"/>
+            <circle cx="20" cy="9.5" r="1.2" fill="currentColor" fill-opacity=".65"/>
+            <circle cx="29.5" cy="25" r="1.2" fill="currentColor" fill-opacity=".65"/>
+            <circle cx="10.5" cy="25" r="1.2" fill="currentColor" fill-opacity=".65"/>
+          </svg>
+          <span class="brand-text"><span class="brand-name">AETHER</span></span>
+        </a>
+        <p class="footer-tagline">Modern infrastructure for aerostructures.</p>
+        <p class="footer-line">Air-gapped by design.<br />Reproducible by construction.<br />Evidence by default.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <a href="#platform">Engineering Graph</a>
+        <a href="#contracts">Contracts</a>
+        <a href="#thread">Workflows</a>
+        <a href="#deployment">Deployment</a>
+      </div>
+      <div class="footer-col">
+        <h4>Proof</h4>
+        <a href="#proof">Benchmarks</a>
+        <a href="#evidence">Architecture</a>
+        <a href="#evidence">Invariants</a>
+        <a href="#about">Status</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="#contact">Request access</a>
+        <a href="#build">Plugin SDK</a>
+        <a href="#platform">Documentation</a>
+        <a href="#footer">License</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="legal">© 2026 Aether Platform Team. Aether is distributed under the Aether Proprietary License (Crocell-Proprietary). Authorised recipients only.</div>
+      <div>Phase 0–2 · substrate, golden path, scientific loop</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    const nav = document.getElementById('nav');
+    const toggle = document.getElementById('menu-toggle');
+    const links = document.getElementById('nav-links');
+
+    function onScroll(){
+      if (window.scrollY > 24) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    }
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    if (toggle && links) {
+      toggle.addEventListener('click', function(){
+        const open = links.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.textContent = open ? 'Close' : 'Menu';
+      });
+      links.querySelectorAll('a').forEach(function(a){
+        a.addEventListener('click', function(){
+          links.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+          toggle.textContent = 'Menu';
+        });
+      });
+    }
+
+    const reveals = document.querySelectorAll('[data-reveal]');
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
+      reveals.forEach(function(el){ io.observe(el); });
+    } else {
+      reveals.forEach(function(el){ el.classList.add('in'); });
+    }
+
+    const form = document.getElementById('contact-form');
+    const status = document.getElementById('form-status');
+    if (form) {
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        const name = form.querySelector('#name');
+        const email = form.querySelector('#email');
+        if (!name.value.trim() || !email.value.trim()) {
+          status.textContent = 'Add a name and a work email so we know who we are replying to.';
+          (!name.value.trim() ? name : email).focus();
+          return;
+        }
+        status.textContent = 'Design preview only — connect the form endpoint to send this.';
+      });
+    }
+  })();
+</script>
+</body>
+</html>

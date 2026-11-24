@@ -1,0 +1,16 @@
+{
+  "type_id": "verified_by",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "Requirement",
+    "Product",
+    "Assembly",
+    "Part"
+  ],
+  "target_types": [
+    "VerificationCase",
+    "TestRun",
+    "Evidence"
+  ]
+}

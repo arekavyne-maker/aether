@@ -1,0 +1,21 @@
+{
+  "contract_id": "aether.model-card",
+  "version": "0.1.0",
+  "title": "Aether Model Card",
+  "description": "Model identity, intended and prohibited use, validity envelope, lineage, metrics, OOD handling, and approval state (ADR-0029).",
+  "methods": ["register", "promote", "check_envelope", "rollback"],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/model-card/schema/model-card.schema.json",
+      "path": "schema/model-card.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "model_lifecycle", "version": "0.1.0", "closed": true, "values": ["research", "benchmarked", "independently_validated", "approved", "deprecated"] }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

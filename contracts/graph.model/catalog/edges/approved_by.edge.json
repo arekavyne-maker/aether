@@ -1,0 +1,15 @@
+{
+  "type_id": "approved_by",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "Evidence",
+    "ConfigurationSnapshot",
+    "ReleasePackage",
+    "ChangeRequest",
+    "RepairDisposition"
+  ],
+  "target_types": [
+    "ReviewDecision"
+  ]
+}

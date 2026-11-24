@@ -227,6 +227,12 @@ fn benchmarks_execute_for_real() {
     assert!(stdout.contains("AETHER-BENCH-01"), "BENCH-01 missing");
     assert!(stdout.contains("AETHER-BENCH-08"), "BENCH-08 missing");
     assert!(stdout.contains("PASS"), "no PASS lines in benchmark output");
+    // Optional tools must not turn the suite into a false failure. If
+    // CalculiX is absent the benchmark is reported as SKIP, not FAIL.
+    assert!(
+        !stdout.lines().any(|l| l.starts_with("FAIL")),
+        "benchmark suite reported a hard failure: {stdout}"
+    );
 }
 
 /// H3 / DEMO 3: the golden path project exports as a self-verifying bundle

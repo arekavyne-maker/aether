@@ -1,0 +1,37 @@
+{
+  "type_id": "Sensor",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": false,
+  "allowed_states": [
+    "active",
+    "retired"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status",
+      "kind"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "active",
+          "retired"
+        ]
+      },
+      "kind": {
+        "type": "string"
+      },
+      "frame": {
+        "type": "string"
+      }
+    }
+  }
+}

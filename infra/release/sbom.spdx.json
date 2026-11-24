@@ -1,15 +1,25 @@
 {
   "SPDXID": "SPDXRef-DOCUMENT",
   "creationInfo": {
-    "created": "2026-09-12T08:09:57.639958+00:00",
+    "created": "2026-11-24T12:09:32.919612+00:00",
     "creators": [
       "Tool: aether-fitness-pipeline-0.1.0"
     ]
   },
   "dataLicense": "CC0-1.0",
-  "documentNamespace": "https://aether.local/sbom/aether-platform-2026-09-12",
+  "documentNamespace": "https://aether.local/sbom/aether-platform-2026-11-24",
   "name": "aether-platform",
   "packages": [
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_artifacts",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_asm",
+      "versionInfo": "0.1.0"
+    },
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_cli",
@@ -28,6 +38,11 @@
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_envman",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_evidence",
       "versionInfo": "0.1.0"
     },
     {
@@ -53,6 +68,11 @@
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_provenance",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_quantities",
       "versionInfo": "0.1.0"
     },
     {

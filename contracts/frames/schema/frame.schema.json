@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/frames/schema/frame.schema.json",
+  "title": "Aether Coordinate Frame",
+  "type": "object",
+  "required": ["id", "transform", "handedness"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "parent": {"type": "string"},
+    "transform": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4,
+        "items": {"type": "number"}
+      },
+      "description": "Row-major 4x4 homogeneous transform from this frame to its parent."
+    },
+    "handedness": {"type": "string", "enum": ["right", "left"]},
+    "valid_from": {"type": "string"},
+    "valid_to": {"type": "string"},
+    "provenance": {"type": "string"}
+  }
+}

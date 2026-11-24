@@ -1,0 +1,14 @@
+{
+  "type_id": "built_as",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "ProcessPlan",
+    "AsBuiltConfiguration"
+  ],
+  "target_types": [
+    "BuildRecord",
+    "AsBuiltConfiguration",
+    "Part"
+  ]
+}

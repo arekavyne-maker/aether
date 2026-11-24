@@ -29,13 +29,22 @@ This directory contains **Architecture Decision Records** for the Aether platfor
 | [ADR-0022](0022-two-implementation-rule.md) | Two-implementation rule for contract stability | Accepted | §5.8 |
 | [ADR-0023](0023-air-gap-egress-free-ci.md) | Egress-free "dark build" CI runner | Accepted | §19.5 |
 | [ADR-0024](0024-siu-autonomy-classes.md) | SI autonomy classes A0–A4 | Accepted | §8.5 |
+| [ADR-0025](0025-typed-quantities-and-frames.md) | Typed quantities and coordinate frames | Proposed | A3-I16 |
+| [ADR-0026](0026-asm-semantic-layer.md) | Aerospace Systems Model as a semantic layer | Proposed | A3-I03 |
+| [ADR-0027](0027-artifact-registry-boundary.md) | Artifact registry as a separate boundary | Proposed | A3-I06 |
+| [ADR-0028](0028-evidence-ledger-and-gates.md) | Evidence ledger and release gates | Proposed | A3-I02 |
+| [ADR-0029](0029-model-registry-governance.md) | Model registry and model-card governance | Proposed | A3-I10 |
+| [ADR-0030](0030-configuration-snapshots.md) | Configuration snapshots bind runs to revisions | Proposed | A3-I03 |
+| [ADR-0031](0031-standards-as-adapters.md) | Standards are adapters, not the internal schema | Proposed | A3-I08 |
+| [ADR-0032](0032-plugin-sandbox.md) | Plugin sandbox and capability enforcement | Proposed | A3-I13 |
+| [ADR-0033](0033-agent-runtime-boundary.md) | Agent runtime is bounded and proposal-only | Proposed | A3-I21 |
 
 ## Conventions
 
 - **Format:** see [ADR-0000](0000-record-format.md)
 - **Status values:** `Proposed` · `Accepted` · `Superseded` · `Deprecated`
 - **Immutability:** once `Accepted`, the file is not edited; create a new ADR that supersedes it
-- **Linking:** ADRs cross-reference invariants (§2), sections in [SDP.md](../../../SDP.md), and other ADRs
+- **Linking:** ADRs cross-reference invariants (§2), the target architecture in [AETHER-3.0.md](../../docs/architecture/AETHER-3.0.md), and other ADRs
 
 ## Writing a new ADR
 

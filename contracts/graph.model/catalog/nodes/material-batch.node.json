@@ -1,0 +1,40 @@
+{
+  "type_id": "MaterialBatch",
+  "version": "1.0.0",
+  "revisioned": false,
+  "immutable": true,
+  "allowed_states": [
+    "released",
+    "retired"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status",
+      "lot"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "active",
+          "released",
+          "superseded",
+          "retired"
+        ]
+      },
+      "lot": {
+        "type": "string"
+      },
+      "material": {
+        "type": "string"
+      }
+    }
+  }
+}

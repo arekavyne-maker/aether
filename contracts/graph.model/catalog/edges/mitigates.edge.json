@@ -1,0 +1,14 @@
+{
+  "type_id": "mitigates",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "RepairDisposition",
+    "ReviewDecision"
+  ],
+  "target_types": [
+    "Nonconformance",
+    "ComplianceFinding",
+    "DamageEvent"
+  ]
+}

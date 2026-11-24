@@ -1,0 +1,26 @@
+{
+  "contract_id": "aether.frames",
+  "version": "0.1.0",
+  "title": "Aether Coordinate Frames",
+  "description": "Named coordinate frames, rigid transforms, handedness, validity, and transform provenance (ADR-0025).",
+  "methods": ["define", "transform_point", "transform_vector", "compose", "verify"],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/frames/schema/frame.schema.json",
+      "path": "schema/frame.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/frames/schema/frame-graph.schema.json",
+      "path": "schema/frame-graph.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    { "namespace": "handedness", "version": "0.1.0", "closed": true, "values": ["right", "left"] }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

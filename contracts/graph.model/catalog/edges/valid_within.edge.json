@@ -1,0 +1,15 @@
+{
+  "type_id": "valid_within",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "Model",
+    "SurrogateModel",
+    "Result"
+  ],
+  "target_types": [
+    "EnvironmentCase",
+    "LoadCase",
+    "ConfigurationSnapshot"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "type_id": "BuildRecord",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": false,
+  "allowed_states": [
+    "draft",
+    "released",
+    "superseded"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status",
+      "process_plan"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "active",
+          "released",
+          "superseded",
+          "retired"
+        ]
+      },
+      "process_plan": {
+        "type": "string"
+      },
+      "as_built": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  }
+}

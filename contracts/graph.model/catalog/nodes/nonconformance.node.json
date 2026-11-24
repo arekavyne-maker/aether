@@ -1,0 +1,46 @@
+{
+  "type_id": "Nonconformance",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": false,
+  "allowed_states": [
+    "draft",
+    "active",
+    "retired"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status",
+      "severity"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "active",
+          "released",
+          "superseded",
+          "retired"
+        ]
+      },
+      "severity": {
+        "type": "string",
+        "enum": [
+          "minor",
+          "major",
+          "critical"
+        ]
+      },
+      "disposition": {
+        "type": "string"
+      }
+    }
+  }
+}

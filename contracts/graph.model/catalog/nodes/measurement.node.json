@@ -1,0 +1,39 @@
+{
+  "type_id": "Measurement",
+  "version": "1.0.0",
+  "revisioned": false,
+  "immutable": true,
+  "allowed_states": [
+    "released"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status",
+      "sensor",
+      "value"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "released"
+        ]
+      },
+      "sensor": {
+        "type": "string"
+      },
+      "value": {
+        "type": "number"
+      },
+      "unit": {
+        "type": "string"
+      }
+    }
+  }
+}

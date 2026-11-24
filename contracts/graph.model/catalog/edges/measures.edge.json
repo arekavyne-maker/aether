@@ -1,0 +1,14 @@
+{
+  "type_id": "measures",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "Sensor",
+    "MeasurementDataset",
+    "TestRun"
+  ],
+  "target_types": [
+    "Measurement",
+    "Result"
+  ]
+}

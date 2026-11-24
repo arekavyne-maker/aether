@@ -22,7 +22,7 @@ from pathlib import Path
 SEMVER = re.compile(
     r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$"
 )
-CONTRACT_ID = re.compile(r"^aether(\.[a-z0-9]+)+$")
+CONTRACT_ID = re.compile(r"^aether(\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$")
 
 
 def check(repo_root: Path) -> "CheckResult":  # type: ignore[name-defined]

@@ -34,6 +34,7 @@ class CheckResult:
     ok: bool
     summary: str
     details: list[str]
+    skipped: bool = False
 
 
 def run_loc_budget() -> CheckResult:
@@ -76,6 +77,21 @@ def run_fuzz_contracts() -> CheckResult:
     return check(REPO_ROOT)
 
 
+def run_docs_links() -> CheckResult:
+    from docs_links import check
+    return check(REPO_ROOT)
+
+
+def run_traceability() -> CheckResult:
+    from traceability import check
+    return check(REPO_ROOT)
+
+
+def run_claim_scan() -> CheckResult:
+    from claim_scan import check
+    return check(REPO_ROOT)
+
+
 CHECKS = {
     "loc_budget": run_loc_budget,
     "token_scan": run_token_scan,
@@ -85,6 +101,9 @@ CHECKS = {
     "ccx_binary": run_ccx_binary,
     "rosetta_cross_arch": run_rosetta_cross_arch,
     "fuzz_contracts": run_fuzz_contracts,
+    "docs_links": run_docs_links,
+    "traceability": run_traceability,
+    "claim_scan": run_claim_scan,
 }
 
 
@@ -131,6 +150,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 {
                     "name": r.name,
                     "ok": r.ok,
+                    "skipped": r.skipped,
                     "summary": r.summary,
                     "details": r.details,
                 }
@@ -140,16 +160,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(json.dumps(report, indent=2))
     else:
         for r in results:
-            mark = "OK " if r.ok else "FAIL"
+            mark = "SKIP" if r.skipped else ("OK " if r.ok else "FAIL")
             print(f"[{mark}] {r.name}: {r.summary}")
             for d in r.details:
                 print(f"       {d}")
 
-    failed = [r for r in results if not r.ok]
+    failed = [r for r in results if not r.ok and not r.skipped]
+    skipped = [r for r in results if r.skipped]
     if failed:
         print(f"\n{len(failed)}/{len(results)} checks failed.", file=sys.stderr)
         return 1
-    print(f"\n{len(results)}/{len(results)} checks passed.")
+    suffix = f" ({len(skipped)} skipped: optional dependency absent)" if skipped else ""
+    print(f"\n{len(results)}/{len(results)} checks passed{suffix}.")
     return 0
 
 
