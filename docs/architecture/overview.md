@@ -2,8 +2,9 @@
 
 Aether is an air-gapped, hardware-agnostic, fully modular engineering
 fabric for emerging aerostructures. It is a microkernel platform on
-which 19 contracts (graph, physics, geometry, mesh, optimizer,
-surrogate, twin, manufacturing, inspection, test, UQ, SI, policy, ...)
+which 24 contracts (graph, physics, geometry, mesh, optimizer,
+surrogate, twin, manufacturing, inspection, test, UQ, SI, policy,
+quantities, frames, ASM, evidence, model cards, ...)
 are implemented as independently-installable plugins.
 
 ## Twelve invariants (the constitution)
@@ -38,7 +39,7 @@ implementations *around* the graph, not the other way around.
 
 Every node has a UUIDv7 identity; every artifact is content-addressed
 (SHA-256). Replays are deterministic; AS-OF queries return the graph
-at any past event offset. The 19 contracts include the
+at any past event offset. The 24 contracts include the
 `aether.graph.model` schema (G0) which the kernel enforces on every
 graph mutation.
 
@@ -58,7 +59,7 @@ plugin. Plugins speak newline-delimited JSON-RPC 2.0 over stdio
 (ADR-0015) and never receive raw DB credentials or graph write
 access — they only get scoped, signed `RunToken`s.
 
-## The contract surface (19 contracts)
+## The contract surface (24 contracts)
 
 Every capability in Aether is a contract. Each contract declares
 its methods, its example documents, and its conformance fixtures.

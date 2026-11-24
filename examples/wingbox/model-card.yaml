@@ -1,0 +1,43 @@
+# Phase 6 model card for the wing-box deflection surrogate.
+model:
+  id: surrogate-wingbox-deflection
+  version: 0.2.0
+  name: Wing-box tip-deflection surrogate
+  intended_use: >-
+    Linear-elastic screening of metallic wing-box tip deflection inside the
+    declared envelope, as a precursor to a full FEM run.
+  prohibited_use:
+    - Certification credit
+    - Composite failure prediction
+    - Post-buckling response
+  validity_envelope:
+    span_m: "0.5 .. 12.0"
+    tip_load_kN: "1 .. 100"
+    material: "Al-2024-T3"
+  evidence:
+    - id: ev-ver-01
+      class: verification
+      subject_version: 0.2.0
+      status: current
+      independent: false
+    - id: ev-val-01
+      class: validation
+      subject_version: 0.2.0
+      status: current
+      independent: true
+    - id: ev-bench-01
+      class: benchmark
+      subject_version: 0.2.0
+      status: current
+      independent: true
+  approved_by: null
+  state: candidate
+gate:
+  required:
+    - verification
+    - validation
+    - benchmark
+  require_independent_validation: true
+  authorized_roles:
+    - chief-engineer
+    - model-governance-board

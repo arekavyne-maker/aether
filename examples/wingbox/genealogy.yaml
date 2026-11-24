@@ -1,0 +1,61 @@
+# Phase 3 manufacturing genealogy for the wing-box rib demonstrator.
+builds:
+  - id: build-rib07-001
+    part_id: rib-07
+    design_revision: 2
+    process_plan_id: pp-rib-07
+    process_plan_revision: 3
+    material_lots:
+      - lot: LOT-AL24-1042
+        material: Al-2024-T3
+        certificate_hash: "0000000000000000000000000000000000000000000000000000000000000011"
+    operator_qualification: op-qual-cnc-07
+    critical_process: true
+    inspections:
+      - id: insp-001-cmm
+        method: cmm
+        result: pass
+    nonconformances: []
+    as_built_revision: 2
+    built_at: 2026-11-20T09:00:00Z
+  - id: build-rib07-002
+    part_id: rib-07
+    design_revision: 1
+    process_plan_id: pp-rib-07
+    process_plan_revision: 2
+    material_lots:
+      - lot: LOT-AL24-1031
+        material: Al-2024-T3
+    operator_qualification: op-qual-cnc-04
+    critical_process: true
+    inspections:
+      - id: insp-002-cmm
+        method: cmm
+        result: fail
+        measured:
+          thickness_mm: 2.1
+    nonconformances:
+      - id: nc-002-01
+        severity: major
+        description: Pocket floor below drawing tolerance
+        disposition: rework
+        approved_by: quality-auditor
+    as_built_revision: 1
+    built_at: 2026-11-18T14:30:00Z
+  - id: build-rib07-003
+    part_id: rib-07
+    design_revision: 2
+    process_plan_id: pp-rib-07
+    process_plan_revision: 3
+    material_lots:
+      - lot: LOT-AL24-1044
+        material: Al-2024-T3
+    operator_qualification: op-qual-cnc-07
+    critical_process: true
+    inspections:
+      - id: insp-003-ut
+        method: ultrasonic
+        result: pass
+    nonconformances: []
+    as_built_revision: 2
+    built_at: 2026-11-21T11:15:00Z

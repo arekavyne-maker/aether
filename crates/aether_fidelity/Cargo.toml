@@ -1,0 +1,13 @@
+[package]
+name = "aether_fidelity"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Deterministic multi-fidelity selection and escalation planning"
+
+[dependencies]
+serde = { workspace = true }
+thiserror = { workspace = true }

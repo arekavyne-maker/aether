@@ -8,13 +8,14 @@ verdicts. Historical evaluations live under [`../history/`](../history/).
 
 ## Current capability line
 
-Aether is a **Phase 0–2 substrate + golden path + scientific loop**, now
-extended with the first Aether 3.0 Phase 1 primitives. It is **not** a
-completed 3.0 platform and does not claim certification or qualification.
+Aether is a **Phase 0–2 substrate + golden path + scientific loop**, extended
+with Aether 3.0 Phase 1 primitives and targeted Phase 3–7 vertical-slice
+artifacts. It is **not** a completed 3.0 platform and does not claim
+certification or qualification.
 
 | Area | Status | Evidence |
 |---|---|---|
-| Rust workspace | builds; 16 crates; ~22.8k Rust LOC | `cargo build --workspace` |
+| Rust workspace | builds; 19 crates, ~24.6k Rust LOC | `cargo build --workspace` |
 | Rust tests | green baseline | `cargo test --workspace` |
 | Python tests | green baseline | `python3 -m pytest -q` |
 | Contracts | 24 packages / 48 schemas | `contracts/*/manifest.json` |
@@ -28,7 +29,9 @@ completed 3.0 platform and does not claim certification or qualification.
 | Artifacts | content-addressed local store, scoped handles | `crates/aether_artifacts` |
 | ASM | lifecycle, revisions, interfaces, snapshots | `crates/aether_asm` |
 | Evidence | classes, gates, waivers, release packages | `crates/aether_evidence` |
-| Model cards | contract only; registry/runtime not implemented | `contracts/model-card/` |
+| Manufacturing | genealogy, as-built snapshots, disposition and impact checks | `crates/aether_manufacturing` |
+| Model governance | model cards, promotion gates, auditable registry | `crates/aether_model_registry` |
+| Fidelity planning | deterministic cost/error selection and escalation | `crates/aether_fidelity` |
 | Plugin sandbox | **not implemented** until Phase 7 | `crates/aether_exec/src/local.rs` |
 | Agent runtime | **not implemented** until Phase 6 | — |
 | Aether 3.0 docs | Phase 0 set complete | `docs/architecture/`, `docs/roadmap/` |
@@ -38,15 +41,22 @@ completed 3.0 platform and does not claim certification or qualification.
 - `openfoam-adapter` is a shim, not real OpenFOAM.
 - `occ-geometry` is a bounding-box fixture, not real B-rep.
 - Slurm/Apptainer/SSH/AgentPool backends are contract-surface fixtures.
-- Manufacturing, inspection, and test are conformance fixtures.
+- Manufacturing, inspection, and test are conformance fixtures; the new
+  manufacturing crate records and checks evidence, it does not control machines.
 - The digital twin uses synthetic data; real rig ingestion is not implemented.
 - AGARD 445.6 is not numerically reproduced.
 - No real HPC fleet, factory cell, or machine control is exercised.
-- AI agents and the model registry runtime are not implemented.
+- AI agents and a model runtime are not implemented; the model registry is a
+  governance and audit layer, not a trainer.
 - Units/frames are enforced in the new library and CLI boundaries; solver
   adapters do not yet consume typed quantities end to end.
+- Fidelity planning uses declared errors as claims; it does not measure error
+  or prove physical fidelity.
 - Evidence gates are exercised through `aether evidence gate`; release
   packages are a library type, not yet a full release workflow.
+- Phase 7 is only partially demonstrated by chain/export/replay/tamper/DR-drill
+  acceptance. Sandboxing, federation, signed production release, and SLOs
+  remain open.
 
 ## Optional-tool status on this machine
 
@@ -60,13 +70,23 @@ completed 3.0 platform and does not claim certification or qualification.
 | Gate | Verdict | Notes |
 |---|---|---|
 | Phase 0 truth/cleanup | complete | docs, links, baseline, optional-tool semantics |
-| Phase 1 substrate | partial | quantities, artifacts, ASM, evidence, policy, snapshots, CLI |
+| Phase 1 substrate | implemented for the declared scope | quantities, artifacts, ASM, evidence, policy, snapshots, CLI |
 | Phase 2 vertical slice | demonstrator complete | `scripts/acceptance/phase2-wingbox.sh` |
-| Phase 3 manufacturing | not started | genealogy/as-built nodes and contracts staged |
-| Phase 4 multi-physics | not started | fidelity/UQ |
+| Phase 3 manufacturing | vertical-slice complete | `scripts/acceptance/phase3-manufacturing.sh`; no machine control |
+| Phase 4 multi-physics | fidelity planner demonstrator complete | `scripts/acceptance/phase4-fidelity.sh`; no new physics domain |
 | Phase 5 emerging structures | not started | one vertical at a time |
-| Phase 6 adaptive intelligence | not started | model-card contract only |
-| Phase 7 hardening/federation | not started | sandbox/restore/federation |
+| Phase 6 adaptive intelligence | governance demonstrator complete | `scripts/acceptance/phase6-model-governance.sh`; no model runtime/agents |
+| Phase 7 hardening/federation | partial | `scripts/acceptance/phase7-hardening.sh`; sandbox/federation open |
+
+## Acceptance commands
+
+```bash
+bash scripts/acceptance/phase2-wingbox.sh
+bash scripts/acceptance/phase3-manufacturing.sh
+bash scripts/acceptance/phase4-fidelity.sh
+bash scripts/acceptance/phase6-model-governance.sh
+bash scripts/acceptance/phase7-hardening.sh
+```
 
 ## How to refresh
 

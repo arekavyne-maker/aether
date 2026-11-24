@@ -1,0 +1,17 @@
+# Negative fixture: no material lot and an unresolved failed inspection.
+builds:
+  - id: build-rib07-bad
+    part_id: rib-07
+    design_revision: 2
+    process_plan_id: pp-rib-07
+    process_plan_revision: 3
+    material_lots: []
+    operator_qualification: op-qual-cnc-07
+    critical_process: true
+    inspections:
+      - id: insp-bad-cmm
+        method: cmm
+        result: fail
+    nonconformances: []
+    as_built_revision: 2
+    built_at: 2026-11-22T09:00:00Z

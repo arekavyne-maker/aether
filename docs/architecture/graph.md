@@ -49,7 +49,7 @@ materializes state from the log without mutation; the production
 Each edge-type entry declares its source / target node types and
 its cardinality constraints (max_out_per_source, etc.).
 
-## Schemas (the 19 contracts)
+## Schemas (the 24 contracts)
 
 The graph itself is `aether.graph.model` (G0). Every other contract
 (physics.solver, geometry.kernel, mesh.engine, ...) operates on

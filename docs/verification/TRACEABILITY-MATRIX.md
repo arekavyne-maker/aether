@@ -21,12 +21,22 @@ and an evidence artifact. A requirement without a test is not done.
 | A3-REQ-012 Status/policy/provenance explain | A3-I10 | CLI commands | golden tests | verified |
 | A3-REQ-013 Metallic wing-box vertical slice | Phase 2 | example + workflow | end-to-end CLI execution | verified |
 | A3-REQ-014 Reproducible result | A3-I06 | envman + snapshot + replay | same result within tolerance offline | verified |
-| A3-REQ-015 Dependent invalidation | A3-I14 | graph impact query | changed load invalidates result/evidence | verified |
+| A3-REQ-015 Dependent invalidation | A3-I14 | `crates/aether_asm` snapshots + manufacturing impact | changed object/build invalidates dependent records | verified |
 | A3-REQ-016 No certification overclaim | A3-I22 | docs/status/claim scan | claim-scan fitness check | verified |
-| A3-REQ-017 Model card lifecycle | A3-I10, A3-I15 | `aether.model-card` | promotion blocked without benchmark | planned |
+| A3-REQ-017 Model card lifecycle | A3-I10, A3-I15 | `crates/aether_model_registry` | `model verify` gate and `model promote` | verified |
 | A3-REQ-018 Agent cannot mutate released baseline | A3-I21 | `aether.agent-tool` policy | denied-action integration test | planned |
-| A3-REQ-019 Manufacturing genealogy | A3-I11 | graph nodes + manufacturing contract | design→batch→inspection trace test | planned |
+| A3-REQ-019 Manufacturing genealogy | A3-I11 | `crates/aether_manufacturing` | `manufacturing verify/as-built/impact` acceptance | verified |
 | A3-REQ-020 Threat model coverage | A3-I13 | `docs/threat-model/THREAT-MODEL.md` | review sign-off | verified |
+
+| A3-REQ-021 Manufacturing genealogy completeness | A3-I11, A3-I14 | `crates/aether_manufacturing` | material/lot/inspection/disposition checks | verified |
+| A3-REQ-022 As-built snapshot reproducibility | A3-I06, A3-I11 | `crates/aether_manufacturing` | order-independent manifest hash | verified |
+| A3-REQ-023 Design-revision impact analysis | A3-I11, A3-I14 | `crates/aether_manufacturing::impact` | affected builds and revalidation list | verified |
+| A3-REQ-024 Role-gated model promotion | A3-I05, A3-I13, A3-I21 | `crates/aether_model_registry` | unauthorized role and non-independent validation refused | verified |
+| A3-REQ-025 Deterministic fidelity escalation | A3-I06, A3-I07 | `crates/aether_fidelity` | cheapest-level selection and budget/error conflict explanation | verified |
+| A3-REQ-026 Offline export/replay integrity | A3-I06, A3-I08, A3-I12 | `aether export` / `aether replay` | tamper detection and deterministic replay acceptance | verified |
+| A3-REQ-027 Sandbox and federation | A3-I13, A3-I18, A3-I20 | `crates/aether_exec` + Phase 7 | real sandbox and second-site exercise | planned |
+| A3-REQ-028 Solver adapters consume quantities | A3-I04, A3-I16 | `crates/aether_quantities` + adapters | solver-submit rejection test | planned |
+| A3-REQ-029 Evidence-native release workflow | A3-I02, A3-I03 | evidence + ASM + registry | signed release package produced by CLI | planned |
 
 ## Evidence artifact conventions
 

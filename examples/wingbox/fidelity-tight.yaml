@@ -1,0 +1,13 @@
+domain: structures
+target_error: 0.001
+budget_core_hours: 20
+available:
+  - name: closed_form
+    cost_core_hours: 1
+    expected_error: 0.20
+  - name: beam_fem
+    cost_core_hours: 10
+    expected_error: 0.04
+  - name: shell_fem
+    cost_core_hours: 60
+    expected_error: 0.01

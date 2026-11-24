@@ -1,0 +1,30 @@
+# Negative fixture: no validation evidence and a non-independent benchmark.
+model:
+  id: surrogate-wingbox-deflection
+  version: 0.2.0
+  name: Wing-box tip-deflection surrogate
+  intended_use: Screening inside the declared envelope.
+  prohibited_use:
+    - Certification credit
+  validity_envelope:
+    span_m: "0.5 .. 12.0"
+  evidence:
+    - id: ev-ver-01
+      class: verification
+      subject_version: 0.2.0
+      status: current
+      independent: false
+    - id: ev-bench-01
+      class: benchmark
+      subject_version: 0.2.0
+      status: stale
+      independent: true
+  state: candidate
+gate:
+  required:
+    - verification
+    - validation
+    - benchmark
+  require_independent_validation: true
+  authorized_roles:
+    - chief-engineer

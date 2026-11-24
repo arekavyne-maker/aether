@@ -48,6 +48,11 @@ enum Command {
         #[arg(long)]
         platform: Option<PathBuf>,
     },
+    /// Phase 2 wing-box vertical slice (metallic subassembly).
+    Wingbox {
+        #[command(subcommand)]
+        action: WingboxCommand,
+    },
     /// Run a bundled, deterministic demonstration (aircraft | structure |
     /// reproducibility | twin | twin-span) in a temporary project.
     Demo {
@@ -241,6 +246,21 @@ enum Command {
         #[command(subcommand)]
         action: ConfigCommand,
     },
+    /// Manufacturing genealogy and as-built traceability.
+    Manufacturing {
+        #[command(subcommand)]
+        action: ManufacturingCommand,
+    },
+    /// Model cards and promotion governance.
+    Model {
+        #[command(subcommand)]
+        action: ModelCommand,
+    },
+    /// Multi-fidelity selection planning.
+    Fidelity {
+        #[command(subcommand)]
+        action: FidelityCommand,
+    },
 }
 
 #[derive(Subcommand, Debug)]
@@ -310,6 +330,84 @@ enum ConfigCommand {
     Verify {
         snapshot: PathBuf,
         file: PathBuf,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+enum ManufacturingCommand {
+    /// Verify build genealogy, material lots, inspections, and dispositions.
+    Verify { file: PathBuf },
+    /// Produce an as-built configuration snapshot for one part.
+    AsBuilt {
+        file: PathBuf,
+        #[arg(long)]
+        part: String,
+    },
+    /// Explain which builds a design revision change affects.
+    Impact {
+        file: PathBuf,
+        #[arg(long)]
+        part: String,
+        #[arg(long)]
+        to_revision: u32,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+enum ModelCommand {
+    /// Evaluate a model-card promotion gate without promoting.
+    Verify {
+        file: PathBuf,
+        #[arg(long, default_value = "chief-engineer")]
+        approver_role: String,
+    },
+    /// Evaluate the gate and emit the promoted model card.
+    Promote {
+        file: PathBuf,
+        #[arg(long, default_value = "chief-engineer")]
+        approver_role: String,
+        #[arg(long)]
+        output: Option<PathBuf>,
+    },
+}
+
+#[derive(Subcommand, Debug)]
+enum FidelityCommand {
+    /// Explain a deterministic fidelity selection and escalation path.
+    Plan { file: PathBuf },
+}
+
+#[derive(Subcommand, Debug)]
+enum WingboxCommand {
+    /// Capture and verify the Phase 2 configuration snapshot.
+    Config {
+        /// Snapshot action.
+        #[command(subcommand)]
+        action: ConfigCommand,
+    },
+    /// Evaluate the Phase 2 release gate.
+    ReleaseGate {
+        /// Gate file (defaults to the repository wing-box example).
+        #[arg(default_value = "examples/wingbox/release-gate.yaml")]
+        file: PathBuf,
+    },
+    /// Verify manufacturing genealogy and as-built records.
+    Manufacturing {
+        /// Manufacturing action.
+        #[command(subcommand)]
+        action: ManufacturingCommand,
+    },
+    /// Model governance and promotion.
+    Model {
+        /// Model action.
+        #[command(subcommand)]
+        action: ModelCommand,
+    },
+    /// Fidelity selection planning.
+    Fidelity {
+        /// Fidelity action.
+        #[command(subcommand)]
+        action: FidelityCommand,
     },
 }
 
@@ -574,6 +672,41 @@ fn main() -> Result<()> {
     match cli.command {
         Command::Init { path, profile } => commands::cmd_init_profile(path, &profile, mode),
         Command::Doctor { platform } => spine::cmd_doctor(platform, mode),
+        Command::Wingbox { action } => match action {
+            WingboxCommand::Config { action } => match action {
+                ConfigCommand::Snapshot { file, output } => {
+                    aether3_commands::cmd_config_snapshot(file, output, mode)
+                }
+                ConfigCommand::Verify { snapshot, file } => {
+                    aether3_commands::cmd_config_verify(snapshot, file, mode)
+                }
+            },
+            WingboxCommand::ReleaseGate { file } => {
+                aether3_commands::cmd_evidence_gate(file, mode)
+            }
+            WingboxCommand::Manufacturing { action } => match action {
+                ManufacturingCommand::Verify { file } => {
+                    aether3_commands::cmd_manufacturing_verify(file, mode)
+                }
+                ManufacturingCommand::AsBuilt { file, part } => {
+                    aether3_commands::cmd_manufacturing_as_built(file, part, mode)
+                }
+                ManufacturingCommand::Impact { file, part, to_revision } => {
+                    aether3_commands::cmd_manufacturing_impact(file, part, to_revision, mode)
+                }
+            },
+            WingboxCommand::Model { action } => match action {
+                ModelCommand::Verify { file, approver_role } => {
+                    aether3_commands::cmd_model_verify(file, approver_role, mode)
+                }
+                ModelCommand::Promote { file, approver_role, output } => {
+                    aether3_commands::cmd_model_promote(file, approver_role, output, mode)
+                }
+            },
+            WingboxCommand::Fidelity { action } => match action {
+                FidelityCommand::Plan { file } => aether3_commands::cmd_fidelity_plan(file, mode),
+            },
+        },
         Command::Demo { kind } => spine::cmd_demo(kind, mode),
         Command::Run { workflow, project } => spine::cmd_run(project, workflow, mode),
         Command::Explain { project } => spine::cmd_explain(project, mode),
@@ -732,6 +865,33 @@ fn main() -> Result<()> {
             ConfigCommand::Verify { snapshot, file } => {
                 aether3_commands::cmd_config_verify(snapshot, file, mode)
             }
+        },
+        Command::Manufacturing { action } => match action {
+            ManufacturingCommand::Verify { file } => {
+                aether3_commands::cmd_manufacturing_verify(file, mode)
+            }
+            ManufacturingCommand::AsBuilt { file, part } => {
+                aether3_commands::cmd_manufacturing_as_built(file, part, mode)
+            }
+            ManufacturingCommand::Impact {
+                file,
+                part,
+                to_revision,
+            } => aether3_commands::cmd_manufacturing_impact(file, part, to_revision, mode),
+        },
+        Command::Model { action } => match action {
+            ModelCommand::Verify {
+                file,
+                approver_role,
+            } => aether3_commands::cmd_model_verify(file, approver_role, mode),
+            ModelCommand::Promote {
+                file,
+                approver_role,
+                output,
+            } => aether3_commands::cmd_model_promote(file, approver_role, output, mode),
+        },
+        Command::Fidelity { action } => match action {
+            FidelityCommand::Plan { file } => aether3_commands::cmd_fidelity_plan(file, mode),
         },
     }
 }

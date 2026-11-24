@@ -543,6 +543,140 @@ pub fn cmd_evidence_gate(file: PathBuf, mode: OutputMode) -> Result<()> {
     Ok(())
 }
 
+/// `aether manufacturing verify <file>` — check build genealogy and
+/// disposition completeness.
+pub fn cmd_manufacturing_verify(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let genealogy = read_genealogy(&file)?;
+    let report = genealogy.verify();
+    emit(mode, &report)?;
+    if !report.valid {
+        std::process::exit(30);
+    }
+    Ok(())
+}
+
+/// `aether manufacturing as-built <file> --part <id>` — produce an
+/// as-built configuration snapshot for one part.
+pub fn cmd_manufacturing_as_built(file: PathBuf, part: String, mode: OutputMode) -> Result<()> {
+    let genealogy = read_genealogy(&file)?;
+    let snapshot = genealogy
+        .as_built(&part)
+        .ok_or_else(|| anyhow!("no build records for part {part:?}"))?;
+    emit(mode, &snapshot)
+}
+
+/// `aether manufacturing impact <file> --part <id> --to-revision <n>` —
+/// explain which builds a design revision change affects.
+pub fn cmd_manufacturing_impact(
+    file: PathBuf,
+    part: String,
+    to_revision: u32,
+    mode: OutputMode,
+) -> Result<()> {
+    let genealogy = read_genealogy(&file)?;
+    let impact = genealogy
+        .impact(&part, to_revision)
+        .map_err(|e| anyhow!("{e}"))?;
+    emit(mode, &impact)
+}
+
+fn read_genealogy(file: &Path) -> Result<aether_manufacturing::Genealogy> {
+    let raw = std::fs::read_to_string(file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let records = if let Some(array) = doc.as_array() {
+        array.clone()
+    } else {
+        doc.get("records")
+            .or_else(|| doc.get("builds"))
+            .and_then(|v| v.as_array())
+            .cloned()
+            .ok_or_else(|| anyhow!("document must contain a `builds` or `records` array"))?
+    };
+    let parsed: Vec<aether_manufacturing::BuildRecord> =
+        serde_json::from_value(Value::Array(records)).context("parse build records")?;
+    Ok(aether_manufacturing::Genealogy::new(parsed))
+}
+
+/// `aether model verify <file>` — evaluate a model-card promotion gate.
+pub fn cmd_model_verify(file: PathBuf, approver_role: String, mode: OutputMode) -> Result<()> {
+    let (card, gate) = read_model_doc(&file)?;
+    let decision = aether_model_registry::evaluate_promotion(&card, &gate, &approver_role);
+    emit(mode, &decision)?;
+    if !decision.passed {
+        std::process::exit(30);
+    }
+    Ok(())
+}
+
+/// `aether model promote <file>` — evaluate a gate and emit the promoted card.
+pub fn cmd_model_promote(
+    file: PathBuf,
+    approver_role: String,
+    output: Option<PathBuf>,
+    mode: OutputMode,
+) -> Result<()> {
+    let (mut card, gate) = read_model_doc(&file)?;
+    let decision = aether_model_registry::evaluate_promotion(&card, &gate, &approver_role);
+    if !decision.passed {
+        emit(mode, &decision)?;
+        std::process::exit(30);
+    }
+    card.state = aether_model_registry::ModelState::Promoted;
+    card.approved_by = Some(approver_role.clone());
+    if let Some(path) = &output {
+        let bytes = serde_json::to_vec_pretty(&card)?;
+        std::fs::write(path, &bytes)
+            .with_context(|| format!("write {}", path.display()))?;
+    }
+    emit(
+        mode,
+        &json!({
+            "decision": decision,
+            "model": card,
+            "output": output.map(|p| p.display().to_string()),
+        }),
+    )
+}
+
+fn read_model_doc(
+    file: &Path,
+) -> Result<(
+    aether_model_registry::ModelCard,
+    aether_model_registry::PromotionGate,
+)> {
+    let raw = std::fs::read_to_string(file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let model_value = doc.get("model").cloned().unwrap_or_else(|| doc.clone());
+    let card: aether_model_registry::ModelCard =
+        serde_json::from_value(model_value).context("parse model card")?;
+    let gate: aether_model_registry::PromotionGate = match doc.get("gate") {
+        Some(value) => serde_json::from_value(value.clone()).context("parse promotion gate")?,
+        None => aether_model_registry::PromotionGate::default(),
+    };
+    Ok((card, gate))
+}
+
+/// `aether fidelity plan <file>` — deterministic multi-fidelity selection.
+pub fn cmd_fidelity_plan(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let request: aether_fidelity::FidelityRequest = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let plan = aether_fidelity::plan(&request).map_err(|e| anyhow!("{e}"))?;
+    emit(
+        mode,
+        &json!({
+            "request": request,
+            "plan": plan,
+            "claim": "declared errors are claims; validation evidence is required before use",
+        }),
+    )
+}
+
 /// Structured schema list result, used by tests.
 #[derive(Debug, Serialize)]
 pub struct SchemaSummary {

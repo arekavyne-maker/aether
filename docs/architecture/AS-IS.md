@@ -40,14 +40,15 @@
 
 ## 2. Contracts and graph schema
 
-- **19 contract packages** under `contracts/`, each with `manifest.json`,
+- **24 contract packages** under `contracts/`, each with `manifest.json`,
   schemas, and examples:
-  `compute.backend`, `field.model`, `geometry.kernel`, `geometry.recipe`,
-  `graph.model`, `inspection.device`, `io.format`, `manufacturing.process`,
-  `mesh.engine`, `optimizer`, `physics.composable`, `physics.solver`,
-  `plugin.manifest`, `requirement`, `si.governor`, `surrogate`, `test.rig`,
-  `twin.estimator`, `uq.method`.
-- **Graph catalog:** 26 node types and 18 edge types, loaded at runtime from
+  `asm`, `compute.backend`, `evidence`, `field.model`, `frames`, `geometry.kernel`,
+  `geometry.recipe`, `graph.model`, `inspection.device`, `io.format`,
+  `manufacturing.process`, `mesh.engine`, `model-card`, `optimizer`,
+  `physics.composable`, `physics.solver`, `plugin.manifest`, `quantities`,
+  `requirement`, `si.governor`, `surrogate`, `test.rig`, `twin.estimator`,
+  `uq.method`.
+- **Graph catalog:** 61 node types and 32 edge types, loaded at runtime from
   `contracts/graph.model/catalog/`.
 - **Node types:** Requirement, System, Part, PhysicalPart, GeometryRevision,
   Mesh, LoadCase, SimulationStudy, SimulationRun, Result, Evidence, Decision,

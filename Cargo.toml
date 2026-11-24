@@ -17,6 +17,9 @@ members = [
     "crates/aether_artifacts",
     "crates/aether_asm",
     "crates/aether_evidence",
+    "crates/aether_manufacturing",
+    "crates/aether_model_registry",
+    "crates/aether_fidelity",
 ]
 
 [workspace.package]

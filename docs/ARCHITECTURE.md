@@ -99,7 +99,7 @@ Everything above the kernel line knows contracts, not vendors. Cross-domain comm
 
 ## 4. The workspace: crates, roles, and sizes
 
-Sixteen crates, ~22.8k LOC of Rust source total — comfortably inside the kernel-boundary budget discipline (I-1).
+Nineteen crates, ~24.6k LOC of Rust source total — comfortably inside the kernel-boundary budget discipline (I-1). The kernel/Boundary LOC tracker counts the kernel and boundary crates, not the new domain libraries.
 
 | Crate | LOC | Role |
 |---|---|---|
@@ -115,6 +115,9 @@ Sixteen crates, ~22.8k LOC of Rust source total — comfortably inside the kerne
 | `aether_artifacts` | 250 | Content-addressed artifact store: SHA-256, atomic writes, dedupe, scoped handles |
 | `aether_asm` | 430 | ASM lifecycle, revision lineage, interface compatibility, configuration snapshots |
 | `aether_evidence` | 430 | Evidence classes, credibility records, release gates, waivers, release packages |
+| `aether_manufacturing` | 430 | Manufacturing genealogy, as-built snapshots, disposition and revision-impact checks |
+| `aether_model_registry` | 430 | Model cards, role-gated promotion, hash-chained registry audit |
+| `aether_fidelity` | 430 | Deterministic multi-fidelity selection and escalation planning |
 | `aether_compose` | 518 | Multiphysics coupling: participants, exchanges, coupling schemes, Broyden-style IQN-ILS, conservation checks |
 | `aether_contract_validate` | 475 | The Rust half of the two-implementation rule for contract validation |
 | `aether_kernel` | 195 | The transport substrate: spawn plugin process, exchange newline-delimited JSON-RPC 2.0, reap. Proves the boundary without absorbing domain logic |
@@ -317,7 +320,7 @@ The loop's epistemology is uniform: **classification (REFERENCE/SYNTHETIC) and v
 
 | Check | Enforces |
 |---|---|
-| `loc_budget` | I-1 — kernel/boundary LOC within budget (currently ~16.6% of the kernel cap) |
+| `loc_budget` | I-1 — kernel/boundary LOC within budget |
 | `token_scan` | I-3 — no prohibited coupling tokens (`if solver == X` and friends) |
 | `schema_semver` | I-11 — 24 contracts / 48 schemas, all valid, semver discipline |
 | `sbom` | Supply chain — SPDX 2.3 SBOM emitted per run |

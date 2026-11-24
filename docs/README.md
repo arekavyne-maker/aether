@@ -14,7 +14,7 @@ and the certification dossier.
 | Twelve invariants | `architecture/invariants.md` | Architects, kernel engineers |
 | AWL v1.3 (workflow language) | `architecture/awl.md` | Workflow authors |
 | Engineering Graph (G0 contract surface) | `architecture/graph.md` | All engineers |
-| Contract catalog (19 contracts) | `contracts/index.md` | All engineers |
+| Contract catalog (24 contracts) | `contracts/index.md` | All engineers |
 | Operator's guide | `operator/site-install.md` | Site operators |
 | Operator's guide (offline) | `operator/airgap.md` | Site operators |
 | Operator's guide (HPC backends) | `operator/hpc-backends.md` | Site operators |
@@ -59,10 +59,12 @@ and the certification dossier.
 
 ## Versioning
 
-**Status:** the platform is substrate-complete for Phases 0–2. It has
-**not** reached the v1.0 final acceptance gate; an earlier claim to
-that effect was retracted and the defensible, verification-backed
-status is maintained in [`README-EVAL.md`](../docs/history/README-EVAL-2026-09.md) and
+**Status:** the platform is substrate-complete for Phases 0–2, with early
+Phase 3–7 vertical-slice artifacts where noted in
+[`verification/STATUS.md`](verification/STATUS.md). It has **not** reached
+the v1.0 final acceptance gate; an earlier claim to that effect was
+retracted and the defensible, verification-backed status is maintained in
+[`verification/STATUS.md`](verification/STATUS.md) and
 [`workflows/paper-run/gaps.md`](../workflows/paper-run/gaps.md). The
 described target architecture corresponds to the end-state plan, not
 to shipped capability; where a capability is not yet real, the
