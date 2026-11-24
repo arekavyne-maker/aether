@@ -112,6 +112,11 @@ def run_research_claim() -> CheckResult:
     return check(REPO_ROOT)
 
 
+def run_benchmark_coverage() -> CheckResult:
+    from benchmark_coverage import check
+    return check(REPO_ROOT)
+
+
 CHECKS = {
     "loc_budget": run_loc_budget,
     "token_scan": run_token_scan,
@@ -128,6 +133,7 @@ CHECKS = {
     "interop_roundtrip": run_interop_roundtrip,
     "adr_discipline": run_adr_discipline,
     "research_claim": run_research_claim,
+    "benchmark_coverage": run_benchmark_coverage,
 }
 
 

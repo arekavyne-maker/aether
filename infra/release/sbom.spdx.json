@@ -1,7 +1,7 @@
 {
   "SPDXID": "SPDXRef-DOCUMENT",
   "creationInfo": {
-    "created": "2026-11-24T18:21:05.788992+00:00",
+    "created": "2026-11-24T18:45:33.365067+00:00",
     "creators": [
       "Tool: aether-fitness-pipeline-0.1.0"
     ]
@@ -57,6 +57,11 @@
     },
     {
       "downloadLocation": "NOASSERTION",
+      "name": "aether_digital_twin",
+      "versionInfo": "3.0.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
       "name": "aether_envman",
       "versionInfo": "3.0.0"
     },
@@ -72,7 +77,22 @@
     },
     {
       "downloadLocation": "NOASSERTION",
+      "name": "aether_federation",
+      "versionInfo": "3.0.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
       "name": "aether_fidelity",
+      "versionInfo": "3.0.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_generative",
+      "versionInfo": "3.0.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_genome",
       "versionInfo": "3.0.0"
     },
     {
@@ -83,6 +103,11 @@
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_identity",
+      "versionInfo": "3.0.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_job",
       "versionInfo": "3.0.0"
     },
     {
@@ -138,6 +163,11 @@
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_registry",
+      "versionInfo": "3.0.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_research",
       "versionInfo": "3.0.0"
     },
     {
