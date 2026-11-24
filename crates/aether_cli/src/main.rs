@@ -286,6 +286,16 @@ enum Command {
         #[command(subcommand)]
         action: VvCommand,
     },
+    /// Material allowable checks.
+    Material {
+        #[command(subcommand)]
+        action: MaterialCommand,
+    },
+    /// Flight-regime and environment envelope checks.
+    Loads {
+        #[command(subcommand)]
+        action: LoadsCommand,
+    },
     /// Release-package preparation and approval.
     Release {
         #[command(subcommand)]
@@ -447,6 +457,18 @@ enum VvCommand {
     Coverage { file: PathBuf },
     /// Validate review decisions against the authorized-role list.
     Decisions { file: PathBuf },
+}
+
+#[derive(Subcommand, Debug)]
+enum MaterialCommand {
+    /// Evaluate an allowable at a design point.
+    Check { file: PathBuf },
+}
+
+#[derive(Subcommand, Debug)]
+enum LoadsCommand {
+    /// Validate a flight-regime envelope.
+    Validate { file: PathBuf },
 }
 
 #[derive(Subcommand, Debug)]
@@ -1001,6 +1023,12 @@ fn main() -> Result<()> {
         Command::Vv { action } => match action {
             VvCommand::Coverage { file } => aether3_commands::cmd_vv_coverage(file, mode),
             VvCommand::Decisions { file } => aether3_commands::cmd_vv_decisions(file, mode),
+        },
+        Command::Material { action } => match action {
+            MaterialCommand::Check { file } => aether3_commands::cmd_material_check(file, mode),
+        },
+        Command::Loads { action } => match action {
+            LoadsCommand::Validate { file } => aether3_commands::cmd_loads_validate(file, mode),
         },
         Command::Release { action } => match action {
             ReleaseCommand::Prepare {

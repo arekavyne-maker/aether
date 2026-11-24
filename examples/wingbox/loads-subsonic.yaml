@@ -1,0 +1,27 @@
+# Phase C example: a subsonic flight-regime envelope.
+envelope:
+  regime: subsonic
+  mach_range: [0.2, 0.85]
+  altitude_range_m: [0.0, 12000.0]
+  load_factor_range: [-1.0, 2.5]
+  operating_points:
+    - mach: 0.5
+      altitude_m: 3000.0
+      dynamic_pressure_pa: 25000.0
+      load_factor: 1.0
+      reynolds: 50000000.0
+      static_temperature_k: 288.0
+    - mach: 0.75
+      altitude_m: 9000.0
+      dynamic_pressure_pa: 18000.0
+      load_factor: 2.0
+      reynolds: 30000000.0
+      static_temperature_k: 250.0
+  environments:
+    - gust
+    - icing
+    - acoustic
+    - vibration
+  mission_duration_h: 2.0
+  design_service_goals_h: 60000.0
+  inspection_interval_h: 500.0

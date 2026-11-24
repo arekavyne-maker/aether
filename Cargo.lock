@@ -44,7 +44,9 @@ dependencies = [
  "aether_exec",
  "aether_fidelity",
  "aether_graph",
+ "aether_loads",
  "aether_manufacturing",
+ "aether_materials",
  "aether_model_registry",
  "aether_policy",
  "aether_provenance",
@@ -197,7 +199,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "aether_loads"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "thiserror",
+]
+
+[[package]]
 name = "aether_manufacturing"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "thiserror",
+]
+
+[[package]]
+name = "aether_materials"
 version = "0.1.0"
 dependencies = [
  "serde",

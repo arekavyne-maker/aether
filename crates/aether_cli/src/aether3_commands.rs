@@ -1136,6 +1136,99 @@ pub fn cmd_vv_decisions(file: PathBuf, mode: OutputMode) -> Result<()> {
     Ok(())
 }
 
+/// `aether material check <file>` — evaluate an allowable at a design point.
+pub fn cmd_material_check(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let card: aether_materials::MaterialCard =
+        serde_json::from_value(doc.get("card").cloned().unwrap_or_else(|| doc.clone()))
+            .context("parse material card")?;
+    let property = doc
+        .get("property")
+        .and_then(Value::as_str)
+        .unwrap_or("yield_strength");
+    let temperature = doc
+        .get("temperature_c")
+        .and_then(Value::as_f64)
+        .unwrap_or(23.0);
+    let intended_use = doc
+        .get("intended_use")
+        .and_then(Value::as_str)
+        .unwrap_or("primary structure");
+    let result = aether_materials::evaluate_allowable(
+        &card,
+        property,
+        temperature,
+        intended_use,
+    );
+    match result {
+        Ok(value) => {
+            emit(
+                mode,
+                &json!({
+                    "valid": true,
+                    "card": card.id,
+                    "property": property,
+                    "temperature_c": temperature,
+                    "allowable": aether_materials::property_to_value(&value),
+                    "pedigree": card.pedigree,
+                }),
+            )?;
+            Ok(())
+        }
+        Err(e) => {
+            emit(
+                mode,
+                &json!({
+                    "valid": false,
+                    "card": card.id,
+                    "property": property,
+                    "temperature_c": temperature,
+                    "error": e.to_string(),
+                }),
+            )?;
+            std::process::exit(30);
+        }
+    }
+}
+
+/// `aether loads validate <file>` — validate a flight-regime envelope.
+pub fn cmd_loads_validate(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let envelope: aether_loads::FlightEnvelope =
+        serde_json::from_value(doc.get("envelope").cloned().unwrap_or_else(|| doc.clone()))
+            .context("parse flight envelope")?;
+    let result = envelope.validate();
+    let (valid, error) = match &result {
+        Ok(()) => (true, Value::Null),
+        Err(e) => (false, Value::String(e.to_string())),
+    };
+    emit(
+        mode,
+        &json!({
+            "valid": valid,
+            "regime": envelope.regime.as_str(),
+            "mach_range": envelope.mach_range,
+            "altitude_range_m": envelope.altitude_range_m,
+            "limit_load_factor": envelope.limit_load_factor(),
+            "ultimate_load_factor": envelope.ultimate_load_factor(),
+            "operating_points": envelope.operating_points.len(),
+            "environments": aether_loads::environments_to_value(&envelope.environments),
+            "manifest_hash": envelope.content_hash(),
+            "error": error,
+        }),
+    )?;
+    if !valid {
+        std::process::exit(30);
+    }
+    Ok(())
+}
+
 /// Structured schema list result, used by tests.
 #[derive(Debug, Serialize)]
 pub struct SchemaSummary {

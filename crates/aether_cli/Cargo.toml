@@ -50,3 +50,5 @@ aether_fidelity = { path = "../aether_fidelity" }
 aether_design = { path = "../aether_design" }
 aether_agents = { path = "../aether_agents" }
 aether_vv = { path = "../aether_vv" }
+aether_materials = { path = "../aether_materials" }
+aether_loads = { path = "../aether_loads" }

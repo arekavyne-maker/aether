@@ -1,0 +1,35 @@
+# Phase C example: an aluminium material card with temperature-dependent
+# allowables and a declared pedigree.
+card:
+  id: mat-al2024-t3
+  name: Aluminium 2024-T3
+  family: aluminium
+  specification: AMS-QQ-A-250/4
+  form: plate
+  density:
+    value: 2780.0
+    unit: kg/m^3
+    basis: specification_minimum
+    source: AMS-QQ-A-250/4
+  allowables:
+    - name: yield_strength
+      temperature_points:
+        - temperature_c: 23.0
+          property:
+            value: 345000000.0
+            unit: Pa
+            basis: a_basis
+            source: MMPDS-01
+        - temperature_c: 150.0
+          property:
+            value: 290000000.0
+            unit: Pa
+            basis: a_basis
+            source: MMPDS-01
+  temperature_range_c: [-55.0, 200.0]
+  prohibited_use:
+    - elevated temperature above 200 C
+  pedigree: MMPDS-01 allowables programme
+property: yield_strength
+temperature_c: 86.5
+intended_use: primary structure

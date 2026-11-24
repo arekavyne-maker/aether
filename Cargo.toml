@@ -23,6 +23,8 @@ members = [
     "crates/aether_design",
     "crates/aether_agents",
     "crates/aether_vv",
+    "crates/aether_materials",
+    "crates/aether_loads",
 ]
 
 [workspace.package]
