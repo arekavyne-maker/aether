@@ -1,0 +1,44 @@
+# Phase B example: a small requirements package with honest coverage.
+requirements:
+  - id: R-001
+    text: The wing-box tip deflection under the limit load shall not exceed 0.5 m.
+    method: analysis
+    criticality: major
+    owner: structures
+  - id: R-002
+    text: The rib-07 pocket floor thickness shall be 3.0 mm +/- 0.1 mm.
+    method: inspection
+    criticality: minor
+    owner: manufacturing
+
+verification_cases:
+  - id: VC-001
+    requirement_id: R-001
+    method: analysis
+    acceptance_criterion: Computed tip deflection <= 0.5 m at 40 kN.
+    evidence_ids: [EV-001]
+    requirement_revision: 1
+  - id: VC-002
+    requirement_id: R-002
+    method: inspection
+    acceptance_criterion: Measured pocket floor thickness within 2.9..3.1 mm.
+    evidence_ids: [EV-002]
+    requirement_revision: 1
+
+evidence:
+  - id: EV-001
+    class: verification
+    subject: R-001
+    subject_revision: 1
+    artifact_hash: "0000000000000000000000000000000000000000000000000000000000000001"
+    status: current
+    issued_by: analyst
+    issued_at: 2026-11-24T00:00:00Z
+  - id: EV-002
+    class: inspection
+    subject: R-002
+    subject_revision: 1
+    artifact_hash: "0000000000000000000000000000000000000000000000000000000000000002"
+    status: current
+    issued_by: quality
+    issued_at: 2026-11-24T00:00:00Z

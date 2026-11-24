@@ -47,6 +47,7 @@ ALL_CONTRACTS = [
     "aether.asm",
     "aether.evidence",
     "aether.model-card",
+    "aether.vv",
 ]
 
 

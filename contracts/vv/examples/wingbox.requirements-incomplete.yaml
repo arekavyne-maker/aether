@@ -1,0 +1,31 @@
+# Phase B example: an incomplete package. R-003 has no verification case,
+# so coverage reports it as a gap and the CLI exits non-zero.
+requirements:
+  - id: R-001
+    text: The wing-box tip deflection under the limit load shall not exceed 0.5 m.
+    method: analysis
+    criticality: major
+    owner: structures
+  - id: R-003
+    text: The wing-box shall withstand the ultimate load without failure.
+    method: test
+    criticality: hazardous
+    owner: structures
+
+verification_cases:
+  - id: VC-001
+    requirement_id: R-001
+    method: analysis
+    acceptance_criterion: Computed tip deflection <= 0.5 m at 40 kN.
+    evidence_ids: [EV-001]
+    requirement_revision: 1
+
+evidence:
+  - id: EV-001
+    class: verification
+    subject: R-001
+    subject_revision: 1
+    artifact_hash: "0000000000000000000000000000000000000000000000000000000000000001"
+    status: current
+    issued_by: analyst
+    issued_at: 2026-11-24T00:00:00Z

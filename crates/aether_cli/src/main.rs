@@ -281,6 +281,11 @@ enum Command {
         #[command(subcommand)]
         action: SandboxCommand,
     },
+    /// Verification and validation coverage.
+    Vv {
+        #[command(subcommand)]
+        action: VvCommand,
+    },
     /// Release-package preparation and approval.
     Release {
         #[command(subcommand)]
@@ -433,6 +438,15 @@ enum SandboxCommand {
         #[arg(last = true)]
         command: Vec<String>,
     },
+}
+
+#[derive(Subcommand, Debug)]
+enum VvCommand {
+    /// Report verification coverage; exits 30 if any requirement is not
+    /// verified by current evidence.
+    Coverage { file: PathBuf },
+    /// Validate review decisions against the authorized-role list.
+    Decisions { file: PathBuf },
 }
 
 #[derive(Subcommand, Debug)]
@@ -983,6 +997,10 @@ fn main() -> Result<()> {
                 let args: Vec<String> = parts.collect();
                 aether3_commands::cmd_sandbox_run(policy, program, args, mode)
             }
+        },
+        Command::Vv { action } => match action {
+            VvCommand::Coverage { file } => aether3_commands::cmd_vv_coverage(file, mode),
+            VvCommand::Decisions { file } => aether3_commands::cmd_vv_decisions(file, mode),
         },
         Command::Release { action } => match action {
             ReleaseCommand::Prepare {

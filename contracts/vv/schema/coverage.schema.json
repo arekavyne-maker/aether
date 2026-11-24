@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/vv/schema/coverage.schema.json",
+  "title": "Aether Verification Coverage Report",
+  "description": "Honest coverage for a requirements package. A requirement is verified only when a matching verification case exists and current evidence is bound to it. This report is not a certification claim.",
+  "type": "object",
+  "required": ["requirements_total", "requirements_verified", "gaps", "claim"],
+  "additionalProperties": false,
+  "properties": {
+    "requirements_total": {"type": "integer", "minimum": 0},
+    "requirements_verified": {"type": "integer", "minimum": 0},
+    "requirements_unverified": {"type": "integer", "minimum": 0},
+    "requirements_uncased": {"type": "integer", "minimum": 0},
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["requirement_id", "reason_code", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "requirement_id": {"type": "string"},
+          "requirement_text": {"type": "string"},
+          "criticality": {"type": "string"},
+          "reason_code": {
+            "type": "string",
+            "enum": ["NO_VERIFICATION_CASE", "METHOD_MISMATCH", "NO_CURRENT_EVIDENCE"]
+          },
+          "reason": {"type": "string"}
+        }
+      }
+    },
+    "claim": {
+      "type": "string",
+      "description": "Always states that this is coverage only, not certification."
+    }
+  }
+}

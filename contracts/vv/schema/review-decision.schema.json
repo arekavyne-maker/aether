@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/vv/schema/review-decision.schema.json",
+  "title": "Aether Review Decision",
+  "description": "An authorized human decision. An approval made by a role outside the authorized set is rejected, never silently accepted.",
+  "type": "object",
+  "required": ["id", "subject_id", "outcome", "approved_by", "approved_by_role", "decided_at", "rationale"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "subject_id": {"type": "string", "minLength": 1},
+    "outcome": {"type": "string", "enum": ["approved", "rejected", "deferred"]},
+    "approved_by": {"type": "string", "minLength": 1},
+    "approved_by_role": {"type": "string", "minLength": 1},
+    "decided_at": {"type": "string"},
+    "rationale": {"type": "string", "minLength": 1}
+  }
+}

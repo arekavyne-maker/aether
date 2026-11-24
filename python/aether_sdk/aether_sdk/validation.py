@@ -49,6 +49,7 @@ CONTRACT_MANIFESTS: dict[str, Path] = {
     "aether.asm": Path("contracts/asm/manifest.json"),
     "aether.evidence": Path("contracts/evidence/manifest.json"),
     "aether.model-card": Path("contracts/model-card/manifest.json"),
+    "aether.vv": Path("contracts/vv/manifest.json"),
 }
 
 REPO_ROOT = Path(__file__).resolve().parents[3]

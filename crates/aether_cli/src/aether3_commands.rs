@@ -1043,6 +1043,99 @@ pub fn cmd_sandbox_run(policy_path: PathBuf, command: String, args: Vec<String>,
     Ok(())
 }
 
+/// `aether vv coverage <file>` — compute honest verification coverage for a
+/// requirements package.
+pub fn cmd_vv_coverage(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let mut model = aether_vv::VvModel::new();
+    for value in doc
+        .get("requirements")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default()
+    {
+        let req: aether_vv::Requirement =
+            serde_json::from_value(value).context("parse requirement")?;
+        model.add_requirement(req).map_err(|e| anyhow!("{e}"))?;
+    }
+    for value in doc
+        .get("verification_cases")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default()
+    {
+        let case: aether_vv::VerificationCase =
+            serde_json::from_value(value).context("parse verification case")?;
+        model.add_verification_case(case).map_err(|e| anyhow!("{e}"))?;
+    }
+    for value in doc
+        .get("evidence")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default()
+    {
+        let item: aether_evidence::EvidenceItem =
+            serde_json::from_value(value).context("parse evidence item")?;
+        model.add_evidence(item).map_err(|e| anyhow!("{e}"))?;
+    }
+    let report = model.coverage();
+    emit(mode, &report)?;
+    if report.requirements_verified != report.requirements_total {
+        std::process::exit(30);
+    }
+    Ok(())
+}
+
+/// `aether vv decisions <file>` — validate that recorded review decisions
+/// were made by authorized roles.
+pub fn cmd_vv_decisions(file: PathBuf, mode: OutputMode) -> Result<()> {
+    let raw = std::fs::read_to_string(&file)
+        .with_context(|| format!("read {}", file.display()))?;
+    let doc: Value = serde_yaml::from_str(&raw)
+        .with_context(|| format!("parse {}", file.display()))?;
+    let roles: Vec<String> = doc
+        .get("authorized_roles")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default()
+        .iter()
+        .filter_map(|v| v.as_str().map(str::to_string))
+        .collect();
+    let roles: Vec<&str> = roles.iter().map(String::as_str).collect();
+    let mut model = aether_vv::VvModel::new();
+    let mut accepted = 0usize;
+    let mut rejected: Vec<Value> = Vec::new();
+    for value in doc
+        .get("decisions")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default()
+    {
+        let decision: aether_vv::ReviewDecision =
+            serde_json::from_value(value).context("parse review decision")?;
+        let id = decision.id.clone();
+        match model.record_decision(decision, &roles) {
+            Ok(()) => accepted += 1,
+            Err(e) => rejected.push(json!({ "id": id, "error": e.to_string() })),
+        }
+    }
+    emit(
+        mode,
+        &json!({
+            "decisions_accepted": accepted,
+            "decisions_rejected": rejected,
+            "authorized_roles": roles,
+        }),
+    )?;
+    if !rejected.is_empty() {
+        std::process::exit(30);
+    }
+    Ok(())
+}
+
 /// Structured schema list result, used by tests.
 #[derive(Debug, Serialize)]
 pub struct SchemaSummary {

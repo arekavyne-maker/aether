@@ -1,0 +1,16 @@
+[package]
+name = "aether_vv"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Verification and validation cases, coverage, compliance findings, and review decisions"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+thiserror = { workspace = true }
+aether_evidence = { path = "../aether_evidence" }

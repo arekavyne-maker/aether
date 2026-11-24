@@ -50,6 +50,7 @@ dependencies = [
  "aether_provenance",
  "aether_quantities",
  "aether_registry",
+ "aether_vv",
  "aether_workflow",
  "anyhow",
  "chrono",
@@ -263,6 +264,17 @@ name = "aether_sdk_ffi"
 version = "0.1.0"
 dependencies = [
  "serde",
+]
+
+[[package]]
+name = "aether_vv"
+version = "0.1.0"
+dependencies = [
+ "aether_evidence",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "thiserror",
 ]
 
 [[package]]

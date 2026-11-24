@@ -1,0 +1,61 @@
+{
+  "contract_id": "aether.vv",
+  "version": "0.1.0",
+  "title": "Aether Verification and Validation",
+  "description": "Requirements, verification cases, validation cases, compliance findings, review decisions, and honest coverage reporting (ADR-0026, A3-I02, A3-I04, A3-I05).",
+  "methods": [
+    "coverage",
+    "add_requirement",
+    "add_verification_case",
+    "add_validation_case",
+    "record_finding",
+    "record_decision"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/vv/schema/coverage.schema.json",
+      "path": "schema/coverage.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/vv/schema/verification-case.schema.json",
+      "path": "schema/verification-case.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "id": "https://aether.local/contracts/vv/schema/review-decision.schema.json",
+      "path": "schema/review-decision.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "vocabularies": [
+    {
+      "namespace": "verification_method",
+      "version": "0.1.0",
+      "closed": true,
+      "values": ["analysis", "test", "inspection", "demonstration", "similarity"]
+    },
+    {
+      "namespace": "criticality",
+      "version": "0.1.0",
+      "closed": true,
+      "values": ["no_effect", "minor", "major", "hazardous", "catastrophic"]
+    },
+    {
+      "namespace": "compliance_state",
+      "version": "0.1.0",
+      "closed": true,
+      "values": ["compliant", "non_compliant", "not_assessed", "not_applicable"]
+    }
+  ],
+  "invariants": [
+    "a_requirement_is_not_verified_without_current_evidence",
+    "verification_method_must_match_the_requirement_declaration",
+    "only_authorized_roles_may_approve_a_review_decision",
+    "coverage_report_is_never_a_certification_claim"
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

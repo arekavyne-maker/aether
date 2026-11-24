@@ -1,0 +1,19 @@
+# Phase B example: review decisions, one of which is unauthorized.
+authorized_roles:
+  - chief-engineer
+  - quality-auditor
+decisions:
+  - id: RD-001
+    subject_id: R-001
+    outcome: approved
+    approved_by: c.engineer
+    approved_by_role: chief-engineer
+    decided_at: 2026-11-24T00:00:00Z
+    rationale: Analysis method and evidence accepted for the preliminary baseline.
+  - id: RD-002
+    subject_id: R-003
+    outcome: approved
+    approved_by: random.user
+    approved_by_role: analyst
+    decided_at: 2026-11-24T00:00:00Z
+    rationale: This one should be rejected; an analyst may not approve.

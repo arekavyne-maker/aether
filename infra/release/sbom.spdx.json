@@ -1,7 +1,7 @@
 {
   "SPDXID": "SPDXRef-DOCUMENT",
   "creationInfo": {
-    "created": "2026-11-24T13:16:17.338025+00:00",
+    "created": "2026-11-24T14:44:10.986880+00:00",
     "creators": [
       "Tool: aether-fitness-pipeline-0.1.0"
     ]
@@ -108,6 +108,11 @@
     {
       "downloadLocation": "NOASSERTION",
       "name": "aether_sdk_ffi",
+      "versionInfo": "0.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "aether_vv",
       "versionInfo": "0.1.0"
     },
     {
