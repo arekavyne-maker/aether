@@ -1,0 +1,53 @@
+# Aether linearised buckling reference plugin manifest.
+_schema_id: "https://aether.local/contracts/plugin.manifest/schema/manifest.schema.json"
+
+manifest_version: "1.2"
+plugin:
+  id: "org.aether.reference.fe.buckling"
+  name: "Aether Linear Buckling FEM"
+  version: "0.1.0"
+  vendor: "Crocell Company"
+  license_ref: "LicenseRef-Crocell-Proprietary"
+contracts:
+  - id: "aether.physics.solver"
+    version: ">=0.1.0 <1.0.0"
+    role: "implements"
+capabilities:
+  physics:
+    fluid: false
+    structural: true
+    thermal: false
+    conjugate_heat: false
+    multiphase: false
+    linear_static: false
+    modal: false
+    buckling: true
+  compute:
+    cpu: true
+    gpu: false
+    mpi_distributed: false
+    accelerator_optional: false
+  features:
+    adjoint: false
+    autodiff: false
+    uncertainty_quantification: false
+    restart: false
+    checkpoint: false
+resources:
+  defaults: {memory_gb: 1, cores: 1}
+  maximums: {memory_gb: 16, cores: 8}
+isolation:
+  level: "process"
+  filesystem: "scoped"
+  network: "deny"
+runtime:
+  entry:
+    kind: "python-stdio"
+    path: "python/stdio_plugin.py"
+    args: []
+airgap:
+  offline_install: true
+provenance_template: "prov/solver-run.v1.json"
+policy:
+  data_residency: "local_only"
+  export_class: "PUBLIC"
