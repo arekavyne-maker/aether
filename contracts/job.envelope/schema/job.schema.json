@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/job.envelope/schema/job.schema.json",
+  "title": "Aether Portable Job Envelope",
+  "description": "The common execution envelope shared by local, cluster, cloud, edge and lab backends (spec §7.1).",
+  "type": "object",
+  "required": ["schema", "job_id", "idempotency_key", "configuration_snapshot", "inputs", "solver", "environment_digest", "classification", "timeout_seconds", "validation", "provenance_policy"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"type": "string", "const": "aether.job-envelope/v1"},
+    "job_id": {"type": "string"},
+    "idempotency_key": {"type": "string", "minLength": 1},
+    "configuration_snapshot": {"type": "string"},
+    "inputs": {"type": "array", "items": {"type": "object", "required": ["artifact", "hash"], "properties": {"artifact": {"type": "string"}, "hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}}},
+    "solver": {"type": "object", "required": ["plugin_id", "version"], "properties": {"plugin_id": {"type": "string"}, "version": {"type": "string"}}},
+    "environment_digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "parameter_set": {"type": "object"},
+    "resources": {"type": "object", "properties": {"memory_gb": {"type": "number"}, "cores": {"type": "integer"}}},
+    "licensing": {"type": "object"},
+    "classification": {"type": "string", "enum": ["public", "internal", "confidential", "restricted", "export_controlled"]},
+    "timeout_seconds": {"type": "integer", "minimum": 1},
+    "retry_policy": {"type": "object"},
+    "expected_outputs": {"type": "array", "items": {"type": "string"}},
+    "validation": {"type": "array", "items": {"type": "string"}},
+    "provenance_policy": {"type": "string"}
+  }
+}

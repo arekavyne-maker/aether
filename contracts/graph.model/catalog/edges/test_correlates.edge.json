@@ -1,0 +1,13 @@
+{
+  "type_id": "test_correlates",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "TestRun",
+    "InspectionRecord"
+  ],
+  "target_types": [
+    "ResultSet",
+    "Evidence"
+  ]
+}

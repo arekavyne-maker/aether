@@ -1,0 +1,22 @@
+{
+  "contract_id": "aether.credibility.record",
+  "version": "0.1.0",
+  "title": "Record",
+  "description": "Model credibility record with intended use, evidence and revalidation triggers (spec \u00a710.2).",
+  "methods": [
+    "create",
+    "validate",
+    "review"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/credibility.record/schema/credibility.schema.json",
+      "path": "schema/credibility.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

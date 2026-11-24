@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/credibility.record/schema/credibility.schema.json",
+  "title": "Aether Model Credibility Record",
+  "description": "Credentials for a physics or AI model used in a consequential decision (spec §10.2).",
+  "type": "object",
+  "required": ["schema", "model_id", "version", "intended_use", "governing_description", "assumptions", "input_domain", "quantities_of_interest", "numerical_method", "validation_data", "uncertainty_treatment", "known_limitations", "independent_review", "revalidation_triggers"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"type": "string", "const": "aether.credibility-record/v1"},
+    "model_id": {"type": "string"},
+    "version": {"type": "string"},
+    "intended_use": {"type": "array", "items": {"type": "string"}},
+    "governing_description": {"type": "string"},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "input_domain": {"type": "object"},
+    "quantities_of_interest": {"type": "array", "items": {"type": "string"}},
+    "numerical_method": {"type": "string"},
+    "convergence_evidence": {"type": "array", "items": {"type": "string"}},
+    "calibration_data": {"type": "array", "items": {"type": "string"}},
+    "validation_data": {"type": "array", "items": {"type": "string"}},
+    "uncertainty_treatment": {"type": "string"},
+    "known_limitations": {"type": "array", "items": {"type": "string"}},
+    "software_version": {"type": "string"},
+    "environment_digest": {"type": "string"},
+    "independent_review": {"type": ["string", "null"]},
+    "revalidation_triggers": {"type": "array", "items": {"type": "string"}},
+    "ai_specific": {
+      "type": "object",
+      "properties": {
+        "training_data_lineage": {"type": "array", "items": {"type": "string"}},
+        "split_strategy": {"type": "string"},
+        "weights_digest": {"type": "string"},
+        "seed": {"type": "integer"},
+        "ood_method": {"type": "string"},
+        "drift_monitoring": {"type": "boolean"}
+      }
+    }
+  }
+}

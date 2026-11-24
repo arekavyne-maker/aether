@@ -18,6 +18,7 @@ pub mod event;
 pub mod scale;
 pub mod storage;
 pub mod aql;
+pub mod auth;
 pub mod error;
 pub mod types;
 pub mod catalog;

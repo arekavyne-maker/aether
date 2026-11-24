@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/design.candidate/schema/candidate.schema.json",
+  "title": "Aether Design Candidate Lineage",
+  "description": "Typed engineering genome with generator provenance, evaluation status and disposition; rejected candidates remain in lineage.",
+  "type": "object",
+  "required": ["schema", "candidate_id", "generator", "genome", "evaluation", "disposition"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"type": "string", "const": "aether.design-candidate/v1"},
+    "candidate_id": {"type": "string", "minLength": 1},
+    "parent_candidates": {"type": "array", "items": {"type": "string"}},
+    "generator": {
+      "type": "object",
+      "required": ["method", "plugin", "version", "seed"],
+      "properties": {
+        "method": {"type": "string"},
+        "plugin": {"type": "string"},
+        "version": {"type": "string"},
+        "seed": {"type": "integer"}
+      }
+    },
+    "genome": {
+      "type": "object",
+      "required": ["representation", "artifact"],
+      "properties": {
+        "representation": {"type": "string"},
+        "artifact": {"type": "string"}
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "interface_set": {"type": "string"},
+        "process_route": {"type": "string"}
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "required": ["status", "high_fidelity_required"],
+      "properties": {
+        "status": {"type": "string"},
+        "surrogate_run": {"type": "string"},
+        "high_fidelity_required": {"type": "boolean"},
+        "uncertainty_report": {"type": "string"}
+      }
+    },
+    "disposition": {
+      "type": "object",
+      "required": ["state", "reason_codes"],
+      "properties": {
+        "state": {"type": "string"},
+        "reason_codes": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

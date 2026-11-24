@@ -1,0 +1,13 @@
+{
+  "type_id": "operates_in",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "AircraftConfiguration",
+    "EnvironmentCase"
+  ],
+  "target_types": [
+    "EnvironmentCase",
+    "Sensor"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "contract_id": "aether.design.candidate",
+  "version": "0.1.0",
+  "title": "Candidate",
+  "description": "Design candidate lineage with generator, genome, evaluation and disposition (spec \u00a720.3).",
+  "methods": [
+    "create",
+    "lineage",
+    "evaluate",
+    "dispose"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/design.candidate/schema/candidate.schema.json",
+      "path": "schema/candidate.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

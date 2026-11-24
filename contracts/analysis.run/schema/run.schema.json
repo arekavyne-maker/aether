@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/analysis.run/schema/run.schema.json",
+  "title": "Aether Analysis Run Manifest",
+  "description": "Binds one analysis run to an exact configuration, subject, solver, inputs, uncertainty treatment and required checks.",
+  "type": "object",
+  "required": ["schema", "run_id", "project_id", "configuration", "subject", "analysis", "inputs", "execution", "outputs", "validation"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"type": "string", "const": "aether.analysis-run/v1"},
+    "run_id": {"type": "string", "minLength": 1},
+    "project_id": {"type": "string", "minLength": 1},
+    "configuration": {
+      "type": "object",
+      "required": ["baseline_id", "revision"],
+      "properties": {
+        "baseline_id": {"type": "string"},
+        "revision": {"type": "integer", "minimum": 1}
+      }
+    },
+    "subject": {
+      "type": "object",
+      "required": ["product_element_id", "geometry_revision", "material_assignment_revision"],
+      "properties": {
+        "product_element_id": {"type": "string"},
+        "geometry_revision": {"type": "string"},
+        "material_assignment_revision": {"type": "string"}
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "required": ["discipline", "fidelity", "method", "solver"],
+      "properties": {
+        "discipline": {"type": "string", "enum": ["structural", "thermal", "fluid", "coupled", "aeroelastic"]},
+        "fidelity": {"type": "string", "enum": ["low", "medium", "high", "physical_test"]},
+        "method": {"type": "string"},
+        "solver": {
+          "type": "object",
+          "required": ["plugin", "version", "environment_digest"],
+          "properties": {
+            "plugin": {"type": "string"},
+            "version": {"type": "string"},
+            "environment_digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}
+          }
+        }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "required": ["load_case_ids"],
+      "properties": {
+        "load_case_ids": {"type": "array", "items": {"type": "string"}},
+        "mesh_artifact": {"type": "string"},
+        "model_artifact": {"type": "string"}
+      }
+    },
+    "uncertainty": {
+      "type": "object",
+      "properties": {
+        "treatment": {"type": "string"},
+        "assumptions_artifact": {"type": "string"},
+        "components": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "execution": {
+      "type": "object",
+      "required": ["target"],
+      "properties": {
+        "target": {"type": "string", "enum": ["local", "cluster", "cloud", "edge", "lab"]},
+        "seed": {"type": "integer"},
+        "idempotency_key": {"type": "string"},
+        "timeout_seconds": {"type": "integer", "minimum": 1}
+      }
+    },
+    "outputs": {"type": "array", "items": {"type": "object", "required": ["type"], "properties": {"type": {"type": "string"}}}},
+    "validation": {
+      "type": "object",
+      "required": ["required_checks"],
+      "properties": {
+        "required_checks": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["units", "mesh-quality", "equilibrium", "convergence-status", "result-sanity"]}
+        }
+      }
+    }
+  }
+}

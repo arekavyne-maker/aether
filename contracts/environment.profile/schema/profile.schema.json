@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/environment.profile/schema/profile.schema.json",
+  "title": "Aether Flight-Regime Environment Profile",
+  "description": "Structured operational envelope: Mach/Reynolds, altitude, temperature, load factor, environments and duty cycle (spec §3.1).",
+  "type": "object",
+  "required": ["schema", "profile_id", "regime", "mach_range", "altitude_range_m", "load_factor_range", "environments"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"type": "string", "const": "aether.environment-profile/v1"},
+    "profile_id": {"type": "string", "minLength": 1},
+    "regime": {"type": "string", "enum": ["low_speed_high_lift", "subsonic", "transonic", "supersonic", "hypersonic"]},
+    "mach_range": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+    "altitude_range_m": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+    "load_factor_range": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+    "reynolds_range": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+    "temperature_range_k": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+    "dynamic_pressure_pa": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+    "environments": {"type": "array", "items": {"type": "string"}},
+    "pressure_cycling": {"type": "boolean"},
+    "lightning": {"type": "boolean"},
+    "mission_duration_h": {"type": "number"},
+    "inspection_interval_h": {"type": "number"}
+  }
+}

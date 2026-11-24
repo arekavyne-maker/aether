@@ -1,0 +1,35 @@
+{
+  "type_id": "ModelUpdate",
+  "version": "1.0.0",
+  "revisioned": true,
+  "immutable": false,
+  "allowed_states": [
+    "draft",
+    "released",
+    "superseded",
+    "retired"
+  ],
+  "properties_schema": {
+    "type": "object",
+    "required": [
+      "name",
+      "status"
+    ],
+    "additionalProperties": true,
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "active",
+          "released",
+          "superseded",
+          "retired"
+        ]
+      }
+    }
+  }
+}

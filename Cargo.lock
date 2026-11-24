@@ -190,6 +190,7 @@ dependencies = [
 name = "aether_graph"
 version = "3.0.0"
 dependencies = [
+ "aether_policy",
  "anyhow",
  "chrono",
  "clap",

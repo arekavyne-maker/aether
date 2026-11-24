@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/contracts/release.gate/schema/gate.schema.json",
+  "title": "Aether Release Gate",
+  "description": "Configurable G0-G8 gate with required evidence, authorised roles and waiver policy (spec §10.3).",
+  "type": "object",
+  "required": ["schema", "gate_id", "definition", "required_evidence", "authorized_roles", "waiver_policy", "audit_record"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"type": "string", "const": "aether.release-gate/v1"},
+    "gate_id": {"type": "string", "enum": ["G0","G1","G2","G3","G4","G5","G6","G7","G8"]},
+    "definition": {"type": "string"},
+    "required_evidence": {"type": "array", "items": {"type": "string"}},
+    "authorized_roles": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "waiver_policy": {"type": "object", "properties": {"allowed": {"type": "boolean"}, "min_approver_role": {"type": "string"}}},
+    "audit_record": {"type": "string"}
+  }
+}

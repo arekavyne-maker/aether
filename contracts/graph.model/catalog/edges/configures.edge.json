@@ -1,0 +1,14 @@
+{
+  "type_id": "configures",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "ConfigurationBaseline",
+    "ConfigurationSnapshot"
+  ],
+  "target_types": [
+    "Product",
+    "Assembly",
+    "Part"
+  ]
+}

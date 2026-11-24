@@ -1,0 +1,23 @@
+{
+  "contract_id": "aether.analysis.run",
+  "version": "0.1.0",
+  "title": "Run",
+  "description": "Analysis run manifest binding configuration, inputs, solver and outputs (spec \u00a720.1).",
+  "methods": [
+    "create",
+    "validate",
+    "export",
+    "explain"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/analysis.run/schema/run.schema.json",
+      "path": "schema/run.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

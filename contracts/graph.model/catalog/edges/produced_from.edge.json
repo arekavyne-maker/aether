@@ -1,0 +1,13 @@
+{
+  "type_id": "produced_from",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "BuildRecord",
+    "AsBuiltConfiguration"
+  ],
+  "target_types": [
+    "MaterialBatch",
+    "Part"
+  ]
+}

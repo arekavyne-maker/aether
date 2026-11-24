@@ -1,0 +1,15 @@
+{
+  "type_id": "governs",
+  "version": "1.0.0",
+  "directed": true,
+  "source_types": [
+    "Requirement",
+    "Constraint",
+    "ComplianceFinding"
+  ],
+  "target_types": [
+    "System",
+    "Assembly",
+    "Part"
+  ]
+}

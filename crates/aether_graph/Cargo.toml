@@ -17,6 +17,7 @@ name = "aether_graph_scale"
 path = "src/bin/scale.rs"
 
 [dependencies]
+aether_policy = { path = "../aether_policy" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 serde_yaml = { workspace = true }

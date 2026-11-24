@@ -91,7 +91,8 @@ impl PolicyEngine {
     }
 }
 
-fn parse_action(s: &str) -> Option<Action> {
+/// Convert an action label to the typed RBAC action.
+pub fn parse_action(s: &str) -> Option<Action> {
     Some(match s {
         "project.init" => Action::ProjectInit,
         "project.open" => Action::ProjectOpen,

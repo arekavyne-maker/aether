@@ -1,0 +1,23 @@
+{
+  "contract_id": "aether.release.gate",
+  "version": "0.1.0",
+  "title": "Gate",
+  "description": "Configurable release gate with required evidence, roles and waiver policy (spec \u00a710.3).",
+  "methods": [
+    "define",
+    "evaluate",
+    "waive",
+    "audit"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/release.gate/schema/gate.schema.json",
+      "path": "schema/gate.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}

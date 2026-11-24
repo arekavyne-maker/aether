@@ -1,0 +1,22 @@
+{
+  "contract_id": "aether.environment.profile",
+  "version": "0.1.0",
+  "title": "Profile",
+  "description": "Structured flight-regime and environment envelope (spec \u00a73.1).",
+  "methods": [
+    "define",
+    "validate",
+    "apply"
+  ],
+  "schemas": [
+    {
+      "id": "https://aether.local/contracts/environment.profile/schema/profile.schema.json",
+      "path": "schema/profile.schema.json",
+      "schema_version": "https://json-schema.org/draft/2020-12/schema"
+    }
+  ],
+  "conformance_suite": {
+    "entry": "python/aether_testing/tests/test_contract_conformance.py",
+    "version": "0.1.0"
+  }
+}
