@@ -1,0 +1,29 @@
+[package]
+name = "aether_web"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Local web interface for the canonical Aether CLI"
+
+[[bin]]
+name = "aether-web"
+path = "src/main.rs"
+
+[lib]
+name = "aether_web"
+path = "src/lib.rs"
+
+[dependencies]
+axum = "0.7"
+tokio = { workspace = true, features = ["net", "full"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+sha2 = { workspace = true }
+tower = { version = "0.4", features = ["util"] }

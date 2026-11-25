@@ -1,0 +1,65 @@
+{
+  "version": "1.0",
+  "workspaces": [
+    { "id": "overview", "title": "Overview", "description": "Capability status, graph health, and honest boundaries." },
+    { "id": "schema", "title": "Contracts & schema", "description": "Contract packages, node and edge type definitions." },
+    { "id": "graph", "title": "Graph & provenance", "description": "Queries, lineage, chain verification, and time travel." },
+    { "id": "verification", "title": "Verification", "description": "Requirements, coverage gaps, and review decisions." },
+    { "id": "evidence", "title": "Evidence & release", "description": "Gates, waivers, release packages, and evidence bundles." },
+    { "id": "design", "title": "Design & analysis", "description": "Feasibility, fidelity selection, simulation, and benchmarks." },
+    { "id": "manufacturing", "title": "Manufacturing", "description": "Genealogy, as-built configuration, materials, loads, environments." },
+    { "id": "intelligence", "title": "Intelligence", "description": "Model cards, promotion, agent proposals, and governance." },
+    { "id": "operations", "title": "Operations", "description": "Doctor, health, environment manifests, signed bundles, and dark-build." }
+  ],
+  "commands": [
+    { "name": "status", "about": "Honest capability and project status", "workspace": "overview", "kind": "read", "args": [] },
+    { "name": "doctor", "about": "Probe installed capabilities and optional tools", "workspace": "overview", "kind": "read", "args": [] },
+    { "name": "metrics", "about": "Local operational metrics", "workspace": "overview", "kind": "read", "args": [] },
+    { "name": "commands", "about": "Versioned CLI command contract", "workspace": "overview", "kind": "read", "args": [] },
+
+    { "name": "schema list", "about": "List contract packages and graph catalog types", "workspace": "schema", "kind": "read", "args": [] },
+    { "name": "schema show", "about": "Show a contract, node type, or edge type", "workspace": "schema", "kind": "read", "args": [{"name":"id","label":"Contract or type id","kind":"text","required":true}] },
+
+    { "name": "graph query", "about": "Query graph nodes by type", "workspace": "graph", "kind": "read", "args": [{"name":"type","label":"Node type","kind":"text","required":false}] },
+    { "name": "graph chain", "about": "Verify the event hash chain", "workspace": "graph", "kind": "read", "args": [] },
+    { "name": "graph as-of", "about": "Replay the graph to an event offset", "workspace": "graph", "kind": "read", "args": [{"name":"offset","label":"Event offset","kind":"text","required":true}] },
+    { "name": "provenance explain", "about": "Explain an object's lineage", "workspace": "graph", "kind": "read", "args": [{"name":"object-id","label":"Object UUID","kind":"text","required":true}] },
+
+    { "name": "requirement report", "about": "Requirement verification coverage", "workspace": "verification", "kind": "read", "args": [] },
+    { "name": "vv coverage", "about": "V&V coverage with reason-coded gaps", "workspace": "verification", "kind": "read", "args": [{"name":"file","label":"Requirements package (YAML)","kind":"path","required":true}] },
+    { "name": "vv decisions", "about": "Validate review decisions and authorized roles", "workspace": "verification", "kind": "read", "args": [{"name":"file","label":"Decisions document (YAML)","kind":"path","required":true}] },
+    { "name": "validation report", "about": "Requirement verification coverage report", "workspace": "verification", "kind": "read", "args": [] },
+
+    { "name": "evidence export", "about": "Export the evidence ledger", "workspace": "evidence", "kind": "read", "args": [] },
+    { "name": "evidence gate", "about": "Evaluate a release gate over evidence", "workspace": "evidence", "kind": "approval", "args": [{"name":"file","label":"Gate + evidence document","kind":"path","required":true}] },
+    { "name": "release prepare", "about": "Build and optionally approve a release package", "workspace": "evidence", "kind": "approval", "args": [{"name":"file","label":"Release document","kind":"path","required":true},{"name":"--approver","label":"Approver identity","kind":"text","required":false}] },
+    { "name": "verify-tuf", "about": "Verify an offline TUF bundle", "workspace": "evidence", "kind": "read", "args": [{"name":"bundle","label":"Bundle directory","kind":"path","required":true},{"name":"root","label":"Trust root","kind":"path","required":true}] },
+
+    { "name": "plan explain", "about": "Compile and explain a workflow DAG", "workspace": "design", "kind": "read", "args": [{"name":"workflow","label":"AWL workflow file","kind":"path","required":true}] },
+    { "name": "fidelity plan", "about": "Explain a multi-fidelity selection", "workspace": "design", "kind": "read", "args": [{"name":"file","label":"Fidelity request (YAML)","kind":"path","required":true}] },
+    { "name": "design evaluate", "about": "Run the candidate feasibility pipeline", "workspace": "design", "kind": "read", "args": [{"name":"file","label":"Candidate document","kind":"path","required":true}] },
+    { "name": "design lineage", "about": "Validate candidate lineage", "workspace": "design", "kind": "read", "args": [{"name":"file","label":"Candidate set (YAML)","kind":"path","required":true}] },
+    { "name": "benchmark", "about": "Run a built-in engineering benchmark", "workspace": "design", "kind": "long", "args": [{"name":"name","label":"Benchmark id or all","kind":"text","required":true}] },
+    { "name": "uq sobol", "about": "Compute Sobol sensitivity indices", "workspace": "design", "kind": "long", "args": [] },
+    { "name": "optimize", "about": "Run surrogate-assisted optimization", "workspace": "design", "kind": "long", "args": [] },
+
+    { "name": "configuration verify", "about": "Verify an ASM configuration snapshot", "workspace": "manufacturing", "kind": "read", "args": [{"name":"snapshot","label":"Snapshot JSON","kind":"path","required":true},{"name":"file","label":"Object set (YAML)","kind":"path","required":true}] },
+    { "name": "manufacturing verify", "about": "Verify manufacturing genealogy", "workspace": "manufacturing", "kind": "read", "args": [{"name":"file","label":"Genealogy document","kind":"path","required":true}] },
+    { "name": "manufacturing as-built", "about": "Produce an as-built configuration", "workspace": "manufacturing", "kind": "read", "args": [{"name":"file","label":"Genealogy document","kind":"path","required":true},{"name":"--part","label":"Part id","kind":"text","required":true}] },
+    { "name": "manufacturing impact", "about": "Explain revision impact on builds", "workspace": "manufacturing", "kind": "read", "args": [{"name":"file","label":"Genealogy document","kind":"path","required":true},{"name":"--part","label":"Part id","kind":"text","required":true},{"name":"--to-revision","label":"Target revision","kind":"text","required":true}] },
+    { "name": "material check", "about": "Evaluate a material allowable", "workspace": "manufacturing", "kind": "read", "args": [{"name":"file","label":"Material card (YAML)","kind":"path","required":true}] },
+    { "name": "loads validate", "about": "Validate a flight-regime envelope", "workspace": "manufacturing", "kind": "read", "args": [{"name":"file","label":"Envelope document","kind":"path","required":true}] },
+    { "name": "units check", "about": "Validate solver quantities and frames", "workspace": "manufacturing", "kind": "read", "args": [{"name":"file","label":"Units + frames document","kind":"path","required":true}] },
+
+    { "name": "model verify", "about": "Check a model promotion gate", "workspace": "intelligence", "kind": "approval", "args": [{"name":"file","label":"Model card document","kind":"path","required":true}] },
+    { "name": "infer", "about": "Run a governed model prediction", "workspace": "intelligence", "kind": "read", "args": [{"name":"file","label":"Inference request","kind":"path","required":true}] },
+    { "name": "agent check", "about": "Evaluate an agent permission proposal", "workspace": "intelligence", "kind": "read", "args": [{"name":"file","label":"Proposal document","kind":"path","required":true}] },
+    { "name": "agent-run", "about": "Evaluate and execute an agent proposal", "workspace": "intelligence", "kind": "approval", "args": [{"name":"file","label":"Proposal document","kind":"path","required":true},{"name":"--approved-by","label":"Human approver identity","kind":"text","required":false}] },
+    { "name": "policy explain", "about": "Explain a policy decision", "workspace": "intelligence", "kind": "read", "args": [{"name":"action","label":"Action, e.g. graph.mutate","kind":"text","required":true}] },
+
+    { "name": "envman verify", "about": "Verify an environment manifest", "workspace": "operations", "kind": "read", "args": [{"name":"manifest","label":"Environment manifest","kind":"path","required":true}] },
+    { "name": "sandbox check", "about": "Validate a sandbox policy request", "workspace": "operations", "kind": "read", "args": [{"name":"file","label":"Sandbox request document","kind":"path","required":true}] },
+    { "name": "classify check", "about": "Check a data handling operation", "workspace": "operations", "kind": "read", "args": [{"name":"file","label":"Classification document","kind":"path","required":true}] },
+    { "name": "dark-build-check", "about": "Dark-build smoke check", "workspace": "operations", "kind": "long", "args": [] }
+  ]
+}

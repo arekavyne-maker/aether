@@ -39,6 +39,7 @@ members = [
     "crates/aether_crypto",
     "crates/aether_health",
     "crates/aether_migration",
+    "crates/aether_web",
 ]
 
 [workspace.package]

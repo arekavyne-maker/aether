@@ -1,0 +1,4 @@
+/* Aether local console — minimalistic dark theme. Expanded in W1. */
+:root { --bg:#050505; --ink:#f4f2ec; --muted:#9a9a94; --line:rgba(244,242,236,.14); }
+* { box-sizing:border-box }
+body { margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif }

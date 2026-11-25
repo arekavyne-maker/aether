@@ -1,13 +1,13 @@
 {
   "SPDXID": "SPDXRef-DOCUMENT",
   "creationInfo": {
-    "created": "2026-11-24T18:58:48.961951+00:00",
+    "created": "2026-11-25T19:03:24.706255+00:00",
     "creators": [
       "Tool: aether-fitness-pipeline-0.1.0"
     ]
   },
   "dataLicense": "CC0-1.0",
-  "documentNamespace": "https://aether.local/sbom/aether-platform-2026-11-24",
+  "documentNamespace": "https://aether.local/sbom/aether-platform-2026-11-25",
   "name": "aether-platform",
   "packages": [
     {
