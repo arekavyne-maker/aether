@@ -1,6 +1,6 @@
 // Aether local console — shell, workspaces, composer, inspector and bindings.
 // Zero build step, zero dependencies, zero external requests.
-import { initToken, api, postJSON } from './api.js';
+import { initToken, api, postJSON, forgetToken } from './api.js';
 import { icon, WORKSPACE_ICONS } from './icons.js';
 import { esc, resultHtml } from './format.js';
 import { formatArgv } from './argv.js';
@@ -48,12 +48,19 @@ const terminal = new Terminal({
 function $(selector, root = document) { return root.querySelector(selector); }
 function $$(selector, root = document) { return [...root.querySelectorAll(selector)]; }
 
-function fatal(message) {
+function fatal(message, detail = '') {
   document.getElementById('app').innerHTML = `<div class="fatal">
     <div class="eyebrow">Cannot start</div><h1>Local console unavailable</h1>
     <p>${esc(message)}</p>
-    <p class="dim">Start <code>aether-web</code> and open the exact URL it prints. The token must be a 64-character hex string.</p>
+    <p class="dim">${esc(detail)}</p>
+    <button class="btn" id="fatal-refresh">Retry this link</button>
+    <button class="btn ghost" id="fatal-forget">Clear saved token</button>
   </div>`;
+  $('#fatal-refresh')?.addEventListener('click', () => location.reload());
+  $('#fatal-forget')?.addEventListener('click', () => {
+    forgetToken();
+    location.reload();
+  });
 }
 
 async function boot() {
@@ -64,14 +71,23 @@ async function boot() {
   } catch { state.favorites = new Set(); }
 
   if (!initToken()) {
-    fatal('Missing token in the URL fragment. Launch aether-web and use the printed URL.');
+    fatal(
+      'No console token is saved for this browser.',
+      'Open the URL printed by aether-web once. It contains a 64-character token in the fragment; after that, plain links work in every tab.',
+    );
     return;
   }
   const [surface, status, atlas, health] = await Promise.all([
     api('/surface'), api('/status'), loadAtlas(), loadHealth(),
   ]);
   if (!surface.ok) {
-    fatal(surface.data?.message || 'The local API did not respond.');
+    const rejected = surface.status === 401;
+    fatal(
+      rejected ? 'The saved token was rejected by the server.' : (surface.data?.message || 'The local API did not respond.'),
+      rejected
+        ? 'The server may have restarted with a new token. Open the URL it printed, or clear the saved token and use a fresh link.'
+        : 'Check that aether-web is running on this address.',
+    );
     return;
   }
   state.surface = surface.data;

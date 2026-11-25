@@ -349,6 +349,7 @@ td code{font-size:10px;color:var(--accent)}
 .fatal{max-width:640px;margin:14vh auto;padding:0 24px}
 .fatal h1{font-family:var(--serif);font-size:42px;margin:12px 0}
 .fatal p{color:var(--muted);margin-bottom:10px}
+.fatal .btn{margin:10px 8px 0 0}
 
 /* ---- atlas & project surfaces ---- */
 .hidden{display:none!important}

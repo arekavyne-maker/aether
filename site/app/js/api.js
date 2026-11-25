@@ -1,23 +1,60 @@
 // Aether console — token handling and the local API client. No dependencies.
 const TOKEN_KEY = 'aether.token';
 
-/** Move the fragment token into sessionStorage and scrub it from the URL. */
-export function initToken() {
-  const match = location.hash.match(/token=([0-9a-fA-F]{64})/);
-  if (match) {
-    sessionStorage.setItem(TOKEN_KEY, match[1].toLowerCase());
-    history.replaceState(null, '', location.pathname + location.search);
+function store(tokenValue) {
+  try {
+    sessionStorage.setItem(TOKEN_KEY, tokenValue);
+    localStorage.setItem(TOKEN_KEY, tokenValue);
+  } catch {
+    // Storage can be disabled; the in-memory copy below still works.
   }
-  return sessionStorage.getItem(TOKEN_KEY);
 }
 
-export function token() {
-  return sessionStorage.getItem(TOKEN_KEY);
+function read() {
+  try {
+    return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Accept a token from the URL fragment, then remember it for this origin.
+ *
+ * A link without a fragment therefore works after the first authorised
+ * load — in this tab, in later tabs, and after a browser restart. The
+ * fragment is scrubbed so the secret never stays in the address bar or
+ * browser history.
+ */
+export function initToken() {
+  const match = String(location.hash || '').match(/token=([0-9a-fA-F]{64})/);
+  if (match) {
+    const value = match[1].toLowerCase();
+    store(value);
+    history.replaceState(null, '', location.pathname + location.search);
+    return value;
+  }
+  if (String(location.hash || '').startsWith('#token=')) {
+    // An invalid or short token must not displace a working saved token.
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+  return read();
+}
+
+/** The token used for every request, shared across tabs of this origin. */
+export function token() { return read(); }
+
+/** Forget a rejected token so a fresh printed URL can be used. */
+export function forgetToken() {
+  try {
+    sessionStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(TOKEN_KEY);
+  } catch { /* storage unavailable */ }
 }
 
 /** Every request carries the bearer token. Errors are returned, never thrown. */
 export async function api(path, options = {}) {
-  const headers = { ...(options.headers || {}), Authorization: `Bearer ${token()}` };
+  const headers = { ...(options.headers || {}), Authorization: `Bearer ${token() || ''}` };
   if (options.body) headers['Content-Type'] = 'application/json';
   try {
     const response = await fetch(`/api${path}`, { ...options, headers });

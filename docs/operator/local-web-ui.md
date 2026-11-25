@@ -16,8 +16,11 @@ On an interactive terminal the server prints:
 Open http://127.0.0.1:8787/#token=<64-hex-token>
 ```
 
-Open that exact URL. The token is moved into `sessionStorage` and removed
-from the address bar. Every API request carries it as `Authorization: Bearer`.
+Open that exact URL once. The token is moved into browser storage and removed
+from the address bar, so afterward even a plain `http://127.0.0.1:8787/`
+link works in this and later tabs. Every API request carries the token as
+`Authorization: Bearer`. If the server restarts with a new token, the console
+offers a **Clear saved token** action so a fresh printed URL can be used.
 When stdout is not a terminal (service or CI), the URL is printed with a
 reference to `~/.aether/web.token` instead — logs never contain the secret.
 
