@@ -1,7 +1,7 @@
-# Aether — Local Web Interface
+# Aether — Local Web Console
 
-**Status:** deployable local console (ADR-0042).
-**Scope:** a modern, minimal local UI over the untouched CLI.
+**Status:** deployable local console (ADR-0042, ADR-0043).
+**Scope:** an Obsidian-editorial local interface over the untouched CLI.
 
 ## Start
 
@@ -10,44 +10,80 @@ cargo build -p aether_web
 ./target/debug/aether-web
 ```
 
-The server prints a URL such as:
+On an interactive terminal the server prints:
 
 ```
-aether-web listening on http://127.0.0.1:8787
 Open http://127.0.0.1:8787/#token=<64-hex-token>
 ```
 
 Open that exact URL. The token is moved into `sessionStorage` and removed
-from the address bar. Every API request carries it as a bearer token.
+from the address bar. Every API request carries it as `Authorization: Bearer`.
+When stdout is not a terminal (service or CI), the URL is printed with a
+reference to `~/.aether/web.token` instead — logs never contain the secret.
 
-## What it exposes
+## Two surfaces, one session
 
-- Overview: version, capability status, graph health, honest disclaimer.
-- Nine curated workspaces with 45 commands and typed argument forms.
-- Command palette (`⌘K` / `Ctrl-K`) across all 124 discovered commands.
-- Raw command console, restricted to the CLI discovery surface.
-- JSON inspector with syntax highlighting; stderr shown separately.
-- Fail-closed states: exit 30 renders as `blocked` with the CLI's reason.
+- **Web workspace** — ten workspaces, all 124 discovered commands, grouped by
+  CLI family. Selecting a command loads its real `aether <cmd> --help`
+  contract and generates typed fields, a live argv preview and a result
+  inspector with summary, JSON and stderr tabs.
+- **CLI terminal** (`⌘J`) — a command line that accepts `aether` syntax. It
+  tokenizes quotes and escapes into discrete argv elements, keeps history,
+  completes command names and flags, and rejects shell operators with an
+  explanation. It is not a shell and cannot invoke one.
+- **Session ledger** — every invocation from either surface is recorded in
+  this browser, with state, exit code, duration, rerun, inspect, copy and
+  JSON export.
+
+`⌘K` opens the palette across commands, workspaces, recent runs and actions.
+`?` shows the full keyboard map.
+
+## Configuration
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `AETHER_WEB_BIND` | `127.0.0.1:8787` | Loopback bind. Non-loopback requires `AETHER_WEB_ALLOW_REMOTE=1`. |
+| `AETHER_WEB_TOKEN` | generated 0600 file | Explicit token; must be 64 lower-case hex characters. |
+| `AETHER_WEB_PROJECT` | server working directory | Project root for child CLI processes and the path picker. |
+| `AETHER_WEB_TIMEOUT_SECS` | `600` | Default command deadline; a request may clamp 1–3600. |
+| `AETHER_WEB_FILES` | enabled | Set to `0` to disable the path picker. |
+
+Every web invocation adds `--offline`. Structured mode adds `--json` unless
+the caller supplied `--format`. Exit `30` is always rendered as `blocked`,
+never as success.
 
 ## Security
 
-- Loopback only (`127.0.0.1`); no egress, no CDN, no telemetry.
-- Static assets embedded in the binary with strict CSP.
-- Bearer token with constant-time verification, 0600 on disk.
-- No shell: argv elements are passed directly to the CLI process.
+- Loopback-only by default; bearer token with constant-time verification;
+  0600 token file; strict CSP with no `unsafe-inline` or `unsafe-eval`.
+- Static assets are embedded in the binary via `include_str!`; no CDN,
+  external font, telemetry or network egress.
+- No shell and no PTY. `/api/exec` resolves the longest discovered command
+  prefix and caps argv count and size.
+- The path picker is read-only, confined to the project root, skips symlinks
+  and ignores generated/hidden directories.
+- Streaming (SSE) is not implemented; long commands are synchronous with a
+  bounded deadline.
 
 ## Verification
 
 ```bash
+cargo test -p aether_web
+node --test site/app/js/argv.test.mjs
+python3 infra/fitness/run.py web_surface
 bash scripts/acceptance/web-ui.sh
 ```
 
-The script starts the server, checks auth, discovery, catalog, status, a
-curated invocation, the blocked state, and raw-command validation.
+The acceptance script starts a loopback server and checks auth, CSP, the
+merged surface, help parsing, positional argv execution, fail-closed exit
+30, file-root confinement, the raw-console allowlist and the tokenizer.
 
-## Limitations
+## Files
 
-- One CLI process per request; discovery and status are cached briefly.
-- Long-running commands are synchronous; SSE streaming is future work.
-- Curated workspaces require a catalog entry; all other commands remain
-  available through the raw console and palette.
+| Path | Purpose |
+|---|---|
+| `crates/aether_web/src/api.rs` | Routes, auth, surface, describe, exec, files |
+| `crates/aether_web/src/help.rs` | Defensive parser for clap help text |
+| `crates/aether_web/catalog.json` | Workspaces, family map, curated presentation metadata |
+| `site/app/js/` | Zero-build ES modules for shell, composer, terminal and palette |
+| `site/app/app.css` | Obsidian night / Paper design system |

@@ -80,9 +80,19 @@ fn random_token() -> Result<Vec<u8>> {
         .into_bytes())
 }
 
+/// True when a token has the generated form: 64 lower-case hex characters.
+pub fn is_valid_token(value: &str) -> bool {
+    value.len() == 64 && value.bytes().all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
+}
+
 /// Load an existing token or create one with restrictive permissions.
 pub fn load_or_create_token() -> Result<TokenAuth> {
     if let Ok(override_token) = std::env::var("AETHER_WEB_TOKEN") {
+        if !is_valid_token(&override_token) {
+            return Err(anyhow!(
+                "AETHER_WEB_TOKEN must be exactly 64 lower-case hex characters"
+            ));
+        }
         return Ok(TokenAuth::new(override_token.into_bytes()));
     }
     let path = token_path()?;
@@ -135,6 +145,13 @@ mod tests {
     fn extracts_bearer() {
         assert_eq!(bearer("Bearer xyz").unwrap(), "xyz");
         assert!(bearer("xyz").is_err());
+    }
+
+    #[test]
+    fn token_form_is_enforced() {
+        assert!(is_valid_token(&"a".repeat(64)));
+        assert!(!is_valid_token("short"));
+        assert!(!is_valid_token(&"A".repeat(64)));
     }
 
     #[test]

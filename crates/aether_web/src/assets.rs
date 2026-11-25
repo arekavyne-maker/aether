@@ -9,12 +9,25 @@
 #![deny(unsafe_code)]
 #![warn(missing_docs)]
 
-use axum::http::{HeaderMap, HeaderValue, header};
+use axum::extract::Path;
+use axum::http::{HeaderMap, HeaderValue, StatusCode, header};
 use axum::response::{Html, IntoResponse, Response};
 
 const INDEX: &str = include_str!("../../../site/app/index.html");
 const CSS: &str = include_str!("../../../site/app/app.css");
-const JS: &str = include_str!("../../../site/app/app.js");
+
+/// Frontend ES modules, embedded and served only from `/assets/js/`.
+pub const JS_MODULES: &[(&str, &str)] = &[
+    ("main.js", include_str!("../../../site/app/js/main.js")),
+    ("api.js", include_str!("../../../site/app/js/api.js")),
+    ("argv.js", include_str!("../../../site/app/js/argv.js")),
+    ("icons.js", include_str!("../../../site/app/js/icons.js")),
+    ("format.js", include_str!("../../../site/app/js/format.js")),
+    ("surface.js", include_str!("../../../site/app/js/surface.js")),
+    ("terminal.js", include_str!("../../../site/app/js/terminal.js")),
+    ("ledger.js", include_str!("../../../site/app/js/ledger.js")),
+    ("palette.js", include_str!("../../../site/app/js/palette.js")),
+];
 
 /// Security headers applied to every response.
 pub fn security_headers(headers: &mut HeaderMap) {
@@ -62,15 +75,18 @@ pub async fn css() -> Response {
     (headers, CSS).into_response()
 }
 
-/// Serve the application module.
-pub async fn javascript() -> Response {
+/// Serve one embedded frontend module. Unknown names are rejected.
+pub async fn javascript_module(Path(name): Path<String>) -> Response {
+    let Some((_, source)) = JS_MODULES.iter().find(|(file, _)| *file == name) else {
+        return (StatusCode::NOT_FOUND, "not found").into_response();
+    };
     let mut headers = HeaderMap::new();
     security_headers(&mut headers);
     headers.insert(
         header::CONTENT_TYPE,
         HeaderValue::from_static("text/javascript; charset=utf-8"),
     );
-    (headers, JS).into_response()
+    (headers, *source).into_response()
 }
 
 #[cfg(test)]
@@ -81,7 +97,8 @@ mod tests {
     fn embedded_assets_are_present() {
         assert!(INDEX.contains("<!doctype html>"));
         assert!(CSS.contains("--bg"));
-        assert!(!JS.is_empty());
+        assert!(JS_MODULES.len() >= 8);
+        assert!(JS_MODULES.iter().all(|(_, source)| !source.is_empty()));
     }
 
     #[test]
@@ -96,5 +113,18 @@ mod tests {
         assert!(csp.contains("default-src 'self'"));
         assert!(csp.contains("connect-src 'self'"));
         assert!(csp.contains("frame-ancestors 'none'"));
+        assert!(!csp.contains("unsafe-inline"));
+        assert!(!csp.contains("unsafe-eval"));
+    }
+
+    #[test]
+    fn assets_reference_no_external_origins() {
+        for (name, source) in std::iter::once(("index.html", INDEX))
+            .chain(std::iter::once(("app.css", CSS)))
+            .chain(JS_MODULES.iter().copied())
+        {
+            assert!(!source.contains("http://"), "{name} contains an external URL");
+            assert!(!source.contains("https://"), "{name} contains an external URL");
+        }
     }
 }

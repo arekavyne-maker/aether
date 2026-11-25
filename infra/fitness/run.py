@@ -117,6 +117,11 @@ def run_benchmark_coverage() -> CheckResult:
     return check(REPO_ROOT)
 
 
+def run_web_surface() -> CheckResult:
+    from web_surface import check
+    return check(REPO_ROOT)
+
+
 CHECKS = {
     "loc_budget": run_loc_budget,
     "token_scan": run_token_scan,
@@ -134,6 +139,7 @@ CHECKS = {
     "adr_discipline": run_adr_discipline,
     "research_claim": run_research_claim,
     "benchmark_coverage": run_benchmark_coverage,
+    "web_surface": run_web_surface,
 }
 
 

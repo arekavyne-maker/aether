@@ -4,7 +4,8 @@
 //!
 //! Every `/api/*` route requires a bearer token. Static assets are
 //! unauthenticated but contain no engineering data. All command execution
-//! goes through [`CliRunner`] and the curated [`Catalog`].
+//! goes through [`CliRunner`] and the curated [`Catalog`]; no shell and no
+//! parallel implementation exists in this crate.
 
 #![deny(unsafe_code)]
 #![warn(missing_docs)]
@@ -13,7 +14,7 @@ use std::collections::{BTreeMap, HashMap};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use axum::extract::State;
+use axum::extract::{Query, State};
 use axum::http::{HeaderMap, StatusCode};
 use axum::middleware::from_fn_with_state;
 use axum::response::{IntoResponse, Json, Response};
@@ -25,8 +26,13 @@ use tokio::sync::RwLock;
 
 use crate::assets;
 use crate::auth::{self, AuthError, TokenAuth};
-use crate::catalog::{Catalog, CatalogError};
-use crate::cli::{CliError, CliRunner, CommandRequest, CommandResponse, DiscoveredCommand};
+use crate::catalog::{Catalog, CatalogError, CommandKind};
+use crate::cli::{
+    CliError, CliRunner, CommandRequest, CommandState, DiscoveredCommand, resolve_command,
+    validate_argv,
+};
+use crate::files;
+use crate::help::{self, CommandHelp};
 
 /// Shared application state.
 #[derive(Debug, Clone)]
@@ -39,16 +45,24 @@ pub struct AppState {
     pub catalog: Arc<Catalog>,
     /// Short-lived response cache.
     pub cache: Arc<RwLock<HashMap<String, (Instant, Value)>>>,
+    /// Cached CLI discovery surface.
+    pub discovered: Arc<RwLock<Option<(Instant, Vec<DiscoveredCommand>)>>>,
+    /// Parsed help, cached for the life of the process.
+    pub helps: Arc<RwLock<HashMap<String, CommandHelp>>>,
 }
 
 impl AppState {
-    /// Build state, loading the embedded catalog.
+    /// Build state, loading and validating the embedded catalog.
     pub fn new(token: TokenAuth, runner: CliRunner) -> Result<Self, CatalogError> {
+        let catalog = Catalog::load()?;
+        catalog.validate()?;
         Ok(Self {
             token: Arc::new(token),
             runner: Arc::new(runner),
-            catalog: Arc::new(Catalog::load()?),
+            catalog: Arc::new(catalog),
             cache: Arc::new(RwLock::new(HashMap::new())),
+            discovered: Arc::new(RwLock::new(None)),
+            helps: Arc::new(RwLock::new(HashMap::new())),
         })
     }
 
@@ -68,6 +82,19 @@ impl AppState {
     async fn remember(&self, key: &str, value: Value) {
         let mut cache = self.cache.write().await;
         cache.insert(key.to_string(), (Instant::now(), value));
+    }
+
+    /// One discovery query shared by the surface, describe, exec and raw APIs.
+    pub async fn discovered(&self) -> Result<Vec<DiscoveredCommand>, CliError> {
+        const TTL: Duration = Duration::from_secs(30);
+        if let Some((at, list)) = self.discovered.read().await.as_ref() {
+            if at.elapsed() < TTL {
+                return Ok(list.clone());
+            }
+        }
+        let list = self.runner.discovered().await?;
+        *self.discovered.write().await = Some((Instant::now(), list.clone()));
+        Ok(list)
     }
 }
 
@@ -89,6 +116,137 @@ pub struct RawRequest {
     /// Extra flags.
     #[serde(default)]
     pub flags: Vec<String>,
+}
+
+/// Request body for the terminal. Positional arguments live in `argv`.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ExecRequest {
+    /// Exact argv tokens, without the leading `aether` binary.
+    pub argv: Vec<String>,
+    /// Inject `--json` when the caller did not request another format.
+    #[serde(default = "default_true")]
+    pub structured: bool,
+    /// Optional deadline override in seconds, clamped to 1..=3600.
+    #[serde(default)]
+    pub timeout_secs: Option<u64>,
+}
+
+fn default_true() -> bool {
+    true
+}
+
+/// Query for the help endpoint.
+#[derive(Debug, Deserialize)]
+pub struct DescribeQuery {
+    /// Fully qualified command name, e.g. `vv coverage`.
+    pub name: String,
+}
+
+/// Query for the path picker.
+#[derive(Debug, Deserialize)]
+pub struct FilesQuery {
+    /// Case-insensitive substring filter.
+    #[serde(default)]
+    pub q: Option<String>,
+    /// Maximum number of entries.
+    #[serde(default)]
+    pub limit: Option<usize>,
+}
+
+/// One command in the merged UI surface.
+#[derive(Debug, Clone, Serialize)]
+pub struct SurfaceCommand {
+    /// Full command name.
+    pub name: String,
+    /// Discovery description.
+    pub about: String,
+    /// Resolved workspace id.
+    pub workspace: String,
+    /// Leading CLI token.
+    pub family: String,
+    /// Whether the command has child commands.
+    pub group: bool,
+    /// Whether the command has curated metadata.
+    pub curated: bool,
+    /// Interaction class: `group`, `read`, `approval`, `long`.
+    pub kind: String,
+}
+
+/// One workspace with its command count.
+#[derive(Debug, Clone, Serialize)]
+pub struct SurfaceWorkspace {
+    /// Stable id.
+    pub id: String,
+    /// Display title.
+    pub title: String,
+    /// Display description.
+    pub description: String,
+    /// Number of commands mapped here.
+    pub command_count: usize,
+}
+
+/// The complete command surface available to the browser.
+#[derive(Debug, Clone, Serialize)]
+pub struct Surface {
+    /// Catalog version.
+    pub version: String,
+    /// Workspaces in display order.
+    pub workspaces: Vec<SurfaceWorkspace>,
+    /// Every command advertised by the CLI.
+    pub commands: Vec<SurfaceCommand>,
+}
+
+fn kind_name(kind: CommandKind) -> &'static str {
+    match kind {
+        CommandKind::Read => "read",
+        CommandKind::Approval => "approval",
+        CommandKind::Long => "long",
+    }
+}
+
+async fn build_surface(state: &AppState) -> Result<Surface, String> {
+    let discovered = state.discovered().await.map_err(|e| e.to_string())?;
+    let commands: Vec<SurfaceCommand> = discovered
+        .iter()
+        .map(|command| {
+            let family = command.name.split_whitespace().next().unwrap_or("").to_string();
+            let child_prefix = format!("{} ", command.name);
+            let group = discovered
+                .iter()
+                .any(|other| other.name.starts_with(&child_prefix));
+            let curated = state.catalog.get(&command.name).ok();
+            let kind = if group {
+                "group"
+            } else {
+                curated.map(|c| kind_name(c.kind)).unwrap_or("read")
+            };
+            SurfaceCommand {
+                name: command.name.clone(),
+                about: command.about.clone(),
+                workspace: state.catalog.workspace_for(&family).to_string(),
+                family,
+                group,
+                curated: curated.is_some(),
+                kind: kind.to_string(),
+            }
+        })
+        .collect();
+    let workspaces = state
+        .catalog
+        .workspaces
+        .iter()
+        .map(|w| SurfaceWorkspace {
+            id: w.id.clone(),
+            title: w.title.clone(),
+            description: w.description.clone(),
+            command_count: commands.iter().filter(|c| c.workspace == w.id).count(),
+        })
+        .collect();
+    Ok(Surface {
+        version: state.catalog.version.clone(),
+        workspaces,
+        commands,
+    })
 }
 
 fn error_response(status: StatusCode, code: &str, message: impl Into<String>) -> Response {
@@ -141,14 +299,18 @@ pub fn router(token: TokenAuth, runner: CliRunner) -> Router {
         .route("/commands", get(commands_handler))
         .route("/catalog", get(catalog_handler))
         .route("/status", get(status_handler))
+        .route("/surface", get(surface_handler))
+        .route("/describe", get(describe_handler))
+        .route("/files", get(files_handler))
         .route("/invoke", post(invoke_handler))
+        .route("/exec", post(exec_handler))
         .route("/raw", post(raw_handler))
         .route_layer(from_fn_with_state(state.clone(), authenticate));
 
     Router::new()
         .route("/", get(assets::index))
         .route("/assets/app.css", get(assets::css))
-        .route("/assets/app.js", get(assets::javascript))
+        .route("/assets/js/:file", get(assets::javascript_module))
         .nest("/api", api)
         .with_state(state)
 }
@@ -158,7 +320,7 @@ async fn commands_handler(State(state): State<AppState>) -> Response {
     if let Some(value) = state.cached("commands", ttl).await {
         return Json(value).into_response();
     }
-    match state.runner.discovered().await {
+    match state.discovered().await {
         Ok(commands) => {
             let value = serde_json::to_value(commands).unwrap_or(Value::Null);
             state.remember("commands", value.clone()).await;
@@ -192,11 +354,11 @@ async fn status_handler(State(state): State<AppState>) -> Response {
         .runner
         .run(&CommandRequest {
             command: vec!["status".to_string()],
-            flags: vec!["--json".to_string()],
+            flags: vec!["--json".to_string(), "--offline".to_string()],
         })
         .await
     {
-        Ok(response) if response.state == crate::cli::CommandState::Ok => {
+        Ok(response) if response.state == CommandState::Ok => {
             state.remember("status", response.value.clone()).await;
             Json(response.value).into_response()
         }
@@ -210,6 +372,88 @@ async fn status_handler(State(state): State<AppState>) -> Response {
             "cli_error",
             e.to_string(),
         ),
+    }
+}
+
+async fn surface_handler(State(state): State<AppState>) -> Response {
+    match build_surface(&state).await {
+        Ok(surface) => Json(surface).into_response(),
+        Err(e) => error_response(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "surface_failed",
+            e,
+        ),
+    }
+}
+
+async fn describe_handler(
+    State(state): State<AppState>,
+    Query(query): Query<DescribeQuery>,
+) -> Response {
+    if let Some(help) = state.helps.read().await.get(&query.name) {
+        return Json(help.clone()).into_response();
+    }
+    let known = match state.discovered().await {
+        Ok(commands) => commands,
+        Err(e) => {
+            return error_response(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "discovery_failed",
+                e.to_string(),
+            );
+        }
+    };
+    if !known.iter().any(|c| c.name == query.name) {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            "unknown_command",
+            format!("{} is not in the CLI discovery surface", query.name),
+        );
+    }
+    let command: Vec<String> = query.name.split_whitespace().map(str::to_string).collect();
+    let response = match state
+        .runner
+        .run_with_timeout(
+            &CommandRequest {
+                command,
+                flags: vec!["--help".to_string()],
+            },
+            Duration::from_secs(10),
+        )
+        .await
+    {
+        Ok(response) => response,
+        Err(e) => {
+            return error_response(StatusCode::BAD_GATEWAY, "help_failed", e.to_string());
+        }
+    };
+    let text = response
+        .text
+        .unwrap_or_else(|| serde_json::to_string(&response.value).unwrap_or_default());
+    if text.trim().is_empty() {
+        return error_response(StatusCode::BAD_GATEWAY, "help_failed", "empty help output");
+    }
+    let parsed = help::parse_help(&query.name, &text);
+    state
+        .helps
+        .write()
+        .await
+        .insert(query.name.clone(), parsed.clone());
+    Json(parsed).into_response()
+}
+
+async fn files_handler(State(state): State<AppState>, Query(query): Query<FilesQuery>) -> Response {
+    let _ = &state;
+    if std::env::var("AETHER_WEB_FILES").as_deref() == Ok("0") {
+        return error_response(StatusCode::NOT_FOUND, "files_disabled", "path picker disabled");
+    }
+    let root = match files::default_root() {
+        Ok(root) => root,
+        Err(e) => return error_response(StatusCode::INTERNAL_SERVER_ERROR, "bad_root", e),
+    };
+    match files::list_files(&root, query.q.as_deref().unwrap_or(""), query.limit.unwrap_or(80)) {
+        Ok(entries) => Json(entries).into_response(),
+        Err(e) => error_response(StatusCode::INTERNAL_SERVER_ERROR, "files_failed", e),
     }
 }
 
@@ -233,22 +477,73 @@ async fn invoke_handler(
             return error_response(StatusCode::BAD_REQUEST, "unknown_command", e.to_string());
         }
     };
-    let mut flags = vec!["--json".to_string()];
-    let kind = state.catalog.get(&body.name).map(|c| c.kind).ok();
-    if kind == Some(crate::catalog::CommandKind::Long) {
+    let request = CommandRequest {
+        command,
+        flags: vec!["--json".to_string(), "--offline".to_string()],
+    };
+    run_and_render(&state, request).await
+}
+
+async fn exec_handler(State(state): State<AppState>, Json(body): Json<ExecRequest>) -> Response {
+    if let Err(e) = validate_argv(&body.argv) {
+        return error_response(StatusCode::BAD_REQUEST, "invalid_argv", e.to_string());
+    }
+    let known = match state.discovered().await {
+        Ok(commands) => commands,
+        Err(e) => {
+            return error_response(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "discovery_failed",
+                e.to_string(),
+            );
+        }
+    };
+    let resolved = match resolve_command(&body.argv, &known) {
+        Some(command) => command,
+        None => {
+            return error_response(
+                StatusCode::BAD_REQUEST,
+                "unknown_command",
+                "command is not in the CLI discovery surface",
+            );
+        }
+    };
+    let used = resolved.name.split_whitespace().count();
+    let mut flags: Vec<String> = body.argv[used..].to_vec();
+    if body.structured {
+        let has_format = flags
+            .iter()
+            .any(|f| f == "--json" || f == "--format" || f.starts_with("--format="));
+        if !has_format {
+            flags.push("--json".to_string());
+        }
+    }
+    if !flags.iter().any(|f| f == "--offline") {
         flags.push("--offline".to_string());
     }
-    let request = CommandRequest { command, flags };
-    run_and_render(&state, request).await
+    let timeout = body
+        .timeout_secs
+        .unwrap_or_else(|| {
+            std::env::var("AETHER_WEB_TIMEOUT_SECS")
+                .ok()
+                .and_then(|v| v.parse().ok())
+                .unwrap_or(600)
+        })
+        .clamp(1, 3600);
+    let request = CommandRequest {
+        command: body.argv[..used].to_vec(),
+        flags,
+    };
+    run_and_render_with_timeout(&state, request, Duration::from_secs(timeout)).await
 }
 
 async fn raw_handler(State(state): State<AppState>, Json(body): Json<RawRequest>) -> Response {
     if body.command.is_empty() {
         return error_response(StatusCode::BAD_REQUEST, "empty_command", "command is empty");
     }
-    // Restrict to commands the CLI actually advertises. No shell is used,
-    // but this prevents the UI being turned into a generic argv launcher.
-    let known = match state.runner.discovered().await {
+    // Legacy surface: restricted to exact discovery names. The terminal uses
+    // /api/exec, which also accepts positional arguments.
+    let known = match state.discovered().await {
         Ok(commands) => commands,
         Err(e) => {
             return error_response(
@@ -273,6 +568,9 @@ async fn raw_handler(State(state): State<AppState>, Json(body): Json<RawRequest>
     if !flags.iter().any(|f| f == "--json" || f == "--format") {
         flags.push("--json".to_string());
     }
+    if !flags.iter().any(|f| f == "--offline") {
+        flags.push("--offline".to_string());
+    }
     run_and_render(
         &state,
         CommandRequest {
@@ -284,10 +582,22 @@ async fn raw_handler(State(state): State<AppState>, Json(body): Json<RawRequest>
 }
 
 async fn run_and_render(state: &AppState, request: CommandRequest) -> Response {
-    match state.runner.run(&request).await {
-        Ok(response) if response.state == crate::cli::CommandState::Ok => {
-            Json(response).into_response()
-        }
+    run_and_render_with_timeout(state, request, state.runner_default_timeout()).await
+}
+
+impl AppState {
+    fn runner_default_timeout(&self) -> Duration {
+        Duration::from_secs(600)
+    }
+}
+
+async fn run_and_render_with_timeout(
+    state: &AppState,
+    request: CommandRequest,
+    timeout: Duration,
+) -> Response {
+    match state.runner.run_with_timeout(&request, timeout).await {
+        Ok(response) if response.state == CommandState::Ok => Json(response).into_response(),
         Ok(response) => {
             // Blocked / usage errors are still valid results: the browser
             // needs the reason, so return 200 with a non-ok state.
@@ -318,7 +628,7 @@ pub async fn invoke_for_test(state: &AppState, request: InvokeRequest) -> Respon
         state,
         CommandRequest {
             command,
-            flags: vec!["--json".to_string()],
+            flags: vec!["--json".to_string(), "--offline".to_string()],
         },
     )
     .await
@@ -342,13 +652,44 @@ mod tests {
 
     use std::path::PathBuf;
 
+    fn app() -> Router {
+        router(
+            TokenAuth::new(b"test-token".to_vec()),
+            match crate::cli::find_cli_binary() {
+                Some(bin) => CliRunner::with_binary(bin, Duration::from_secs(30)),
+                None => CliRunner::with_binary(PathBuf::from("/bin/true"), Duration::from_secs(1)),
+            },
+        )
+    }
+
+    async fn body_value(response: Response) -> Value {
+        let body = axum::body::to_bytes(response.into_body(), 2_000_000)
+            .await
+            .unwrap();
+        serde_json::from_slice(&body).unwrap()
+    }
+
+    fn fixture(relative: &str) -> String {
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../..")
+            .join(relative)
+            .to_string_lossy()
+            .to_string()
+    }
+
+    fn post(path: &str, body: Value) -> Request<Body> {
+        Request::builder()
+            .method("POST")
+            .uri(path)
+            .header("Authorization", "Bearer test-token")
+            .header("Content-Type", "application/json")
+            .body(Body::from(body.to_string()))
+            .unwrap()
+    }
+
     #[tokio::test]
     async fn api_requires_token() {
-        let app = router(
-            TokenAuth::new(b"test-token".to_vec()),
-            CliRunner::with_binary(PathBuf::from("/bin/true"), Duration::from_secs(1)),
-        );
-        let response = app
+        let response = app()
             .oneshot(Request::builder().uri("/api/status").body(Body::empty()).unwrap())
             .await
             .unwrap();
@@ -357,14 +698,7 @@ mod tests {
 
     #[tokio::test]
     async fn api_accepts_valid_token_and_serves_status() {
-        let app = router(
-            TokenAuth::new(b"test-token".to_vec()),
-            match crate::cli::find_cli_binary() {
-                Some(bin) => CliRunner::with_binary(bin, Duration::from_secs(30)),
-                None => CliRunner::with_binary(PathBuf::from("/bin/true"), Duration::from_secs(1)),
-            },
-        );
-        let response = app
+        let response = app()
             .oneshot(
                 Request::builder()
                     .uri("/api/status")
@@ -375,14 +709,6 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(response.status(), StatusCode::OK);
-    }
-
-    fn fixture(relative: &str) -> String {
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../..")
-            .join(relative)
-            .to_string_lossy()
-            .to_string()
     }
 
     #[tokio::test]
@@ -400,11 +726,68 @@ mod tests {
         )
         .await;
         assert_eq!(response.status(), StatusCode::OK);
-        let body = axum::body::to_bytes(response.into_body(), 1_000_000)
-            .await
-            .unwrap();
-        let value: Value = serde_json::from_slice(&body).unwrap();
+        let value = body_value(response).await;
         assert_eq!(value["state"], "blocked");
         assert_eq!(value["exit_code"], 30);
+    }
+
+    #[tokio::test]
+    async fn surface_maps_every_command_to_a_workspace() {
+        if crate::cli::find_cli_binary().is_none() {
+            return;
+        }
+        let state = state();
+        let surface = build_surface(&state).await.unwrap();
+        assert_eq!(surface.workspaces.len(), 10);
+        assert!(surface.commands.len() >= 100);
+        assert!(surface.commands.iter().all(|c| !c.workspace.is_empty()));
+        assert!(surface.commands.iter().any(|c| c.name == "vv coverage"));
+        assert!(surface.commands.iter().any(|c| c.group && c.name == "graph"));
+    }
+
+    #[tokio::test]
+    async fn describe_parses_a_real_command() {
+        if crate::cli::find_cli_binary().is_none() {
+            return;
+        }
+        let response = app()
+            .oneshot(
+                Request::builder()
+                    .uri("/api/describe?name=vv%20coverage")
+                    .header("Authorization", "Bearer test-token")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let value = body_value(response).await;
+        assert_eq!(value["name"], "vv coverage");
+        assert_eq!(value["positionals"][0]["name"], "FILE");
+        assert_eq!(value["positionals"][0]["required"], true);
+    }
+
+    #[tokio::test]
+    async fn exec_accepts_positional_arguments_and_rejects_unknown() {
+        if crate::cli::find_cli_binary().is_none() {
+            return;
+        }
+        let response = app()
+            .oneshot(post(
+                "/api/exec",
+                json!({"argv": ["vv", "coverage", fixture("contracts/vv/examples/wingbox.requirements-incomplete.yaml")]}),
+            ))
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let value = body_value(response).await;
+        assert_eq!(value["state"], "blocked");
+        assert_eq!(value["exit_code"], 30);
+
+        let response = app()
+            .oneshot(post("/api/exec", json!({"argv": ["rm", "-rf", "/"]})))
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
     }
 }

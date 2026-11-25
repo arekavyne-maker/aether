@@ -81,6 +81,9 @@ pub struct Catalog {
     pub version: String,
     /// Workspaces in display order.
     pub workspaces: Vec<Workspace>,
+    /// Mapping from CLI top-level command family to workspace id.
+    #[serde(default)]
+    pub families: std::collections::BTreeMap<String, String>,
     /// Curated commands.
     pub commands: Vec<CommandSpec>,
 }
@@ -108,6 +111,37 @@ impl Catalog {
     /// Parse the embedded catalog.
     pub fn load() -> Result<Self, CatalogError> {
         Ok(serde_json::from_str(CATALOG_JSON)?)
+    }
+
+    /// Validate internal consistency: every family points at a declared
+    /// workspace and every curated command belongs to a declared workspace.
+    pub fn validate(&self) -> Result<(), CatalogError> {
+        let known: std::collections::BTreeSet<&str> =
+            self.workspaces.iter().map(|w| w.id.as_str()).collect();
+        for (family, workspace) in &self.families {
+            if !known.contains(workspace.as_str()) {
+                return Err(CatalogError::Unknown(format!(
+                    "family {family} targets unknown workspace {workspace}"
+                )));
+            }
+        }
+        for command in &self.commands {
+            if !known.contains(command.workspace.as_str()) {
+                return Err(CatalogError::Unknown(format!(
+                    "command {} targets unknown workspace {}",
+                    command.name, command.workspace
+                )));
+            }
+        }
+        Ok(())
+    }
+
+    /// Workspace for a CLI command family, defaulting to operations.
+    pub fn workspace_for(&self, family: &str) -> &str {
+        self.families
+            .get(family)
+            .map(String::as_str)
+            .unwrap_or("operations")
     }
 
     /// Look up a curated command.
@@ -156,10 +190,20 @@ mod tests {
     use std::collections::BTreeMap;
 
     #[test]
-    fn catalog_parses() {
+    fn catalog_parses_and_validates() {
         let catalog = Catalog::load().unwrap();
-        assert_eq!(catalog.workspaces.len(), 9);
+        assert_eq!(catalog.workspaces.len(), 10);
         assert!(catalog.commands.len() >= 40);
+        assert!(catalog.families.len() >= 50);
+        catalog.validate().unwrap();
+    }
+
+    #[test]
+    fn every_declared_family_has_a_workspace() {
+        let catalog = Catalog::load().unwrap();
+        assert_eq!(catalog.workspace_for("schema"), "schema");
+        assert_eq!(catalog.workspace_for("wingbox"), "manufacturing");
+        assert_eq!(catalog.workspace_for("unknown-family"), "operations");
     }
 
     #[test]

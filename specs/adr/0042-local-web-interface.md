@@ -1,6 +1,6 @@
 # ADR-0042: Local web interface as a CLI adapter
 
-**Status:** Accepted
+**Status:** Accepted — interactive surface added by [ADR-0043](0043-interactive-web-console.md)
 **Date:** 2026-11-25
 
 ## Context

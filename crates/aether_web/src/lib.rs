@@ -13,6 +13,8 @@
 pub mod cli;
 pub mod auth;
 pub mod catalog;
+pub mod help;
+pub mod files;
 pub mod api;
 pub mod assets;
 

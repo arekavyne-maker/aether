@@ -126,21 +126,46 @@ pub fn find_cli_binary() -> Option<PathBuf> {
 pub struct CliRunner {
     bin: PathBuf,
     timeout: Duration,
+    project: Option<PathBuf>,
 }
 
 impl CliRunner {
     /// Build a runner, discovering the CLI binary and command surface.
     pub fn discover() -> Result<Self, CliError> {
         let bin = find_cli_binary().ok_or(CliError::BinaryNotFound)?;
+        let project = std::env::var("AETHER_WEB_PROJECT")
+            .ok()
+            .map(PathBuf::from)
+            .and_then(|path| {
+                path.canonicalize()
+                    .map_err(|e| tracing::warn!("ignoring AETHER_WEB_PROJECT: {e}"))
+                    .ok()
+            });
         Ok(Self {
             bin,
             timeout: Duration::from_secs(120),
+            project,
         })
     }
 
     /// Build a runner for a specific binary and deadline.
     pub fn with_binary(bin: PathBuf, timeout: Duration) -> Self {
-        Self { bin, timeout }
+        Self {
+            bin,
+            timeout,
+            project: None,
+        }
+    }
+
+    /// Run every child process in this project root.
+    pub fn with_project(mut self, project: PathBuf) -> Self {
+        self.project = Some(project);
+        self
+    }
+
+    /// The configured project root, if any.
+    pub fn project(&self) -> Option<&Path> {
+        self.project.as_deref()
     }
 
     /// The resolved CLI binary path.
@@ -175,8 +200,17 @@ impl CliRunner {
             .collect())
     }
 
-    /// Invoke one command.
+    /// Invoke one command with the default deadline.
     pub async fn run(&self, request: &CommandRequest) -> Result<CommandResponse, CliError> {
+        self.run_with_timeout(request, self.timeout).await
+    }
+
+    /// Invoke one command with an explicit deadline.
+    pub async fn run_with_timeout(
+        &self,
+        request: &CommandRequest,
+        timeout: Duration,
+    ) -> Result<CommandResponse, CliError> {
         let mut argv = Vec::new();
         for token in request.command.iter().chain(request.flags.iter()) {
             if token.is_empty() || token.contains('\0') {
@@ -192,12 +226,15 @@ impl CliRunner {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .kill_on_drop(true);
+        if let Some(project) = &self.project {
+            command.current_dir(project);
+        }
 
         let started = std::time::Instant::now();
-        let output = match tokio::time::timeout(self.timeout, command.output()).await {
+        let output = match tokio::time::timeout(timeout, command.output()).await {
             Ok(Ok(output)) => output,
             Ok(Err(e)) => return Err(CliError::Spawn(e.to_string())),
-            Err(_) => return Err(CliError::Timeout(self.timeout)),
+            Err(_) => return Err(CliError::Timeout(timeout)),
         };
         let duration_ms = started.elapsed().as_millis();
         let stdout = String::from_utf8_lossy(&output.stdout).to_string();
@@ -223,6 +260,52 @@ impl CliRunner {
             duration_ms,
         })
     }
+}
+
+/// Validate raw argv before it reaches a process boundary.
+pub fn validate_argv(argv: &[String]) -> Result<(), CliError> {
+    if argv.is_empty() {
+        return Err(CliError::InvalidToken("empty command".to_string()));
+    }
+    if argv.len() > 64 {
+        return Err(CliError::InvalidToken("too many arguments".to_string()));
+    }
+    let total: usize = argv.iter().map(String::len).sum();
+    if total > 8192 {
+        return Err(CliError::InvalidToken("command too long".to_string()));
+    }
+    for token in argv {
+        if token.is_empty()
+            || token.contains('\0')
+            || token.chars().any(char::is_control)
+        {
+            return Err(CliError::InvalidToken("illegal character".to_string()));
+        }
+    }
+    Ok(())
+}
+
+/// Resolve the longest discovered command name that prefixes `argv`.
+///
+/// This is the allowlist that keeps the terminal from becoming a generic
+/// argv launcher. Remaining tokens are the command's own arguments and flags.
+pub fn resolve_command<'a>(
+    argv: &[String],
+    discovered: &'a [DiscoveredCommand],
+) -> Option<&'a DiscoveredCommand> {
+    let mut best: Option<&DiscoveredCommand> = None;
+    for command in discovered {
+        let tokens: Vec<&str> = command.name.split_whitespace().collect();
+        if tokens.len() > argv.len() || !tokens.iter().zip(argv.iter()).all(|(a, b)| *a == b) {
+            continue;
+        }
+        if best.map_or(true, |current: &DiscoveredCommand| {
+            command.name.len() > current.name.len()
+        }) {
+            best = Some(command);
+        }
+    }
+    best
 }
 
 #[cfg(test)]
@@ -289,6 +372,28 @@ mod tests {
             .unwrap();
         assert_eq!(response.state, CommandState::Blocked);
         assert_eq!(response.exit_code, 30);
+    }
+
+    #[test]
+    fn argv_validation_rejects_controls_and_oversize() {
+        assert!(validate_argv(&["status".into()]).is_ok());
+        assert!(validate_argv(&[]).is_err());
+        assert!(validate_argv(&["bad\0token".into()]).is_err());
+        assert!(validate_argv(&["line\nbreak".into()]).is_err());
+        assert!(validate_argv(&vec!["x".into(); 65]).is_err());
+    }
+
+    #[test]
+    fn longest_discovered_prefix_wins() {
+        let discovered = vec![
+            DiscoveredCommand { name: "vv".into(), about: String::new() },
+            DiscoveredCommand { name: "vv coverage".into(), about: String::new() },
+            DiscoveredCommand { name: "status".into(), about: String::new() },
+        ];
+        let argv = vec!["vv".into(), "coverage".into(), "/tmp/req.yaml".into()];
+        let resolved = resolve_command(&argv, &discovered).unwrap();
+        assert_eq!(resolved.name, "vv coverage");
+        assert!(resolve_command(&["unknown".into()], &discovered).is_none());
     }
 
     #[test]
