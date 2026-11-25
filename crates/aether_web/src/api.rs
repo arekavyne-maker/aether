@@ -66,7 +66,7 @@ impl AppState {
         })
     }
 
-    async fn cached(&self, key: &str, ttl: Duration) -> Option<Value> {
+    pub(crate) async fn cached(&self, key: &str, ttl: Duration) -> Option<Value> {
         let cache = self.cache.read().await;
         cache
             .get(key)
@@ -79,7 +79,7 @@ impl AppState {
             })
     }
 
-    async fn remember(&self, key: &str, value: Value) {
+    pub(crate) async fn remember(&self, key: &str, value: Value) {
         let mut cache = self.cache.write().await;
         cache.insert(key.to_string(), (Instant::now(), value));
     }
@@ -151,6 +151,14 @@ pub struct FilesQuery {
     /// Maximum number of entries.
     #[serde(default)]
     pub limit: Option<usize>,
+}
+
+/// Query for the project atlas. An omitted offset uses the chain head.
+#[derive(Debug, Deserialize)]
+pub struct AtlasQuery {
+    /// Event offset to render.
+    #[serde(default)]
+    pub offset: Option<u64>,
 }
 
 /// One command in the merged UI surface.
@@ -302,6 +310,10 @@ pub fn router(token: TokenAuth, runner: CliRunner) -> Router {
         .route("/surface", get(surface_handler))
         .route("/describe", get(describe_handler))
         .route("/files", get(files_handler))
+        .route("/atlas", get(atlas_handler))
+        .route("/atlas/graph", get(atlas_graph_handler))
+        .route("/atlas/schema", get(atlas_schema_handler))
+        .route("/atlas/health", get(atlas_health_handler))
         .route("/invoke", post(invoke_handler))
         .route("/exec", post(exec_handler))
         .route("/raw", post(raw_handler))
@@ -310,7 +322,7 @@ pub fn router(token: TokenAuth, runner: CliRunner) -> Router {
     Router::new()
         .route("/", get(assets::index))
         .route("/assets/app.css", get(assets::css))
-        .route("/assets/js/:file", get(assets::javascript_module))
+        .route("/assets/js/*file", get(assets::javascript_module))
         .nest("/api", api)
         .with_state(state)
 }
@@ -455,6 +467,31 @@ async fn files_handler(State(state): State<AppState>, Query(query): Query<FilesQ
         Ok(entries) => Json(entries).into_response(),
         Err(e) => error_response(StatusCode::INTERNAL_SERVER_ERROR, "files_failed", e),
     }
+}
+
+async fn atlas_handler(
+    State(state): State<AppState>,
+    Query(query): Query<AtlasQuery>,
+) -> Response {
+    Json(crate::atlas::build(&state, query.offset).await).into_response()
+}
+
+async fn atlas_graph_handler(
+    State(state): State<AppState>,
+    Query(query): Query<AtlasQuery>,
+) -> Response {
+    let (graph, source) = crate::atlas::graph(&state, query.offset).await;
+    Json(json!({ "graph": graph, "source": source })).into_response()
+}
+
+async fn atlas_schema_handler(State(state): State<AppState>) -> Response {
+    let (schema, source) = crate::atlas::schema(&state).await;
+    Json(json!({ "schema": schema, "source": source })).into_response()
+}
+
+async fn atlas_health_handler(State(state): State<AppState>) -> Response {
+    let (health, source) = crate::atlas::health(&state).await;
+    Json(json!({ "health": health, "source": source })).into_response()
 }
 
 async fn invoke_handler(
@@ -765,6 +802,93 @@ mod tests {
         assert_eq!(value["name"], "vv coverage");
         assert_eq!(value["positionals"][0]["name"], "FILE");
         assert_eq!(value["positionals"][0]["required"], true);
+    }
+
+    fn get(path: &str) -> Request<Body> {
+        Request::builder()
+            .uri(path)
+            .header("Authorization", "Bearer test-token")
+            .body(Body::empty())
+            .unwrap()
+    }
+
+    #[tokio::test]
+    async fn atlas_reports_schema_and_graph_provenance() {
+        if crate::cli::find_cli_binary().is_none() {
+            return;
+        }
+        let response = app().oneshot(get("/api/atlas")).await.unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let value = body_value(response).await;
+        assert_eq!(value["schema"]["node_types"].as_array().unwrap().len(), 78);
+        assert_eq!(value["schema"]["edge_types"].as_array().unwrap().len(), 38);
+        assert_eq!(value["graph"]["offset"], value["chain"]["event_count"]);
+        assert_eq!(value["sources"].as_array().unwrap().len(), 6);
+        assert!(value["project"]["root"].as_str().is_some());
+    }
+
+    #[tokio::test]
+    async fn atlas_subroutes_match_the_aggregate() {
+        if crate::cli::find_cli_binary().is_none() {
+            return;
+        }
+        let response = app().oneshot(get("/api/atlas/graph?offset=0")).await.unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let value = body_value(response).await;
+        assert_eq!(value["graph"]["offset"], 0);
+        assert_eq!(value["graph"]["nodes"].as_array().unwrap().len(), 0);
+
+        let response = app().oneshot(get("/api/atlas/schema")).await.unwrap();
+        let value = body_value(response).await;
+        assert_eq!(value["schema"]["node_types"].as_array().unwrap().len(), 78);
+
+        let response = app().oneshot(get("/api/atlas/health")).await.unwrap();
+        let value = body_value(response).await;
+        assert!(value["health"]["checks"].as_array().is_some());
+    }
+
+    #[tokio::test]
+    async fn atlas_counts_match_the_project_graph() {
+        let Some(bin) = crate::cli::find_cli_binary() else { return };
+        let root = std::env::temp_dir().join(format!("aether-atlas-test-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        std::fs::create_dir_all(&root).unwrap();
+        let steps = [
+            std::process::Command::new(&bin)
+                .arg("init")
+                .arg(&root)
+                .stdout(std::process::Stdio::null())
+                .stderr(std::process::Stdio::null())
+                .status(),
+            std::process::Command::new(&bin)
+                .arg("run")
+                .arg("--project")
+                .arg(&root)
+                .stdout(std::process::Stdio::null())
+                .stderr(std::process::Stdio::null())
+                .status(),
+        ];
+        for status in steps {
+            match status {
+                Ok(s) if s.success() => {}
+                _ => {
+                    let _ = std::fs::remove_dir_all(&root);
+                    return;
+                }
+            }
+        }
+        let token = TokenAuth::new(b"test-token".to_vec());
+        let runner = CliRunner::with_binary(bin, Duration::from_secs(30)).with_project(root.clone());
+        let state = AppState::new(token, runner).unwrap();
+        let atlas = crate::atlas::build(&state, None).await;
+        assert!(atlas.project.initialized);
+        let reported = atlas.chain.get("event_count").and_then(Value::as_u64).unwrap_or(0);
+        assert_eq!(atlas.graph.event_count, reported);
+        assert!(atlas.graph.node_count >= 3, "{:?}", atlas.graph.node_count);
+        assert!(atlas.graph.edge_count >= 2, "{:?}", atlas.graph.edge_count);
+        assert_eq!(atlas.graph.nodes.len() as u64, atlas.graph.node_count);
+        assert_eq!(atlas.graph.edges.len() as u64, atlas.graph.edge_count);
+        let _ = std::fs::remove_dir_all(&root);
     }
 
     #[tokio::test]

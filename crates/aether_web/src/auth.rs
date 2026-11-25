@@ -80,6 +80,14 @@ fn random_token() -> Result<Vec<u8>> {
         .into_bytes())
 }
 
+/// Generate an in-memory token without touching the token file.
+///
+/// Used by the desktop shell, which owns the server for the lifetime of the
+/// window and never writes the secret to disk or logs.
+pub fn generate_token() -> Result<TokenAuth> {
+    Ok(TokenAuth::new(random_token()?))
+}
+
 /// True when a token has the generated form: 64 lower-case hex characters.
 pub fn is_valid_token(value: &str) -> bool {
     value.len() == 64 && value.bytes().all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())

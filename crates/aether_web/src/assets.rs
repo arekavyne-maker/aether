@@ -27,6 +27,17 @@ pub const JS_MODULES: &[(&str, &str)] = &[
     ("terminal.js", include_str!("../../../site/app/js/terminal.js")),
     ("ledger.js", include_str!("../../../site/app/js/ledger.js")),
     ("palette.js", include_str!("../../../site/app/js/palette.js")),
+    ("data/atlas.js", include_str!("../../../site/app/js/data/atlas.js")),
+    ("state/store.js", include_str!("../../../site/app/js/state/store.js")),
+    ("state/router.js", include_str!("../../../site/app/js/state/router.js")),
+    ("viz/layout.js", include_str!("../../../site/app/js/viz/layout.js")),
+    ("viz/graph.js", include_str!("../../../site/app/js/viz/graph.js")),
+    ("viz/treemap.js", include_str!("../../../site/app/js/viz/treemap.js")),
+    ("viz/coverage.js", include_str!("../../../site/app/js/viz/coverage.js")),
+    ("views/pulse.js", include_str!("../../../site/app/js/views/pulse.js")),
+    ("views/atlas.js", include_str!("../../../site/app/js/views/atlas.js")),
+    ("views/assurance.js", include_str!("../../../site/app/js/views/assurance.js")),
+    ("views/capability.js", include_str!("../../../site/app/js/views/capability.js")),
 ];
 
 /// Security headers applied to every response.
@@ -77,6 +88,7 @@ pub async fn css() -> Response {
 
 /// Serve one embedded frontend module. Unknown names are rejected.
 pub async fn javascript_module(Path(name): Path<String>) -> Response {
+
     let Some((_, source)) = JS_MODULES.iter().find(|(file, _)| *file == name) else {
         return (StatusCode::NOT_FOUND, "not found").into_response();
     };

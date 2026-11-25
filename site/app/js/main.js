@@ -8,6 +8,12 @@ import { groupCommands, roman } from './surface.js';
 import { Terminal, terminalHelp } from './terminal.js';
 import * as ledger from './ledger.js';
 import * as palette from './palette.js';
+import { loadAtlas, loadHealth, normalize as normalizeAtlas } from './data/atlas.js';
+import * as router from './state/router.js';
+import { renderPulse } from './views/pulse.js';
+import { renderAtlas } from './views/atlas.js';
+import { renderAssurance } from './views/assurance.js';
+import { renderCapability } from './views/capability.js';
 
 const state = {
   surface: null,
@@ -24,6 +30,9 @@ const state = {
   favorites: new Set(),
   theme: 'night',
   fileTarget: null,
+  atlas: null,
+  health: null,
+  atlasTab: 'graph',
 };
 
 const MANAGED_FLAGS = new Set(['--json', '--offline', '-h', '--help']);
@@ -58,35 +67,61 @@ async function boot() {
     fatal('Missing token in the URL fragment. Launch aether-web and use the printed URL.');
     return;
   }
-  const [surface, status] = await Promise.all([api('/surface'), api('/status')]);
+  const [surface, status, atlas, health] = await Promise.all([
+    api('/surface'), api('/status'), loadAtlas(), loadHealth(),
+  ]);
   if (!surface.ok) {
     fatal(surface.data?.message || 'The local API did not respond.');
     return;
   }
   state.surface = surface.data;
   state.status = status.ok ? status.data : {};
+  state.atlas = atlas.ok ? normalizeAtlas(atlas.data) : normalizeAtlas(null);
+  state.health = health.ok ? (health.data.health || {}) : {};
   renderShell();
+  const route = router.parse(location.hash);
+  if (route.view !== 'pulse') {
+    state.view = route.view;
+    state.workspace = route.workspace || null;
+    state.atlasTab = route.tab || 'graph';
+  }
   renderView();
+  router.onChange((next) => {
+    if (next.view === state.view && next.workspace === (state.workspace || '') && next.tab === state.atlasTab) return;
+    state.view = next.view;
+    state.workspace = next.workspace || null;
+    if (next.tab) state.atlasTab = next.tab;
+    closeInspector();
+    syncChrome(state.view);
+    renderView();
+  });
 }
 
 function renderShell() {
-  const nav = state.surface.workspaces.map((w, i) => `
-    <button class="nav-item ${state.workspace === w.id && state.view === 'workspace' ? 'active' : ''}" data-workspace="${w.id}">
-      <span class="nav-icon">${icon(WORKSPACE_ICONS[w.id] || 'overview')}</span>
-      <span class="nav-label">${esc(w.title)}</span>
-      <span class="nav-count">${w.command_count}</span>
+  const destinations = [
+    ['pulse', 'Pulse', 'overview'],
+    ['atlas', 'Atlas', 'graph'],
+    ['assurance', 'Assurance', 'verification'],
+    ['build', 'Build', 'design'],
+    ['govern', 'Govern', 'intelligence'],
+    ['commands', 'Commands', 'project'],
+  ];
+  const nav = destinations.map(([id, label, glyph]) => `
+    <button class="nav-item ${state.view === id ? 'active' : ''}" data-view="${id}">
+      <span class="nav-icon">${icon(WORKSPACE_ICONS[glyph] || 'overview')}</span>
+      <span class="nav-label">${label}</span>
     </button>`).join('');
   const themeIcon = state.theme === 'night' ? 'sun' : 'moon';
   document.getElementById('app').innerHTML = `
     <div class="shell">
       <aside class="rail" id="rail">
         <div class="brand"><span class="brand-mark">A</span><span class="brand-text"><b>Aether</b><small>local console</small></span></div>
-        <button class="nav-item ${state.view === 'overview' ? 'active' : ''}" data-view="overview">
-          <span class="nav-icon">${icon('overview')}</span><span class="nav-label">Overview</span>
-        </button>
-        <div class="nav-label">Workspaces</div>
+        <div class="nav-label">Workspace</div>
         <nav>${nav}</nav>
         <div class="nav-label spaced">Tools</div>
+        <button class="nav-item ${state.view === 'workspace' ? 'active' : ''}" data-view="workspace">
+          <span class="nav-icon">${icon('project')}</span><span class="nav-label">Command index</span>
+        </button>
         <button class="nav-item ${state.view === 'terminal' ? 'active' : ''}" data-view="terminal">
           <span class="nav-icon">${icon('terminal')}</span><span class="nav-label">CLI terminal</span>
         </button>
@@ -180,29 +215,83 @@ function renderShell() {
   });
 }
 
-function setView(view) {
-  state.view = view;
-  closeInspector();
+const VIEW_TITLES = {
+  pulse: 'Pulse', atlas: 'Atlas', assurance: 'Assurance', build: 'Build',
+  govern: 'Govern', commands: 'Commands', workspace: 'Workspace',
+  terminal: 'CLI terminal', session: 'Session ledger',
+};
+
+function syncChrome(view) {
   $$('.nav-item').forEach((item) => item.classList.remove('active'));
-  const target = view === 'workspace'
-    ? $(`[data-workspace="${state.workspace}"]`)
-    : $(`[data-view="${view}"]`);
+  const target = view === 'workspace' ? $(`[data-view="workspace"]`) : $(`[data-view="${view}"]`);
   target?.classList.add('active');
   $('#rail').classList.remove('open');
   $('#crumb').textContent = view === 'workspace'
     ? (state.surface.workspaces.find((w) => w.id === state.workspace)?.title || 'Workspace')
-    : ({ overview: 'Overview', terminal: 'CLI terminal', session: 'Session ledger' }[view] || view);
+    : (VIEW_TITLES[view] || view);
+}
+
+function setView(view, options = {}) {
+  state.view = view;
+  if (options.workspace) state.workspace = options.workspace;
+  closeInspector();
+  syncChrome(view);
+  if (view === 'atlas') router.go({ view, tab: state.atlasTab });
+  else if (view === 'commands' || view === 'workspace') router.go({ view, workspace: state.workspace || '' });
+  else router.go({ view });
   return Promise.resolve(renderView());
 }
 
 function renderView() {
   const stage = $('#stage');
   stage.innerHTML = '';
-  if (state.view === 'overview') stage.innerHTML = overviewHtml();
-  else if (state.view === 'workspace') stage.innerHTML = workspaceHtml();
-  else if (state.view === 'session') stage.innerHTML = sessionHtml();
-  else if (state.view === 'terminal') stage.appendChild(terminalHost());
-  if (state.view === 'workspace') bindWorkspace();
+  if (state.view === 'pulse' || state.view === 'overview') {
+    renderPulse(stage, {
+      atlas: state.atlas,
+      surface: state.surface,
+      ledgerHtml: ledger.ledgerHtml(ledger.recent(5)),
+      onNavigate: (view) => setView(view === 'commands' ? 'commands' : view),
+      onWorkspace: (id) => setView('workspace', { workspace: id }),
+    });
+  } else if (state.view === 'workspace' || state.view === 'commands') {
+    if (!state.surface.workspaces.some((w) => w.id === state.workspace)) {
+      state.workspace = state.surface.workspaces[0]?.id || 'overview';
+    }
+    stage.innerHTML = workspaceHtml();
+  } else if (state.view === 'atlas') {
+    renderAtlas(stage, {
+      atlas: state.atlas,
+      surface: state.surface,
+      tab: state.atlasTab,
+      onTab: (tab) => { state.atlasTab = tab; setView('atlas'); },
+      onFamily: (family) => {
+        const command = state.surface.commands.find((c) => c.family === family);
+        state.filter = family;
+        setView('workspace', { workspace: command?.workspace || state.workspace || 'overview' });
+      },
+    });
+  } else if (state.view === 'assurance') {
+    renderAssurance(stage, {
+      atlas: state.atlas,
+      onRequirement: () => { state.atlasTab = 'graph'; setView('atlas'); },
+    });
+  } else if (state.view === 'build' || state.view === 'govern') {
+    renderCapability(stage, {
+      kind: state.view,
+      atlas: state.atlas,
+      health: state.health,
+      surface: state.surface,
+      onCommand: (name) => {
+        const command = state.surface.commands.find((c) => c.name === name);
+        setView('workspace', { workspace: command?.workspace || 'overview' }).then(() => selectCommand(name));
+      },
+    });
+  } else if (state.view === 'session') {
+    stage.innerHTML = sessionHtml();
+  } else if (state.view === 'terminal') {
+    stage.appendChild(terminalHost());
+  }
+  if (state.view === 'workspace' || state.view === 'commands') bindWorkspace();
   if (state.view === 'session') bindSession();
 }
 
@@ -292,6 +381,7 @@ function renderCommandList() {
 }
 
 function bindWorkspace() {
+  if (!$('#cmd-filter')) return;
   $('#cmd-filter').addEventListener('input', (event) => { state.filter = event.target.value; renderCommandList(); });
   $$('[data-kind]').forEach((chip) => chip.addEventListener('click', () => {
     state.kind = chip.dataset.kind;

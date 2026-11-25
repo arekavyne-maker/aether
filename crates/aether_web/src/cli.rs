@@ -92,10 +92,15 @@ pub struct DiscoveredCommand {
 
 /// Locate the CLI binary without ever invoking a shell.
 pub fn find_cli_binary() -> Option<PathBuf> {
+    // Always return an absolute path: child processes may run with
+    // `current_dir` set to a different project root.
+    fn absolute(path: PathBuf) -> Option<PathBuf> {
+        path.canonicalize().ok().or(Some(path))
+    }
     if let Ok(path) = std::env::var("AETHER_BIN") {
         let candidate = PathBuf::from(path);
         if candidate.is_file() {
-            return Some(candidate);
+            return absolute(candidate);
         }
     }
     for relative in [
@@ -106,7 +111,7 @@ pub fn find_cli_binary() -> Option<PathBuf> {
     ] {
         let candidate = PathBuf::from(relative);
         if candidate.is_file() {
-            return Some(candidate);
+            return absolute(candidate);
         }
     }
     // Search PATH manually so a shell is never involved.
@@ -114,7 +119,7 @@ pub fn find_cli_binary() -> Option<PathBuf> {
         for dir in std::env::split_paths(&paths) {
             let candidate = dir.join("aether");
             if candidate.is_file() {
-                return Some(candidate);
+                return absolute(candidate);
             }
         }
     }

@@ -1,0 +1,9 @@
+# Runtime wheels for the bundled Python. Versions match requirements-dev.txt.
+numpy==2.0.2
+scipy==1.13.1
+PyYAML
+jsonschema>=4.18,<5
+gmsh==4.15.2
+meshio==5.3.5
+trimesh==4.12.2
+cadquery-ocp==7.7.2

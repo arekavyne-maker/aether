@@ -65,6 +65,20 @@ def check(repo_root: Path = REPO_ROOT):
         for token in ("http://", "https://", "@import", "src=\"//"):
             if token in text:
                 problems.append(f"{path.relative_to(repo_root)} contains external reference {token!r}")
+        if path.suffix in (".js", ".html") and "style=" in text:
+            problems.append(f"{path.relative_to(repo_root)} contains an inline style attribute")
+
+    # --- dynamic console surface (ADR-0044) ---
+    api_source = (repo_root / "crates/aether_web/src/api.rs").read_text()
+    for route in ("/atlas", "/atlas/graph", "/atlas/schema", "/atlas/health"):
+        if f'route("{route}"' not in api_source:
+            problems.append(f"missing API route {route}")
+    atlas_source = (repo_root / "crates/aether_web/src/atlas.rs").read_text()
+    if "MAX_NODES" not in atlas_source or "MAX_EDGES" not in atlas_source:
+        problems.append("atlas has no truncation caps")
+    for module in ("viz/graph.js", "viz/layout.js", "data/atlas.js", "views/atlas.js"):
+        if not (app / "js" / module).is_file():
+            problems.append(f"missing atlas module {module}")
 
     assets = (repo_root / "crates/aether_web/src/assets.rs").read_text()
     csp_lines = [line for line in assets.splitlines() if "-src " in line]

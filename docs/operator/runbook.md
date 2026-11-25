@@ -144,7 +144,15 @@ spawn the canonical `aether` binary with discrete argv, always `--offline`
 and by default `--json`. Exit 30 is shown as `blocked`; the CLI remains the
 policy authority. Every run is recorded in a browser-local session ledger.
 
+The project-first navigation includes Pulse, Atlas, Assurance, Build, Govern,
+Commands, terminal and ledger. Atlas renders the real `graph as-of` snapshot,
+the 78/38 type catalog, coverage gaps and a command treemap; every view shows
+its CLI source. See `docs/operator/local-web-ui.md`.
+
+For a native macOS application, run `make app` and open `dist/Aether.app`.
+It hosts the same UI in a system WebView with an in-process loopback server
+and a per-launch token. See `docs/operator/desktop-app.md`.
+
 Configuration: `AETHER_WEB_BIND` (loopback only unless
 `AETHER_WEB_ALLOW_REMOTE=1`), `AETHER_WEB_PROJECT`, `AETHER_WEB_TOKEN`,
 `AETHER_WEB_TIMEOUT_SECS`, `AETHER_WEB_FILES=0` to disable path discovery.
-See `docs/operator/local-web-ui.md` for the full guide.

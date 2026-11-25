@@ -1,0 +1,22 @@
+[package]
+name = "aether_desktop"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.92"
+license = "LicenseRef-Crocell-Proprietary"
+description = "Native Aether desktop shell (wry + tao) over the embedded console"
+publish = false
+
+[[bin]]
+name = "aether-desktop"
+path = "src/main.rs"
+
+[workspace]
+
+[dependencies]
+aether_web = { path = "../../crates/aether_web" }
+anyhow = "1.0"
+tokio = { version = "1.35", features = ["rt-multi-thread", "net", "macros", "sync"] }
+tao = "0.38"
+wry = "0.58"
+muda = "0.22"

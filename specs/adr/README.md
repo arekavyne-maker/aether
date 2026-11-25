@@ -72,3 +72,4 @@ This directory contains **Architecture Decision Records** for the Aether platfor
 |---|---|---|
 | [0042](0042-local-web-interface.md) | Local web interface as a CLI adapter | Accepted |
 | [0043](0043-interactive-web-console.md) | Interactive web console and dynamic command surface | Accepted |
+| [0044](0044-atlas-and-desktop-shell.md) | Atlas visualization and native desktop shell | Accepted |

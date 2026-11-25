@@ -102,7 +102,32 @@ curl -sf -H "$AUTH" -H 'Content-Type: application/json' \
     | python3 -c "import json,sys; d=json.load(sys.stdin); assert d['state']=='blocked' and d['exit_code']==30, d" || fail "blocked state"
 pass "curated command spawns real CLI; exit 30 is Blocked"
 
-echo "== 9. raw console and tokenizer =="
+echo "== 9. project atlas =="
+curl -sf -H "$AUTH" "$API/atlas" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+assert len(d['schema']['node_types'])==78, len(d['schema']['node_types'])
+assert len(d['schema']['edge_types'])==38, len(d['schema']['edge_types'])
+assert d['graph']['offset']==d['chain']['event_count'], (d['graph']['offset'],d['chain']['event_count'])
+assert len(d['sources'])==6, len(d['sources'])
+assert all(s['command'].startswith('aether ') for s in d['sources'])
+" || fail "atlas aggregate"
+curl -sf -H "$AUTH" "$API/atlas/graph?offset=0" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+assert d['graph']['offset']==0 and d['graph']['nodes']==[], d
+" || fail "atlas graph offset"
+curl -sf -H "$AUTH" "$API/atlas/schema" | python3 -c "
+import json,sys
+d=json.load(sys.stdin); assert len(d['schema']['node_types'])==78
+" || fail "atlas schema"
+curl -sf -H "$AUTH" "$API/atlas/health" | python3 -c "
+import json,sys
+d=json.load(sys.stdin); assert d['health']['checks'], d
+" || fail "atlas health"
+pass "atlas aggregates CLI JSON with source provenance"
+
+echo "== 10. raw console and tokenizer =="
 code=$(curl -s -o /dev/null -w "%{http_code}" -H "$AUTH" -H 'Content-Type: application/json' \
     -d '{"command":["rm","-rf","/"],"flags":[]}' "$API/raw")
 [ "$code" = "400" ] || fail "raw accepted undiscovered command with $code"

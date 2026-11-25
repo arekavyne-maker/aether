@@ -122,6 +122,11 @@ def run_web_surface() -> CheckResult:
     return check(REPO_ROOT)
 
 
+def run_desktop_shell() -> CheckResult:
+    from desktop_shell import check
+    return check(REPO_ROOT)
+
+
 CHECKS = {
     "loc_budget": run_loc_budget,
     "token_scan": run_token_scan,
@@ -140,6 +145,7 @@ CHECKS = {
     "research_claim": run_research_claim,
     "benchmark_coverage": run_benchmark_coverage,
     "web_surface": run_web_surface,
+    "desktop_shell": run_desktop_shell,
 }
 
 

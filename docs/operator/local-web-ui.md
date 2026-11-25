@@ -21,6 +21,14 @@ from the address bar. Every API request carries it as `Authorization: Bearer`.
 When stdout is not a terminal (service or CI), the URL is printed with a
 reference to `~/.aether/web.token` instead — logs never contain the secret.
 
+## Navigation
+
+The rail has six destinations: **Pulse** (project health and attention
+items), **Atlas** (graph, schema, coverage and command map), **Assurance**,
+**Build**, **Govern**, and **Commands** (the full command index). The CLI
+terminal (`⌘J`) and session ledger remain pinned at the bottom. `⌘K` opens
+the launcher across commands, workspaces, graph nodes and actions.
+
 ## Two surfaces, one session
 
 - **Web workspace** — ten workspaces, all 124 discovered commands, grouped by
@@ -65,12 +73,28 @@ never as success.
 - Streaming (SSE) is not implemented; long commands are synchronous with a
   bounded deadline.
 
+## Atlas endpoints
+
+| Route | Purpose |
+|---|---|
+| `GET /api/atlas?offset=` | Aggregate project, status, chain, graph, schema and coverage plus `sources` provenance |
+| `GET /api/atlas/graph?offset=` | One graph snapshot |
+| `GET /api/atlas/schema` | Node/edge type catalog |
+| `GET /api/atlas/health` | `aether doctor` checks |
+
+All are bearer-gated and shell-free. The graph is capped at 5000 nodes and
+10000 edges; the response reports `truncated` rather than silently dropping
+data.
+
+A native macOS application is built from `apps/desktop`. See
+[`desktop-app.md`](desktop-app.md).
+
 ## Verification
 
 ```bash
 cargo test -p aether_web
-node --test site/app/js/argv.test.mjs
-python3 infra/fitness/run.py web_surface
+node --test site/app/js/*.test.mjs site/app/js/viz/*.test.mjs site/app/js/data/*.test.mjs
+python3 infra/fitness/run.py web_surface desktop_shell
 bash scripts/acceptance/web-ui.sh
 ```
 
