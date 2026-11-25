@@ -65,3 +65,9 @@ This directory contains **Architecture Decision Records** for the Aether platfor
 | [0039](0039-key-management.md) | Key management and data classification | Accepted |
 | [0040](0040-benchmark-slo.md) | Benchmark and SLO methodology | Accepted |
 | [0041](0041-contract-migration.md) | Contract compatibility and migration | Accepted |
+
+## Local interface
+
+| ADR | Title | Status |
+|---|---|---|
+| [0042](0042-local-web-interface.md) | Local web interface as a CLI adapter | Accepted |

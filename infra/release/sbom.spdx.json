@@ -1,7 +1,7 @@
 {
   "SPDXID": "SPDXRef-DOCUMENT",
   "creationInfo": {
-    "created": "2026-11-25T19:03:24.706255+00:00",
+    "created": "2026-11-25T19:41:17.944403+00:00",
     "creators": [
       "Tool: aether-fitness-pipeline-0.1.0"
     ]
@@ -197,6 +197,11 @@
     },
     {
       "downloadLocation": "NOASSERTION",
+      "name": "aether_web",
+      "versionInfo": "3.0.0-rc.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
       "name": "aether_workflow",
       "versionInfo": "3.0.0-rc.1"
     },
@@ -252,8 +257,23 @@
     },
     {
       "downloadLocation": "NOASSERTION",
+      "name": "atomic-waker",
+      "versionInfo": "1.1.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
       "name": "autocfg",
       "versionInfo": "1.5.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "axum",
+      "versionInfo": "0.7.9"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "axum-core",
+      "versionInfo": "0.4.5"
     },
     {
       "downloadLocation": "NOASSERTION",
@@ -507,6 +527,11 @@
     },
     {
       "downloadLocation": "NOASSERTION",
+      "name": "form_urlencoded",
+      "versionInfo": "1.2.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
       "name": "fraction",
       "versionInfo": "0.15.4"
     },
@@ -587,8 +612,43 @@
     },
     {
       "downloadLocation": "NOASSERTION",
+      "name": "http",
+      "versionInfo": "1.5.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "http-body",
+      "versionInfo": "1.1.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "http-body-util",
+      "versionInfo": "0.1.5"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "httparse",
+      "versionInfo": "1.10.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "httpdate",
+      "versionInfo": "1.0.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
       "name": "hybrid-array",
       "versionInfo": "0.4.14"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "hyper",
+      "versionInfo": "1.13.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "hyper-util",
+      "versionInfo": "0.1.21"
     },
     {
       "downloadLocation": "NOASSERTION",
@@ -717,6 +777,11 @@
     },
     {
       "downloadLocation": "NOASSERTION",
+      "name": "matchit",
+      "versionInfo": "0.7.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
       "name": "md-5",
       "versionInfo": "0.11.0"
     },
@@ -724,6 +789,11 @@
       "downloadLocation": "NOASSERTION",
       "name": "memchr",
       "versionInfo": "2.8.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "mime",
+      "versionInfo": "0.3.18"
     },
     {
       "downloadLocation": "NOASSERTION",
@@ -824,6 +894,16 @@
       "downloadLocation": "NOASSERTION",
       "name": "phf_shared",
       "versionInfo": "0.13.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "pin-project",
+      "versionInfo": "1.2.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "pin-project-internal",
+      "versionInfo": "1.2.0"
     },
     {
       "downloadLocation": "NOASSERTION",
@@ -997,6 +1077,16 @@
     },
     {
       "downloadLocation": "NOASSERTION",
+      "name": "serde_path_to_error",
+      "versionInfo": "0.1.20"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "serde_urlencoded",
+      "versionInfo": "0.7.1"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
       "name": "serde_yaml",
       "versionInfo": "0.9.34+deprecated"
     },
@@ -1087,6 +1177,11 @@
     },
     {
       "downloadLocation": "NOASSERTION",
+      "name": "sync_wrapper",
+      "versionInfo": "1.0.2"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
       "name": "synstructure",
       "versionInfo": "0.13.2"
     },
@@ -1144,6 +1239,26 @@
       "downloadLocation": "NOASSERTION",
       "name": "tokio-util",
       "versionInfo": "0.7.19"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tower",
+      "versionInfo": "0.4.13"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tower",
+      "versionInfo": "0.5.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tower-layer",
+      "versionInfo": "0.3.3"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "tower-service",
+      "versionInfo": "0.3.3"
     },
     {
       "downloadLocation": "NOASSERTION",

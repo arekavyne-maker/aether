@@ -44,6 +44,7 @@ qualification.
 | Classification | data handling policy, unclassified denied | `crates/aether_classification` |
 | Identity | short-lived signed tokens, expiry, revocation | `crates/aether_identity` |
 | Observability | local metrics with no-leak labels | `crates/aether_observability` |
+| Local web interface | modern minimal console, CLI untouched | `crates/aether_web`, `scripts/acceptance/web-ui.sh` |
 | Interop | STEP/IGES/STL/HDF5/CSV/JSON + QIF, declared semantic loss | `python/aether_standards` |
 | Benchmarks | 11 benchmarks; absent optional tooling is `SKIP`, not `FAIL` | `benchmarks/` |
 | Dark-build | 24 steps, egress-free by policy | `infra/ci/dark-build.sh` |

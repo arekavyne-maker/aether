@@ -132,3 +132,13 @@ and replay the event chain to its head.
 - Security penetration testing.
 
 Those require separate, qualified programs with their own evidence.
+## Local web interface
+
+Start with `aether-web` (built via `cargo build -p aether_web`). The server
+binds to `127.0.0.1` only, writes a 0600 token to `~/.aether/web.token`, and
+prints the URL with the token in the fragment. Open that URL in a browser.
+
+The interface is a CLI adapter: every action spawns the `aether` binary with
+`--format json`. It cannot bypass policy; exit 30 is shown as `blocked`.
+Override the bind address with `AETHER_WEB_BIND` and the token with
+`AETHER_WEB_TOKEN` for testing. See `docs/operator/local-web-ui.md`.
