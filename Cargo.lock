@@ -441,6 +441,7 @@ version = "3.0.0-rc.1"
 dependencies = [
  "anyhow",
  "axum",
+ "libc",
  "serde",
  "serde_json",
  "sha2 0.10.9",

@@ -28,6 +28,16 @@ export function append(entry) {
   return record;
 }
 
+/** Patch a ledger entry once a live job finishes. */
+export function update(id, patch) {
+  const entries = load();
+  const index = entries.findIndex((entry) => entry.id === id);
+  if (index < 0) return null;
+  entries[index] = { ...entries[index], ...patch };
+  save(entries);
+  return entries[index];
+}
+
 export function clear() {
   save([]);
 }

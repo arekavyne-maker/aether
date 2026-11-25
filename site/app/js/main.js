@@ -1,6 +1,6 @@
 // Aether local console — shell, workspaces, composer, inspector and bindings.
 // Zero build step, zero dependencies, zero external requests.
-import { initToken, api, postJSON, forgetToken } from './api.js';
+import { initToken, api, forgetToken } from './api.js';
 import { icon, WORKSPACE_ICONS } from './icons.js';
 import { esc, resultHtml } from './format.js';
 import { formatArgv } from './argv.js';
@@ -9,6 +9,7 @@ import { Terminal, terminalHelp } from './terminal.js';
 import * as ledger from './ledger.js';
 import * as palette from './palette.js';
 import { loadAtlas, loadHealth, normalize as normalizeAtlas } from './data/atlas.js';
+import { JobRunner, renderDock, tickDock } from './jobs.js';
 import * as router from './state/router.js';
 import { renderPulse } from './views/pulse.js';
 import { renderAtlas } from './views/atlas.js';
@@ -33,7 +34,12 @@ const state = {
   atlas: null,
   health: null,
   atlasTab: 'graph',
+  projectPath: '',
+  chainHead: '',
 };
+
+const jobRunner = new JobRunner();
+const pendingJobs = new Map();
 
 const MANAGED_FLAGS = new Set(['--json', '--offline', '-h', '--help']);
 const PATH_HINT = /(path|file|yaml|json|document|manifest|snapshot|bundle|root|spec|workflow|candidate|envelope|proposal|card|directory)/i;
@@ -77,8 +83,8 @@ async function boot() {
     );
     return;
   }
-  const [surface, status, atlas, health] = await Promise.all([
-    api('/surface'), api('/status'), loadAtlas(), loadHealth(),
+  const [surface, status, atlas, health, project] = await Promise.all([
+    api('/surface'), api('/status'), loadAtlas(), loadHealth(), api('/project'),
   ]);
   if (!surface.ok) {
     const rejected = surface.status === 401;
@@ -94,6 +100,9 @@ async function boot() {
   state.status = status.ok ? status.data : {};
   state.atlas = atlas.ok ? normalizeAtlas(atlas.data) : normalizeAtlas(null);
   state.health = health.ok ? (health.data.health || {}) : {};
+  state.projectPath = project.ok ? (project.data.path || '') : '';
+  state.chainHead = String(state.atlas?.chain?.chain_head || state.atlas?.chain?.head || '');
+  configureJobs();
   renderShell();
   const route = router.parse(location.hash);
   if (route.view !== 'pulse') {
@@ -102,6 +111,10 @@ async function boot() {
     state.atlasTab = route.tab || 'graph';
   }
   renderView();
+  renderLiveDock();
+  void jobRunner.saved().then(() => renderLiveDock());
+  setInterval(() => tickDock($('#live-dock')), 250);
+  setInterval(watchChain, 8000);
   router.onChange((next) => {
     if (next.view === state.view && next.workspace === (state.workspace || '') && next.tab === state.atlasTab) return;
     state.view = next.view;
@@ -113,14 +126,128 @@ async function boot() {
   });
 }
 
+/** Wire live job events to the dock, ledger, inspector and derived views. */
+function configureJobs() {
+  jobRunner.handlers.onEvent = () => renderLiveDock();
+  jobRunner.handlers.onState = () => renderLiveDock();
+  jobRunner.handlers.onError = (_id, error) => toast(`Live job failed: ${error.message}`, 'bad');
+  jobRunner.handlers.onFinish = (job) => {
+    const result = job.result || fallbackResult(job);
+    const entryId = job.ledgerId;
+    if (entryId) {
+      ledger.update(entryId, {
+        state: result.state,
+        exit_code: result.exit_code,
+        duration_ms: result.duration_ms,
+      });
+    }
+    const waiters = pendingJobs.get(job.id) || [];
+    pendingJobs.delete(job.id);
+    waiters.forEach((resolve) => resolve(result));
+    if (result.state === 'blocked') toast('Blocked by the CLI — see the reason in the inspector.', 'bad');
+    else if (job.state === 'cancelled') toast('Command cancelled.', 'warn');
+    if (state.view === 'terminal' || job.fromComposer) showResult(result, job.commandName || (job.argv || []).join(' '));
+    void refreshDerived();
+    renderLiveDock();
+  };
+}
+
+function fallbackResult(job) {
+  const stateName = {
+    ok: 'ok', usage_error: 'usage_error', blocked: 'blocked', error: 'error',
+    cancelled: 'error', timed_out: 'error', failed: 'error',
+  }[job.state] || 'error';
+  return {
+    command: (job.argv || []).join(' '),
+    state: stateName,
+    exit_code: job.exit_code ?? -1,
+    value: null,
+    text: job.error || null,
+    stderr: '',
+    duration_ms: job.duration_ms || 0,
+  };
+}
+
+function renderLiveDock() {
+  const host = $('#live-dock');
+  if (!host) return;
+  host.classList.toggle('active', jobRunner.list().length > 0);
+  renderDock(host, jobRunner, {
+    onCancel: async (id) => {
+      try { await jobRunner.cancel(id); toast('Cancelling command…'); }
+      catch (error) { toast(error.message, 'bad'); }
+    },
+    onSelect: (id) => {
+      const job = jobRunner.get(id);
+      if (job?.result) showResult(job.result, (job.argv || []).join(' '));
+    },
+  });
+}
+
+/** Re-read the CLI after any mutation so no view shows stale truth. */
+async function refreshDerived() {
+  const [status, atlas, health] = await Promise.all([
+    api('/status'), loadAtlas(), loadHealth(),
+  ]);
+  if (status.ok) state.status = status.data;
+  if (atlas.ok) {
+    state.atlas = normalizeAtlas(atlas.data);
+    state.chainHead = String(state.atlas?.chain?.chain_head || state.atlas?.chain?.head || '');
+  }
+  if (health.ok) state.health = health.data.health || {};
+  if (['pulse', 'atlas', 'assurance', 'build', 'govern'].includes(state.view)) renderView();
+}
+
+/** Detect commands run outside this console by watching the real chain head. */
+async function watchChain() {
+  try {
+    const response = await api('/exec', {
+      method: 'POST',
+      body: JSON.stringify({ argv: ['graph', 'chain'] }),
+    });
+    if (!response.ok) return;
+    const value = response.data?.value || {};
+    const head = String(value.chain_head || value.head || value.event_count || '');
+    if (head && state.chainHead && head !== state.chainHead) {
+      state.chainHead = head;
+      await refreshDerived();
+      toast('Graph changed — views refreshed.');
+    } else if (head) {
+      state.chainHead = head;
+    }
+  } catch { /* the watcher must never break the console */ }
+}
+
+/** Start one CLI invocation as a live job and record it in the ledger. */
+async function startCommand(argv, commandName, workspace = '') {
+  const job = await jobRunner.start(argv);
+  const record = ledger.append({
+    argv: `aether ${formatArgv(argv)}`,
+    command: commandName || argv.join(' '),
+    state: 'running',
+    exit_code: '',
+    duration_ms: 0,
+    workspace: workspace || state.workspace || 'terminal',
+  });
+  job.ledgerId = record.id;
+  renderLiveDock();
+  return job;
+}
+
+function waitForJob(id) {
+  return new Promise((resolve) => {
+    const list = pendingJobs.get(id) || [];
+    list.push(resolve);
+    pendingJobs.set(id, list);
+  });
+}
+
 function renderShell() {
   const destinations = [
-    ['pulse', 'Pulse', 'overview'],
+    ['pulse', 'Home', 'overview'],
+    ['run', 'Run', 'terminal'],
     ['atlas', 'Atlas', 'graph'],
-    ['assurance', 'Assurance', 'verification'],
-    ['build', 'Build', 'design'],
-    ['govern', 'Govern', 'intelligence'],
-    ['commands', 'Commands', 'project'],
+    ['assurance', 'Verify', 'verification'],
   ];
   const nav = destinations.map(([id, label, glyph]) => `
     <button class="nav-item ${state.view === id ? 'active' : ''}" data-view="${id}">
@@ -134,17 +261,20 @@ function renderShell() {
         <div class="brand"><span class="brand-mark">A</span><span class="brand-text"><b>Aether</b><small>local console</small></span></div>
         <div class="nav-label">Workspace</div>
         <nav>${nav}</nav>
-        <div class="nav-label spaced">Tools</div>
-        <button class="nav-item ${state.view === 'workspace' ? 'active' : ''}" data-view="workspace">
+        <div class="nav-label spaced">Library</div>
+        <button class="nav-item secondary ${state.view === 'commands' ? 'active' : ''}" data-view="commands">
           <span class="nav-icon">${icon('project')}</span><span class="nav-label">Command index</span>
         </button>
-        <button class="nav-item ${state.view === 'terminal' ? 'active' : ''}" data-view="terminal">
+        <button class="nav-item secondary ${state.view === 'terminal' ? 'active' : ''}" data-view="terminal">
           <span class="nav-icon">${icon('terminal')}</span><span class="nav-label">CLI terminal</span>
         </button>
-        <button class="nav-item ${state.view === 'session' ? 'active' : ''}" data-view="session">
+        <button class="nav-item secondary ${state.view === 'session' ? 'active' : ''}" data-view="session">
           <span class="nav-icon">${icon('ledger')}</span><span class="nav-label">Session ledger</span>
         </button>
-        <div class="rail-foot"><span class="dot"></span>127.0.0.1 · air-gapped</div>
+        <button class="nav-item secondary ${state.view === 'projects' ? 'active' : ''}" data-view="projects">
+          <span class="nav-icon">${icon('folder')}</span><span class="nav-label">Project</span>
+        </button>
+        <div class="rail-foot"><button class="project-chip" id="project-chip" title="Switch project"><span class="dot"></span><span id="project-label">${esc(state.projectPath || 'local project')}</span></button><small>127.0.0.1 · air-gapped</small></div>
       </aside>
       <div class="area">
         <header class="topbar">
@@ -158,6 +288,7 @@ function renderShell() {
           </div>
         </header>
         <main class="stage" id="stage"></main>
+        <section class="live-dock" id="live-dock" aria-live="polite"></section>
       </div>
       <aside class="inspector" id="inspector"></aside>
       <div class="dock"><button class="dock-prompt" id="dock-open"><span>aether &rsaquo;</span><em>Run a command in the CLI</em></button><span class="dock-hint">⌘J terminal · ⌘K palette</span></div>
@@ -180,8 +311,9 @@ function renderShell() {
           <li><kbd>⌘↵</kbd> run the open command</li><li><kbd>Tab</kbd> complete a command or flag</li>
           <li><kbd>↑↓</kbd> terminal history</li><li><kbd>?</kbd> this overlay</li>
           <li><kbd>esc</kbd> close an overlay or inspector</li>
+          <li>Project chip <span class="dim">switch project root</span></li>
         </ul></div>
-        <div><h4>The model</h4><p>The CLI is canonical. Every action — clicked or typed — becomes discrete argv elements for one <code>aether</code> process. No shell, no network, no parallel implementation.</p><p>Exit 30 is always shown as <span class="pill blocked">blocked</span>, never as success.</p></div>
+        <div><h4>The model</h4><p>The CLI is canonical. Every action — clicked or typed — becomes discrete argv elements for one <code>aether</code> process. No shell, no network, no parallel implementation.</p><p>Runs are live: real stdout and stderr arrive while the process works, with an elapsed timer and cancel. No progress percentage is invented.</p><p>Exit 30 is always shown as <span class="pill blocked">blocked</span>, never as success.</p></div>
       </div>
     </div></div>
     <div class="toasts" id="toasts"></div>`;
@@ -191,11 +323,12 @@ function renderShell() {
     state.workspace = button.dataset.workspace;
     state.selected = null;
     state.filter = '';
-    setView('workspace');
+    setView('run', { workspace: button.dataset.workspace });
   }));
   $('#open-palette').addEventListener('click', () => palette.open());
   $('#dock-open').addEventListener('click', () => { setView('terminal'); terminal.focus(); });
   $('#menu-btn').addEventListener('click', () => $('#rail').classList.toggle('open'));
+  $('#project-chip')?.addEventListener('click', () => setView('projects'));
   $('#theme-btn').addEventListener('click', toggleTheme);
   $('#help-btn').addEventListener('click', () => $('#help-overlay').classList.add('open'));
   $('[data-close-help]').addEventListener('click', () => $('#help-overlay').classList.remove('open'));
@@ -215,16 +348,16 @@ function renderShell() {
   palette.configure({
     getSurface: () => state.surface,
     getRecent: () => ledger.recent(8).map((e) => e.argv || e.command),
-    onWorkspace: (id) => { state.workspace = id; state.selected = null; setView('workspace'); },
+    onWorkspace: (id) => { state.workspace = id; state.selected = null; setView('run', { workspace: id }); },
     onCommand: (command) => {
       if (command.group) {
         state.workspace = command.workspace;
         state.selected = null;
         state.filter = command.name;
-        setView('workspace');
+        setView('run', { workspace: command.workspace });
       } else {
         state.workspace = command.workspace;
-        setView('workspace').then(() => selectCommand(command.name));
+        setView('run', { workspace: command.workspace }).then(() => selectCommand(command.name));
       }
     },
     onAction: runAction,
@@ -232,18 +365,19 @@ function renderShell() {
 }
 
 const VIEW_TITLES = {
-  pulse: 'Pulse', atlas: 'Atlas', assurance: 'Assurance', build: 'Build',
-  govern: 'Govern', commands: 'Commands', workspace: 'Workspace',
+  pulse: 'Home', run: 'Run', projects: 'Project', atlas: 'Atlas',
+  assurance: 'Verify', build: 'Build', govern: 'Govern',
+  commands: 'Command index', workspace: 'Command library',
   terminal: 'CLI terminal', session: 'Session ledger',
 };
 
 function syncChrome(view) {
   $$('.nav-item').forEach((item) => item.classList.remove('active'));
-  const target = view === 'workspace' ? $(`[data-view="workspace"]`) : $(`[data-view="${view}"]`);
-  target?.classList.add('active');
+  const chromeView = ['workspace', 'run'].includes(view) ? 'run' : view;
+  $(`[data-view="${chromeView}"]`)?.classList.add('active');
   $('#rail').classList.remove('open');
-  $('#crumb').textContent = view === 'workspace'
-    ? (state.surface.workspaces.find((w) => w.id === state.workspace)?.title || 'Workspace')
+  $('#crumb').textContent = view === 'workspace' || view === 'run'
+    ? (state.surface.workspaces.find((w) => w.id === state.workspace)?.title || VIEW_TITLES[view])
     : (VIEW_TITLES[view] || view);
 }
 
@@ -253,7 +387,7 @@ function setView(view, options = {}) {
   closeInspector();
   syncChrome(view);
   if (view === 'atlas') router.go({ view, tab: state.atlasTab });
-  else if (view === 'commands' || view === 'workspace') router.go({ view, workspace: state.workspace || '' });
+  else if (view === 'commands' || view === 'workspace' || view === 'run') router.go({ view, workspace: state.workspace || '' });
   else router.go({ view });
   return Promise.resolve(renderView());
 }
@@ -266,11 +400,11 @@ function renderView() {
       atlas: state.atlas,
       surface: state.surface,
       ledgerHtml: ledger.ledgerHtml(ledger.recent(5)),
-      onNavigate: (view) => setView(view === 'commands' ? 'commands' : view),
-      onWorkspace: (id) => setView('workspace', { workspace: id }),
+      onNavigate: (view) => setView(view === 'commands' ? 'run' : view),
+      onWorkspace: (id) => setView('run', { workspace: id }),
     });
-  } else if (state.view === 'workspace' || state.view === 'commands') {
-    if (!state.surface.workspaces.some((w) => w.id === state.workspace)) {
+  } else if (state.view === 'workspace' || state.view === 'commands' || state.view === 'run') {
+    if (state.view !== 'run' && !state.surface.workspaces.some((w) => w.id === state.workspace)) {
       state.workspace = state.surface.workspaces[0]?.id || 'overview';
     }
     stage.innerHTML = workspaceHtml();
@@ -302,12 +436,15 @@ function renderView() {
         setView('workspace', { workspace: command?.workspace || 'overview' }).then(() => selectCommand(name));
       },
     });
+  } else if (state.view === 'projects') {
+    stage.innerHTML = projectsHtml();
+    bindProjects(stage);
   } else if (state.view === 'session') {
     stage.innerHTML = sessionHtml();
   } else if (state.view === 'terminal') {
     stage.appendChild(terminalHost());
   }
-  if (state.view === 'workspace' || state.view === 'commands') bindWorkspace();
+  if (state.view === 'workspace' || state.view === 'commands' || state.view === 'run') bindWorkspace();
   if (state.view === 'session') bindSession();
 }
 
@@ -356,16 +493,30 @@ function overviewHtml() {
     </div>`;
 }
 
+const RECIPES = [
+  ['status', 'Status'], ['run', 'Run workflow'], ['explain', 'Explain result'],
+  ['graph as-of', 'Graph snapshot'], ['validation report', 'Validation'],
+  ['vv coverage', 'Coverage gaps'], ['geometry recipe', 'Geometry'],
+  ['mesh generate', 'Mesh'], ['optimize', 'Optimize'],
+  ['evidence export', 'Export evidence'],
+];
+
 function workspaceHtml() {
-  const workspace = state.surface.workspaces.find((w) => w.id === state.workspace);
+  const workspace = state.workspace
+    ? state.surface.workspaces.find((w) => w.id === state.workspace)
+    : { id: '', title: 'Command library', description: 'Every command the canonical CLI exposes. Pick a task to start, or search the full surface.' };
   if (!workspace) return '<div class="empty">Unknown workspace.</div>';
-  const index = state.surface.workspaces.indexOf(workspace);
+  const index = Math.max(0, state.surface.workspaces.indexOf(workspace));
+  const recipes = state.view === 'run' && !state.workspace
+    ? `<div class="recipe-bar"><div class="eyebrow">Start a task</div><div class="recipe-list">${RECIPES.map(([name, label]) => `<button class="chip" data-recipe="${esc(name)}">${esc(label)}</button>`).join('')}</div></div>`
+    : '';
   return `
     <div class="page-head">
-      <div class="eyebrow">Workspace ${roman(index)} · ${esc(workspace.id)}</div>
+      <div class="eyebrow">${state.workspace ? `Workspace ${roman(index)}` : 'Library'} · ${esc(workspace.id || 'all')}</div>
       <h1>${esc(workspace.title)}</h1>
       <p class="lead">${esc(workspace.description)}</p>
     </div>
+    ${recipes}
     <div class="workspace-grid">
       <section class="command-index">
         <div class="index-toolbar">
@@ -404,6 +555,7 @@ function bindWorkspace() {
     $$('[data-kind]').forEach((c) => c.classList.toggle('active', c === chip));
     renderCommandList();
   }));
+  $$('[data-recipe]').forEach((chip) => chip.addEventListener('click', () => selectCommand(chip.dataset.recipe)));
   renderCommandList();
   if (state.selected) selectCommand(state.selected);
 }
@@ -526,49 +678,28 @@ async function runComposer(command) {
   button.disabled = true;
   button.textContent = 'Running…';
   $('#cmd-message').textContent = '';
-  const result = await invokeAndRecord(argv, command.name);
-  button.disabled = false;
-  button.innerHTML = `${icon('play', 14)} Run`;
-  if (!result.ok) {
-    $('#cmd-message').textContent = result.data?.message || 'The command could not run.';
-    return;
+  try {
+    const job = await startCommand(argv, command.name, state.workspace || 'library');
+    job.fromComposer = true;
+    job.commandName = command.name;
+    button.disabled = false;
+    button.innerHTML = `${icon('play', 14)} Run`;
+    $('#cmd-message').textContent = 'Running — follow live output below. The result opens when the CLI exits.';
+  } catch (error) {
+    button.disabled = false;
+    button.innerHTML = `${icon('play', 14)} Run`;
+    $('#cmd-message').textContent = error.message || 'The command could not start.';
   }
-  $('#cmd-message').textContent = '';
-  showResult(result.data, command.name);
 }
 
 async function runArgv(argv, structured) {
-  const result = await api('/exec', {
-    method: 'POST',
-    body: JSON.stringify({ argv, structured }),
-  });
-  if (!result.ok) {
-    return { state: 'error', exit_code: result.status, duration_ms: 0, value: result.data, stderr: result.data?.message || '', command: argv.join(' ') };
-  }
-  ledger.append({
-    argv: `aether ${formatArgv(argv)}`,
-    command: argv.join(' '),
-    state: result.data.state,
-    exit_code: result.data.exit_code,
-    duration_ms: result.data.duration_ms,
-    workspace: 'terminal',
-  });
-  return result.data;
+  const job = await startCommand(argv, argv.join(' '), 'terminal');
+  return { job, done: waitForJob(job.id) };
 }
 
 async function invokeAndRecord(argv, commandName) {
-  const result = await postJSON('/exec', { argv });
-  if (result.ok) {
-    ledger.append({
-      argv: `aether ${formatArgv(argv)}`,
-      command: commandName,
-      state: result.data.state,
-      exit_code: result.data.exit_code,
-      duration_ms: result.data.duration_ms,
-      workspace: state.workspace || 'overview',
-    });
-  }
-  return result;
+  const job = await startCommand(argv, commandName, state.workspace || 'session');
+  return { ok: true, data: await waitForJob(job.id) };
 }
 
 async function runBuiltin(argv, term) {
@@ -607,6 +738,58 @@ function showResult(result, name) {
 function closeInspector() {
   $('#inspector')?.classList.remove('open');
   state.result = null;
+}
+
+function recentProjects() {
+  try {
+    const value = JSON.parse(localStorage.getItem('aether.projects') || '[]');
+    return Array.isArray(value) ? value.slice(0, 8) : [];
+  } catch { return []; }
+}
+
+function rememberProject(path) {
+  const list = [path, ...recentProjects().filter((item) => item !== path)].slice(0, 8);
+  localStorage.setItem('aether.projects', JSON.stringify(list));
+}
+
+function projectsHtml() {
+  const recent = recentProjects();
+  return `<div class="page-head"><div class="eyebrow">Local · Project</div><h1>Switch project</h1>
+    <p class="lead">The CLI runs in this directory. Every view re-reads its canonical answers after the switch; nothing is carried over.</p></div>
+    <div class="project-card">
+      <div class="eyebrow">Current root</div><code class="mono project-path">${esc(state.projectPath || '—')}</code>
+      <form id="project-form" class="project-form">
+        <label>Project directory<input id="project-input" placeholder="/absolute/path/to/project" autocomplete="off" required></label>
+        <button class="btn primary" type="submit">Open project</button>
+      </form>
+      <div id="project-message" class="dim small"></div>
+      ${recent.length ? `<h3>Recent</h3><div class="recent-projects">${recent.map((path) => `<button class="btn ghost" data-project="${esc(path)}">${esc(path)}</button>`).join('')}</div>` : ''}
+    </div>`;
+}
+
+function bindProjects(stage) {
+  stage.querySelectorAll('[data-project]').forEach((button) => button.addEventListener('click', () => {
+    $('#project-input').value = button.dataset.project;
+    $('#project-input').focus();
+  }));
+  $('#project-form')?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const path = $('#project-input').value.trim();
+    const message = $('#project-message');
+    message.textContent = 'Opening project…';
+    const response = await api('/project', { method: 'POST', body: JSON.stringify({ path }) });
+    if (!response.ok) {
+      message.textContent = response.data?.message || 'The directory could not be opened.';
+      return;
+    }
+    state.projectPath = response.data.path;
+    rememberProject(state.projectPath);
+    const label = $('#project-label');
+    if (label) label.textContent = state.projectPath;
+    await refreshDerived();
+    toast(`Opened ${state.projectPath}`);
+    setView('pulse');
+  });
 }
 
 function sessionHtml() {
@@ -680,6 +863,8 @@ async function loadFiles(query) {
 
 function runAction(action) {
   if (action === 'terminal') { setView('terminal'); terminal.focus(); }
+  else if (action === 'projects') setView('projects');
+  else if (action === 'run') setView('run');
   else if (action === 'session') setView('session');
   else if (action === 'theme') toggleTheme();
   else if (action === 'help') $('#help-overlay').classList.add('open');

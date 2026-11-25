@@ -456,6 +456,39 @@ pre.json{margin:0;background:var(--bg);border:1px solid var(--line-soft);border-
 .link-cap{text-align:left;align-items:flex-start}
 .link-cap small{font-size:10px;color:var(--muted);font-weight:400}
 
+/* ---- live runs, recipes and project switching ---- */
+.nav-item.secondary{font-size:12px;padding:5px 9px;color:var(--dim)}
+.project-chip{display:flex;align-items:center;gap:7px;max-width:210px;border:0;background:transparent;padding:0;color:var(--muted);font:inherit;text-align:left}
+.project-chip span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rail-foot small{font-size:9px}
+.pill.running,.pill.timed_out{color:var(--accent)}
+.pill.cancelled,.pill.failed{color:var(--dim)}
+.recipe-bar{padding:14px 0 2px}
+.recipe-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.live-dock{
+  display:none;position:fixed;bottom:44px;left:var(--rail);right:0;z-index:24;max-height:216px;overflow:auto;
+  padding:10px clamp(20px,3vw,44px);border-top:1px solid var(--line);background:var(--panel);
+  box-shadow:0 -14px 44px rgba(0,0,0,.24);
+}
+.live-dock.active{display:block}
+.shell:has(.live-dock.active) .stage{padding-bottom:330px}
+.live-empty{font-family:var(--mono);font-size:10px;color:var(--dim);padding:4px 0}
+.live-job{position:relative;border:1px solid var(--line-soft);border-radius:var(--radius-sm);padding:8px 10px;margin:6px 0;background:var(--raised)}
+.live-head{display:flex;align-items:center;gap:10px}
+.live-head code{font-size:11px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.live-meter{display:flex;gap:12px;font-family:var(--mono);font-size:10px;color:var(--muted);margin:5px 0 0 2px}
+.live-log{margin:6px 0 0;max-height:84px;overflow:auto;font-family:var(--mono);font-size:10px;line-height:1.45;color:var(--muted);white-space:pre-wrap;word-break:break-word}
+.live-line.stderr{color:var(--warn)}
+.btn.mini{padding:2px 8px;font-size:10px}
+.live-pulse{position:absolute;right:14px;bottom:10px;width:5px;height:5px;border-radius:50%;background:var(--accent);animation:breathe 1.4s infinite}
+.project-card{max-width:720px;border:1px solid var(--line);border-radius:var(--radius);background:var(--raised);padding:24px}
+.project-path{display:block;margin:10px 0 18px;font-size:12px;color:var(--accent);word-break:break-all}
+.project-form{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.project-form label{display:flex;flex-direction:column;gap:6px;flex:1;min-width:260px;font-size:11px;color:var(--muted)}
+.project-form input{padding:9px 11px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--panel);font-family:var(--mono);font-size:12px}
+.recent-projects{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.recent-projects .btn{font-family:var(--mono);font-size:10px;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+
 /* ---- motion & responsive ---- */
 @keyframes breathe{0%,100%{opacity:.45}50%{opacity:1}}
 @keyframes slidein{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
@@ -478,6 +511,7 @@ pre.json{margin:0;background:var(--bg);border:1px solid var(--line-soft);border-
   .rail.open{transform:none}
   .menu-btn{display:inline-flex}
   .dock{left:0}
+  .live-dock{left:0}
   .term-suggest{left:24px}
   .topbar{padding:0 18px}
   .search-btn span{display:none}

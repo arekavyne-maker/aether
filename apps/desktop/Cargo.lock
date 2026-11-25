@@ -15,6 +15,8 @@ dependencies = [
  "aether_web",
  "anyhow",
  "muda",
+ "serde",
+ "serde_json",
  "tao",
  "tokio",
  "wry",
@@ -26,6 +28,7 @@ version = "3.0.0-rc.1"
 dependencies = [
  "anyhow",
  "axum",
+ "libc",
  "serde",
  "serde_json",
  "sha2 0.10.9",

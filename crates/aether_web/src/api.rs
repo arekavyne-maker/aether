@@ -11,10 +11,11 @@
 #![warn(missing_docs)]
 
 use std::collections::{BTreeMap, HashMap};
+use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use axum::extract::{Query, State};
+use axum::extract::{Path, Query, State};
 use axum::http::{HeaderMap, StatusCode};
 use axum::middleware::from_fn_with_state;
 use axum::response::{IntoResponse, Json, Response};
@@ -33,6 +34,7 @@ use crate::cli::{
 };
 use crate::files;
 use crate::help::{self, CommandHelp};
+use crate::jobs::{self, JobManager};
 
 /// Shared application state.
 #[derive(Debug, Clone)]
@@ -41,6 +43,8 @@ pub struct AppState {
     pub token: Arc<TokenAuth>,
     /// CLI subprocess adapter.
     pub runner: Arc<CliRunner>,
+    /// Live command jobs with incremental output.
+    pub jobs: Arc<JobManager>,
     /// Curated command catalog.
     pub catalog: Arc<Catalog>,
     /// Short-lived response cache.
@@ -56,9 +60,11 @@ impl AppState {
     pub fn new(token: TokenAuth, runner: CliRunner) -> Result<Self, CatalogError> {
         let catalog = Catalog::load()?;
         catalog.validate()?;
+        let runner = Arc::new(runner);
         Ok(Self {
             token: Arc::new(token),
-            runner: Arc::new(runner),
+            jobs: Arc::new(JobManager::new((*runner).clone())),
+            runner,
             catalog: Arc::new(catalog),
             cache: Arc::new(RwLock::new(HashMap::new())),
             discovered: Arc::new(RwLock::new(None)),
@@ -317,6 +323,11 @@ pub fn router(token: TokenAuth, runner: CliRunner) -> Router {
         .route("/invoke", post(invoke_handler))
         .route("/exec", post(exec_handler))
         .route("/raw", post(raw_handler))
+        .route("/project", get(project_handler).post(project_switch_handler))
+        .route("/jobs", get(jobs_list_handler).post(jobs_start_handler))
+        .route("/jobs/:id", get(jobs_get_handler))
+        .route("/jobs/:id/events", get(jobs_events_handler))
+        .route("/jobs/:id/cancel", post(jobs_cancel_handler))
         .route_layer(from_fn_with_state(state.clone(), authenticate));
 
     Router::new()
@@ -355,6 +366,66 @@ async fn catalog_handler(State(state): State<AppState>) -> Response {
             e.to_string(),
         ),
     }
+}
+
+async fn jobs_list_handler(State(state): State<AppState>) -> Response {
+    jobs::list_handler(State(state.jobs.clone())).await
+}
+
+async fn jobs_start_handler(State(state): State<AppState>, body: Json<jobs::StartBody>) -> Response {
+    jobs::start_handler(State(state.jobs.clone()), body).await
+}
+
+async fn jobs_get_handler(State(state): State<AppState>, Path(id): Path<String>) -> Response {
+    jobs::get_handler(State(state.jobs.clone()), Path(id)).await
+}
+
+async fn jobs_events_handler(
+    State(state): State<AppState>,
+    Path(id): Path<String>,
+    query: Query<jobs::EventsQuery>,
+) -> Response {
+    jobs::events_handler(State(state.jobs.clone()), Path(id), query).await
+}
+
+async fn jobs_cancel_handler(State(state): State<AppState>, Path(id): Path<String>) -> Response {
+    jobs::cancel_handler(State(state.jobs.clone()), Path(id)).await
+}
+
+/// Request body for an in-app project switch.
+#[derive(Debug, Deserialize)]
+pub struct ProjectBody {
+    /// Absolute or relative path to a project directory.
+    pub path: String,
+}
+
+async fn project_handler(State(state): State<AppState>) -> Response {
+    let root = state
+        .runner
+        .project()
+        .or_else(|| std::env::current_dir().ok())
+        .map(|path| path.to_string_lossy().to_string())
+        .unwrap_or_default();
+    Json(json!({ "path": root })).into_response()
+}
+
+async fn project_switch_handler(State(state): State<AppState>, Json(body): Json<ProjectBody>) -> Response {
+    let candidate = PathBuf::from(&body.path);
+    let root = match candidate.canonicalize() {
+        Ok(path) if path.is_dir() => path,
+        _ => {
+            return error_response(
+                StatusCode::BAD_REQUEST,
+                "bad_project",
+                format!("{} is not an existing directory", body.path),
+            );
+        }
+    };
+    state.runner.set_project(root.clone());
+    state.cache.write().await.clear();
+    *state.discovered.write().await = None;
+    state.helps.write().await.clear();
+    Json(json!({ "path": root.to_string_lossy(), "switched": true })).into_response()
 }
 
 async fn status_handler(State(state): State<AppState>) -> Response {

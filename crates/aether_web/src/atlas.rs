@@ -188,7 +188,6 @@ async fn fetch(
 fn project_root(runner: &CliRunner) -> PathBuf {
     runner
         .project()
-        .map(PathBuf::from)
         .unwrap_or_else(|| std::env::current_dir().unwrap_or_else(|_| PathBuf::from(".")))
 }
 

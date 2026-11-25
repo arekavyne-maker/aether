@@ -39,6 +39,12 @@ def check(repo_root: Path = REPO_ROOT):
         problems.append("desktop shell must generate a per-launch token")
     if "with_navigation_handler" not in source_text:
         problems.append("desktop WebView must restrict navigation")
+    for marker in (
+        "MenuItem::with_id", "Accelerator::new", "recent-projects.json",
+        "window.json", "/api/project", "Code::KeyO",
+    ):
+        if marker not in source_text:
+            problems.append(f"desktop shell is missing native affordance {marker}")
     for forbidden in ("Command::new(\"sh\")", "std::process::Command::new(\"bash\")"):
         if forbidden in source_text:
             problems.append(f"desktop shell must not spawn a shell: {forbidden}")

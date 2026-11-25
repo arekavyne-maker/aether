@@ -11,6 +11,7 @@
 
 use std::path::{Path, PathBuf};
 use std::process::Stdio;
+use std::sync::{Arc, RwLock};
 use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
@@ -50,6 +51,16 @@ pub enum CommandState {
     Blocked,
     /// Any other non-zero exit.
     Error,
+}
+
+/// Map the CLI's exit code onto an honest UI state.
+pub fn state_from_exit(exit_code: i32) -> CommandState {
+    match exit_code {
+        0 => CommandState::Ok,
+        2 => CommandState::UsageError,
+        30 => CommandState::Blocked,
+        _ => CommandState::Error,
+    }
 }
 
 /// A command invocation request from the browser.
@@ -131,7 +142,8 @@ pub fn find_cli_binary() -> Option<PathBuf> {
 pub struct CliRunner {
     bin: PathBuf,
     timeout: Duration,
-    project: Option<PathBuf>,
+    /// Shared so an in-app project switch is visible to every cloned runner.
+    project: Arc<RwLock<Option<PathBuf>>>,
 }
 
 impl CliRunner {
@@ -149,7 +161,7 @@ impl CliRunner {
         Ok(Self {
             bin,
             timeout: Duration::from_secs(120),
-            project,
+            project: Arc::new(RwLock::new(project)),
         })
     }
 
@@ -158,19 +170,24 @@ impl CliRunner {
         Self {
             bin,
             timeout,
-            project: None,
+            project: Arc::new(RwLock::new(None)),
         }
     }
 
     /// Run every child process in this project root.
-    pub fn with_project(mut self, project: PathBuf) -> Self {
-        self.project = Some(project);
+    pub fn with_project(self, project: PathBuf) -> Self {
+        self.set_project(project);
         self
     }
 
+    /// Switch the project root for all clones of this runner.
+    pub fn set_project(&self, project: PathBuf) {
+        *self.project.write().expect("project lock poisoned") = Some(project);
+    }
+
     /// The configured project root, if any.
-    pub fn project(&self) -> Option<&Path> {
-        self.project.as_deref()
+    pub fn project(&self) -> Option<PathBuf> {
+        self.project.read().expect("project lock poisoned").clone()
     }
 
     /// The resolved CLI binary path.
@@ -231,7 +248,7 @@ impl CliRunner {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .kill_on_drop(true);
-        if let Some(project) = &self.project {
+        if let Some(project) = self.project() {
             command.current_dir(project);
         }
 
@@ -245,12 +262,7 @@ impl CliRunner {
         let stdout = String::from_utf8_lossy(&output.stdout).to_string();
         let stderr = String::from_utf8_lossy(&output.stderr).to_string();
         let exit_code = output.status.code().unwrap_or(-1);
-        let state = match exit_code {
-            0 => CommandState::Ok,
-            2 => CommandState::UsageError,
-            30 => CommandState::Blocked,
-            _ => CommandState::Error,
-        };
+        let state = state_from_exit(exit_code);
         let (value, text) = match serde_json::from_str::<Value>(&stdout) {
             Ok(v) => (v, None),
             Err(_) => (Value::Null, Some(stdout)),

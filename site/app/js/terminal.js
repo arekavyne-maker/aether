@@ -216,8 +216,25 @@ export class Terminal {
     }
     const entry = { argv, pending: true };
     this.push(entry);
-    const result = await this.options.onInvoke?.(argv, this.structured);
     const index = this.entries.indexOf(entry);
+    const result = await this.options.onInvoke?.(argv, this.structured);
+    if (result?.job && result.done) {
+      this.entries[index] = {
+        argv,
+        result: {
+          state: 'running', exit_code: null, duration_ms: 0,
+          command: argv.join(' '), value: null,
+          text: 'Running — follow the live output in the run dock.',
+          stderr: '',
+        },
+      };
+      this.renderLog();
+      result.done.then((final) => {
+        this.entries[index] = { argv, result: final };
+        this.renderLog();
+      });
+      return;
+    }
     if (index >= 0) this.entries[index] = { argv, result };
     this.renderLog();
   }

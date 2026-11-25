@@ -26,11 +26,13 @@ reference to `~/.aether/web.token` instead — logs never contain the secret.
 
 ## Navigation
 
-The rail has six destinations: **Pulse** (project health and attention
-items), **Atlas** (graph, schema, coverage and command map), **Assurance**,
-**Build**, **Govern**, and **Commands** (the full command index). The CLI
-terminal (`⌘J`) and session ledger remain pinned at the bottom. `⌘K` opens
-the launcher across commands, workspaces, graph nodes and actions.
+The rail has four primary destinations: **Home** (project health and
+attention items), **Run** (task recipes plus the full command index), **Atlas**
+(graph, schema, coverage and command map) and **Verify** (assurance and
+evidence). The command index, CLI terminal (`⌘J`), session ledger and project
+switcher sit in the Library section. `⌘K` opens the launcher across commands,
+workspaces, graph nodes and actions. The project chip at the foot of the rail
+opens the project switcher.
 
 ## Two surfaces, one session
 
@@ -88,6 +90,23 @@ never as success.
 All are bearer-gated and shell-free. The graph is capped at 5000 nodes and
 10000 edges; the response reports `truncated` rather than silently dropping
 data.
+
+## Live runs and project switching
+
+| Route | Purpose |
+|---|---|
+| `POST /api/jobs` with `{"argv":[...]}` | Start one CLI invocation; returns a job id immediately |
+| `GET /api/jobs/:id` | Current state, exit code, duration and final result |
+| `GET /api/jobs/:id/events?after=N` | Authenticated long-poll of real stdout/stderr events |
+| `POST /api/jobs/:id/cancel` | Terminate the job's process group |
+| `GET /api/project` | Current project root |
+| `POST /api/project` with `{"path":"..."}` | Switch the project root in-process |
+
+The live dock shows real output, elapsed time and cancel. When the CLI writes
+nothing, the console shows elapsed time rather than an invented progress bar.
+After each run the console re-reads status, Atlas and health; an idle watcher
+compares the chain head so external CLI runs also refresh the views. Jobs are
+in-memory and do not survive a server restart.
 
 A native macOS application is built from `apps/desktop`. See
 [`desktop-app.md`](desktop-app.md).

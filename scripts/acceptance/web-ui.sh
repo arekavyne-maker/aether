@@ -127,7 +127,30 @@ d=json.load(sys.stdin); assert d['health']['checks'], d
 " || fail "atlas health"
 pass "atlas aggregates CLI JSON with source provenance"
 
-echo "== 10. raw console and tokenizer =="
+echo "== 10. live jobs and project switching =="
+JOB_ID=$(curl -sf -H "$AUTH" -H 'Content-Type: application/json' \
+    -d '{"argv":["status"]}' "$API/jobs" | python3 -c "import json,sys;print(json.load(sys.stdin)['id'])")
+[ -n "$JOB_ID" ] || fail "job did not start"
+for _ in $(seq 1 40); do
+    curl -sf -H "$AUTH" "$API/jobs/$JOB_ID/events?after=0" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+assert d['event_count'] >= 1
+assert d['finished'] in (True, False)
+" || fail "job event feed"
+    state=$(curl -sf -H "$AUTH" "$API/jobs/$JOB_ID" | python3 -c "import json,sys;print(json.load(sys.stdin)['state'])")
+    [ "$state" = "running" ] || break
+    sleep 0.1
+done
+[ "$state" = "ok" ] || fail "job did not reach ok (got $state)"
+curl -sf -H "$AUTH" -X POST -H 'Content-Type: application/json' \
+    -d "{\"path\":\"$ROOT\"}" "$API/project" | python3 -c "
+import json,sys
+d=json.load(sys.stdin); assert d['switched'] is True
+" || fail "project switch"
+pass "live jobs stream CLI output and project root can change in-app"
+
+echo "== 11. raw console and tokenizer =="
 code=$(curl -s -o /dev/null -w "%{http_code}" -H "$AUTH" -H 'Content-Type: application/json' \
     -d '{"command":["rm","-rf","/"],"flags":[]}' "$API/raw")
 [ "$code" = "400" ] || fail "raw accepted undiscovered command with $code"

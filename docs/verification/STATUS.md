@@ -18,7 +18,7 @@ qualification.
 | Area | Status | Evidence |
 |---|---|---|
 | Rust workspace | builds; 38 crates, ~33.9k Rust LOC | `cargo build --workspace` |
-| Rust tests | green baseline (97 test binaries) | `cargo test --workspace` |
+| Rust tests | green baseline (100 test binaries) | `cargo test --workspace` |
 | Python tests | green baseline | `python3 -m pytest -q` |
 | Contracts | 32 packages / 58 schemas | `contracts/*/manifest.json` |
 | Graph catalog | 78 node types / 38 edge types | `contracts/graph.model/catalog/` |
@@ -44,8 +44,9 @@ qualification.
 | Classification | data handling policy, unclassified denied | `crates/aether_classification` |
 | Identity | short-lived signed tokens, expiry, revocation | `crates/aether_identity` |
 | Observability | local metrics with no-leak labels | `crates/aether_observability` |
-| Local console | Obsidian-editorial console + embedded argv CLI, Atlas graph/schema/coverage, 124-command surface, CLI untouched | `crates/aether_web`, `site/app`, `scripts/acceptance/web-ui.sh` |
-| Desktop shell | Native macOS `wry` app with in-process loopback server and bundled Python | `apps/desktop`, `scripts/package`, `scripts/acceptance/desktop.sh` |
+| Local console | Obsidian-editorial console + embedded argv CLI, Atlas graph/schema/coverage, live jobs with cancel and project switching, 124-command surface, CLI untouched | `crates/aether_web`, `site/app`, `scripts/acceptance/web-ui.sh` |
+| Desktop shell | Native macOS `wry` app with in-process loopback server, native menus, recents, window state and bundled Python | `apps/desktop`, `scripts/package`, `scripts/acceptance/desktop.sh` |
+| Audit | Independent findings register and 82-row task coverage matrix | `audit/REPORT.md`, `audit/task-coverage.md` |
 | Interop | STEP/IGES/STL/HDF5/CSV/JSON + QIF, declared semantic loss | `python/aether_standards` |
 | Benchmarks | 11 benchmarks; absent optional tooling is `SKIP`, not `FAIL` | `benchmarks/` |
 | Dark-build | 24 steps, egress-free by policy | `infra/ci/dark-build.sh` |

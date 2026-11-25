@@ -33,6 +33,23 @@ cargo build --manifest-path apps/desktop/Cargo.toml
   `--offline` and by default `--json`.
 - There is no token file, no service, and no network egress.
 
+## Native workflow
+
+The menu bar uses stable ids and real accelerators:
+
+| Menu | Actions |
+|---|---|
+| Aether | About, Diagnostics, Reload `⌘R`, Toggle theme `⌘T`, Quit `⌘Q` |
+| File | Open Project… `⌘O`, Current Project, Recent Projects |
+| Run | Run Command `⌘↵`, Cancel Job `⌘.`, CLI Terminal `⌘J`, Session Ledger |
+| View | Home, Run, Atlas, Verify, Command Index |
+| Help | Keyboard Shortcuts `?` |
+
+Opening or choosing a recent project calls the in-process `/api/project`
+endpoint; the server does not restart and no token changes. Recent paths and
+window geometry are stored in `~/Library/Application Support/Aether/` as JSON.
+Those files contain no engineering data or secrets.
+
 ## Bundled resources
 
 The shell locates resources relative to `Contents/MacOS/Aether`:

@@ -26,6 +26,7 @@ pub const JS_MODULES: &[(&str, &str)] = &[
     ("surface.js", include_str!("../../../site/app/js/surface.js")),
     ("terminal.js", include_str!("../../../site/app/js/terminal.js")),
     ("ledger.js", include_str!("../../../site/app/js/ledger.js")),
+    ("jobs.js", include_str!("../../../site/app/js/jobs.js")),
     ("palette.js", include_str!("../../../site/app/js/palette.js")),
     ("data/atlas.js", include_str!("../../../site/app/js/data/atlas.js")),
     ("state/store.js", include_str!("../../../site/app/js/state/store.js")),

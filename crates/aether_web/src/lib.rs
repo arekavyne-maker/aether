@@ -16,6 +16,7 @@ pub mod catalog;
 pub mod help;
 pub mod files;
 pub mod atlas;
+pub mod jobs;
 pub mod api;
 pub mod assets;
 

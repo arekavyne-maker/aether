@@ -11,11 +11,15 @@
 use std::io::{Read, Write};
 use std::net::{SocketAddr, TcpListener, TcpStream};
 use std::path::PathBuf;
+use std::rc::Rc;
 use std::thread::JoinHandle;
 
 use anyhow::{Context, Result, bail};
 use aether_web::{CliRunner, TokenAuth};
-use muda::{Menu, MenuEvent, MenuItem, Submenu};
+use muda::accelerator::{Accelerator, Code, Modifiers};
+use muda::{Menu, MenuEvent, MenuItem, PredefinedMenuItem, Submenu};
+use serde::{Deserialize, Serialize};
+use tao::dpi::{LogicalSize, PhysicalPosition, PhysicalSize};
 use tao::event_loop::{ControlFlow, EventLoop};
 use tao::window::WindowBuilder;
 use tokio::sync::oneshot;
@@ -37,6 +41,53 @@ impl Drop for ServerHandle {
             let _ = thread.join();
         }
     }
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+struct WindowState {
+    width: u32,
+    height: u32,
+    x: Option<i32>,
+    y: Option<i32>,
+}
+
+fn support_dir() -> Option<PathBuf> {
+    let home = std::env::var("HOME").ok()?;
+    let dir = PathBuf::from(home)
+        .join("Library")
+        .join("Application Support")
+        .join("Aether");
+    std::fs::create_dir_all(&dir).ok()?;
+    Some(dir)
+}
+
+fn read_state<T: for<'de> Deserialize<'de>>(name: &str) -> Option<T> {
+    let path = support_dir()?.join(name);
+    let text = std::fs::read_to_string(path).ok()?;
+    serde_json::from_str(&text).ok()
+}
+
+fn write_state<T: Serialize>(name: &str, value: &T) {
+    if let Some(path) = support_dir().map(|dir| dir.join(name)) {
+        if let Ok(text) = serde_json::to_string_pretty(value) {
+            let _ = std::fs::write(path, text);
+        }
+    }
+}
+
+fn recent_projects() -> Vec<String> {
+    read_state::<Vec<String>>("recent-projects.json").unwrap_or_default()
+}
+
+fn remember_project(path: &PathBuf) {
+    let value = path.to_string_lossy().to_string();
+    let mut list: Vec<String> = recent_projects()
+        .into_iter()
+        .filter(|item| item != &value)
+        .collect();
+    list.insert(0, value);
+    list.truncate(6);
+    write_state("recent-projects.json", &list);
 }
 
 /// Point the canonical CLI at the resources bundled inside the app.
@@ -139,7 +190,7 @@ fn start_server(project: PathBuf) -> Result<ServerHandle> {
     })
 }
 
-/// Headless smoke check: fetch the aggregate over a raw HTTP/1.1 request.
+/// Headless smoke check: fetch the atlas over a raw HTTP/1.1 request.
 fn smoke_check(server: &ServerHandle) -> Result<()> {
     let mut stream = TcpStream::connect(server.addr)?;
     let request = format!(
@@ -160,18 +211,73 @@ fn smoke_check(server: &ServerHandle) -> Result<()> {
     Ok(())
 }
 
-fn build_menu() -> Result<Menu> {
+fn accel(key: Code) -> Option<Accelerator> {
+    Some(Accelerator::new(Modifiers::META, key))
+}
+
+fn build_menu(project: &PathBuf) -> Result<Menu> {
     let menu = Menu::new();
-    let app = Submenu::new("Aether", true);
-    app.append(&MenuItem::new("Quit Aether", true, None))?;
+
+    let app = Submenu::with_id("app", "Aether", true);
+    app.append(&MenuItem::with_id("about", "About Aether", true, None))?;
+    app.append(&MenuItem::with_id("diagnostics", "Diagnostics", true, None))?;
+    app.append(&PredefinedMenuItem::separator())?;
+    app.append(&MenuItem::with_id("reload", "Reload", true, accel(Code::KeyR)))?;
+    app.append(&MenuItem::with_id("theme", "Toggle theme", true, accel(Code::KeyT)))?;
+    app.append(&PredefinedMenuItem::separator())?;
+    app.append(&MenuItem::with_id("quit", "Quit Aether", true, accel(Code::KeyQ)))?;
     menu.append(&app)?;
-    let view = Submenu::new("View", true);
-    view.append(&MenuItem::new("Reload", true, None))?;
-    view.append(&MenuItem::new("Toggle theme", true, None))?;
+
+    let file = Submenu::with_id("file", "File", true);
+    file.append(&MenuItem::with_id("open-project", "Open Project…", true, accel(Code::KeyO)))?;
+    file.append(&MenuItem::with_id("show-project", "Current Project", true, None))?;
+    let recent = Submenu::with_id("recent", "Recent Projects", true);
+    let projects = recent_projects();
+    if projects.is_empty() {
+        recent.append(&MenuItem::with_id("recent:none", "No recent projects", false, None))?;
+    } else {
+        for (index, path) in projects.iter().take(6).enumerate() {
+            recent.append(&MenuItem::with_id(
+                format!("recent:{index}"),
+                path.clone(),
+                true,
+                None,
+            ))?;
+        }
+    }
+    file.append(&recent)?;
+    menu.append(&file)?;
+
+    let run = Submenu::with_id("run", "Run", true);
+    run.append(&MenuItem::with_id("run-command", "Run Command", true, accel(Code::Enter)))?;
+    run.append(&MenuItem::with_id("cancel-job", "Cancel Job", true, accel(Code::Period)))?;
+    run.append(&PredefinedMenuItem::separator())?;
+    run.append(&MenuItem::with_id("terminal", "CLI Terminal", true, accel(Code::KeyJ)))?;
+    run.append(&MenuItem::with_id("ledger", "Session Ledger", true, None))?;
+    menu.append(&run)?;
+
+    let view = Submenu::with_id("view", "View", true);
+    for (id, label) in [
+        ("home", "Home"), ("library", "Run"), ("atlas", "Atlas"),
+        ("verify", "Verify"), ("commands", "Command Index"),
+    ] {
+        view.append(&MenuItem::with_id(format!("view:{id}"), label, true, None))?;
+    }
     menu.append(&view)?;
+
+    let help = Submenu::with_id("help", "Help", true);
+    help.append(&MenuItem::with_id("shortcuts", "Keyboard Shortcuts", true, accel(Code::Slash)))?;
+    help.append(&MenuItem::with_id("project-label", project.to_string_lossy().to_string(), false, None))?;
+    menu.append(&help)?;
+
     #[cfg(target_os = "macos")]
     menu.init_for_nsapp();
     Ok(menu)
+}
+
+fn navigate(webview: &wry::WebView, route: &str) {
+    let script = format!("location.hash='#/{route}'");
+    let _ = webview.evaluate_script(&script);
 }
 
 fn main() -> Result<()> {
@@ -184,32 +290,64 @@ fn main() -> Result<()> {
         return smoke_check(&server);
     }
 
-    let _menu = build_menu()?;
+    remember_project(&project);
+    let _menu = build_menu(&project)?;
     let url = format!("http://{}/#token={}", server.addr, server.token);
-    let mut allowed = format!("http://{}/", server.addr);
-    allowed.truncate(allowed.len() - 1);
+    let allowed = format!("http://{}/", server.addr);
+    let allowed = allowed.trim_end_matches('/').to_string();
 
+    let saved: WindowState = read_state("window.json").unwrap_or_default();
     let event_loop = EventLoop::new();
-    let window = WindowBuilder::new()
-        .with_title(format!("Aether — {}", project.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_else(|| "local".into())))
-        .with_inner_size(tao::dpi::LogicalSize::new(1440, 900))
-        .build(&event_loop)?;
-    let webview = WebViewBuilder::new()
-        .with_url(&url)
-        .with_navigation_handler(move |candidate| candidate.starts_with(&allowed))
-        .build(&window)?;
+    let window = Rc::new(
+        WindowBuilder::new()
+            .with_title(format!("Aether — {}", project.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_else(|| "local".into())))
+            .with_inner_size(LogicalSize::new(
+                if saved.width > 0 { saved.width } else { 1440 },
+                if saved.height > 0 { saved.height } else { 900 },
+            ))
+            .build(&event_loop)?,
+    );
+    if let (Some(x), Some(y)) = (saved.x, saved.y) {
+        window.set_outer_position(PhysicalPosition::new(x, y));
+    }
+    let webview = Rc::new(
+        WebViewBuilder::new()
+            .with_url(&url)
+            .with_navigation_handler(move |candidate| candidate.starts_with(&allowed))
+            .build(&window)?,
+    );
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Wait;
         while let Ok(menu_event) = MenuEvent::receiver().try_recv() {
             match menu_event.id.0.as_str() {
-                "Quit Aether" => *control_flow = ControlFlow::Exit,
-                "Reload" => { let _ = webview.load_url(&url); }
-                "Toggle theme" => {
-                    let _ = webview.evaluate_script(
-                        "document.getElementById('theme-btn')?.click();",
-                    );
+                "about" => { let _ = webview.evaluate_script("document.getElementById('help-overlay')?.classList.add('open');"); }
+                "diagnostics" => navigate(&webview, "build"),
+                "reload" => { let _ = webview.load_url(&url); }
+                "theme" => { let _ = webview.evaluate_script("document.getElementById('theme-btn')?.click();"); }
+                "quit" => *control_flow = ControlFlow::Exit,
+                "open-project" | "show-project" => navigate(&webview, "projects"),
+                id if id.starts_with("recent:") => {
+                    if let Some(index) = id.strip_prefix("recent:").and_then(|value| value.parse::<usize>().ok()) {
+                        if let Some(path) = recent_projects().get(index) {
+                            let script = format!(
+                                "(async()=>{{const r=await fetch('/api/project',{{method:'POST',headers:{{'Authorization':'Bearer '+(localStorage.getItem('aether.token')||'')}} ,body:JSON.stringify({{path:{}}})}});if(r.ok)location.hash='#/pulse';}})()",
+                                serde_json::to_string(path).unwrap_or_default()
+                            );
+                            let _ = webview.evaluate_script(&script);
+                        }
+                    }
                 }
+                "run-command" => { let _ = webview.evaluate_script("document.getElementById('cmd-run')?.click();"); }
+                "cancel-job" => { let _ = webview.evaluate_script("document.querySelector('[data-cancel]')?.click();"); }
+                "terminal" => navigate(&webview, "terminal"),
+                "ledger" => navigate(&webview, "session"),
+                "view:home" => navigate(&webview, "pulse"),
+                "view:library" => navigate(&webview, "run"),
+                "view:atlas" => navigate(&webview, "atlas/graph"),
+                "view:verify" => navigate(&webview, "assurance"),
+                "view:commands" => navigate(&webview, "commands"),
+                "shortcuts" => { let _ = webview.evaluate_script("document.getElementById('help-overlay')?.classList.add('open');"); }
                 _ => {}
             }
         }
@@ -218,6 +356,14 @@ fn main() -> Result<()> {
             ..
         } = event
         {
+            let size: PhysicalSize<u32> = window.inner_size();
+            let position: Option<PhysicalPosition<i32>> = window.outer_position().ok();
+            write_state("window.json", &WindowState {
+                width: size.width,
+                height: size.height,
+                x: position.map(|p| p.x),
+                y: position.map(|p| p.y),
+            });
             *control_flow = ControlFlow::Exit;
         }
     });
