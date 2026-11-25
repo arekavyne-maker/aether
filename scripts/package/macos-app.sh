@@ -40,7 +40,19 @@ fi
 
 ICON_LINE=""
 if [ -f "$ROOT/apps/desktop/AppIcon.png" ]; then
-  sips -s format icns "$ROOT/apps/desktop/AppIcon.png" --out "$RES/AppIcon.icns" >/dev/null
+  echo "==> converting app icon to icns"
+  ICON_TMP="$(mktemp -d)"
+  ICONSET="$ICON_TMP/Aether.iconset"
+  mkdir -p "$ICONSET"
+  for size in 16 32 128 256 512; do
+    sips -z "$size" "$size" "$ROOT/apps/desktop/AppIcon.png" --out "$ICONSET/icon_${size}x${size}.png" >/dev/null
+  done
+  sips -z 32 32 "$ROOT/apps/desktop/AppIcon.png" --out "$ICONSET/icon_16x16@2x.png" >/dev/null
+  sips -z 256 256 "$ROOT/apps/desktop/AppIcon.png" --out "$ICONSET/icon_128x128@2x.png" >/dev/null
+  sips -z 512 512 "$ROOT/apps/desktop/AppIcon.png" --out "$ICONSET/icon_256x256@2x.png" >/dev/null
+  sips -z 1024 1024 "$ROOT/apps/desktop/AppIcon.png" --out "$ICONSET/icon_512x512@2x.png" >/dev/null
+  iconutil -c icns "$ICONSET" --out "$RES/AppIcon.icns"
+  rm -rf "$ICON_TMP"
   ICON_LINE="    <key>CFBundleIconFile</key><string>AppIcon.icns</string>"
 fi
 cat > "$CONTENTS/Info.plist" <<PLIST

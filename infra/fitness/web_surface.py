@@ -101,6 +101,8 @@ def check(repo_root: Path = REPO_ROOT):
         problems.append("embedded assets do not include jobs.js")
     if 'route("/assets/fonts/*file"' not in api_source or "FONT_ASSETS" not in assets:
         problems.append("local fonts are not embedded and served from the same origin")
+    if 'route("/assets/app-icon.png"' not in api_source or "APP_ICON" not in assets:
+        problems.append("application mark is not embedded and served from the same origin")
     for font in ("urbanist-latin.woff2", "arapey-italic-latin.woff2"):
         if not (app / "fonts" / font).is_file():
             problems.append(f"missing bundled font {font}")

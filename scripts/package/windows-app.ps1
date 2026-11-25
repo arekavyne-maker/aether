@@ -59,6 +59,11 @@ $ZIP = Join-Path $OUT 'Aether-windows.zip'
 Compress-Archive -Path $BUNDLE -DestinationPath $ZIP -Force
 
 Write-Host '==> building WiX MSI'
+$ICON_PNG = Join-Path $ROOT 'apps/desktop/AppIcon.png'
+$ICON_ICO = Join-Path $OUT 'AppIcon.ico'
+if (Test-Path $ICON_PNG) {
+  python (Join-Path $ROOT 'scripts/package/make-ico.py') $ICON_PNG $ICON_ICO | Out-Null
+}
 $WIX = $env:WIX
 $HEAT = if ($WIX) { Join-Path $WIX 'heat.exe' } else { 'heat.exe' }
 $CANDLE = if ($WIX) { Join-Path $WIX 'candle.exe' } else { 'candle.exe' }
@@ -76,6 +81,8 @@ if ((Get-Command $HEAT -ErrorAction SilentlyContinue) -and
            Manufacturer="Crocell Company"
            UpgradeCode="8F3B1D2E-6A4C-4F0B-9D1E-2C5A7B9E4F11">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <Icon Id="AppIcon" SourceFile="AppIcon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
     <MajorUpgrade DowngradeErrorMessage="An older Aether is installed." />
     <MediaTemplate EmbedCab="yes" />
     <Feature Id="Main" Title="Aether" Level="1">

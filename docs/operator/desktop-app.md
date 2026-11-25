@@ -46,6 +46,12 @@ cargo build --manifest-path apps/desktop/Cargo.toml
   `--offline` and by default `--json`.
 - There is no token file, no service, and no network egress.
 
+## Application icon
+
+The product mark lives at `apps/desktop/AppIcon.png`. Packaging converts it to
+`AppIcon.icns` for macOS and `AppIcon.ico` for the Windows installer; the same
+PNG is embedded in the console and shown as the brand mark in the top bar.
+
 ## Window
 
 The window is undecorated and carries a custom dark titlebar with macOS

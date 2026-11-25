@@ -15,6 +15,7 @@ use axum::response::{Html, IntoResponse, Response};
 
 const INDEX: &str = include_str!("../../../site/app/index.html");
 const CSS: &str = include_str!("../../../site/app/app.css");
+const APP_ICON: &[u8] = include_bytes!("../../../apps/desktop/AppIcon.png");
 
 /// Frontend ES modules, embedded and served only from `/assets/js/`.
 pub const JS_MODULES: &[(&str, &str)] = &[
@@ -95,6 +96,17 @@ pub async fn css() -> Response {
     (headers, CSS).into_response()
 }
 
+/// Serve the embedded application mark.
+pub async fn app_icon() -> Response {
+    let mut headers = HeaderMap::new();
+    security_headers(&mut headers);
+    headers.insert(
+        header::CONTENT_TYPE,
+        HeaderValue::from_static("image/png"),
+    );
+    (headers, APP_ICON).into_response()
+}
+
 /// Serve one embedded frontend module. Unknown names are rejected.
 pub async fn javascript_module(Path(name): Path<String>) -> Response {
 
@@ -136,6 +148,7 @@ mod tests {
         assert!(JS_MODULES.iter().all(|(_, source)| !source.is_empty()));
         assert_eq!(FONT_ASSETS.len(), 4);
         assert!(FONT_ASSETS.iter().all(|(_, bytes)| bytes.len() > 1000));
+        assert!(APP_ICON.len() > 1000);
     }
 
     #[test]

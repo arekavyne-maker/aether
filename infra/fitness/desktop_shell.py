@@ -26,7 +26,8 @@ def check(repo_root: Path = REPO_ROOT):
         repo_root / "scripts/package/linux-app.sh",
         repo_root / "scripts/package/sign-artifacts.sh",
     )
-    for path in (manifest, source, packaging, *packagers):
+    icon = desktop / "AppIcon.png"
+    for path in (manifest, source, packaging, icon, *packagers):
         if not path.is_file():
             return CheckResult(name="desktop_shell", ok=False,
                                summary=f"missing {path.relative_to(repo_root)}", details=[])

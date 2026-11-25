@@ -267,7 +267,7 @@ function renderShell() {
         <span class="title-meta">canonical CLI · offline</span>
       </div>
       <aside class="rail" id="rail">
-        <div class="brand"><span class="brand-mark">A</span><span class="brand-text"><b>Aether</b><small>local console</small></span></div>
+        <div class="brand"><img class="brand-mark" src="/assets/app-icon.png" alt=""><span class="brand-text"><b>Aether</b><small>local console</small></span></div>
         <div class="nav-label">Workspace</div>
         <nav>${nav}</nav>
         <div class="nav-label spaced">Library</div>
