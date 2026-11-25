@@ -257,6 +257,15 @@ function renderShell() {
   const themeIcon = state.theme === 'night' ? 'sun' : 'moon';
   document.getElementById('app').innerHTML = `
     <div class="shell">
+      <div class="titlebar" data-drag="true">
+        <span class="win">
+          <button class="win-dot close" data-win="close" aria-label="Close"></button>
+          <button class="win-dot min" data-win="min" aria-label="Minimize"></button>
+          <button class="win-dot zoom" data-win="zoom" aria-label="Zoom"></button>
+        </span>
+        <span class="title-name">Aether · ${esc(state.projectPath ? state.projectPath.split('/').pop() : 'local console')}</span>
+        <span class="title-meta">canonical CLI · offline</span>
+      </div>
       <aside class="rail" id="rail">
         <div class="brand"><span class="brand-mark">A</span><span class="brand-text"><b>Aether</b><small>local console</small></span></div>
         <div class="nav-label">Workspace</div>
@@ -329,6 +338,15 @@ function renderShell() {
   $('#dock-open').addEventListener('click', () => { setView('terminal'); terminal.focus(); });
   $('#menu-btn').addEventListener('click', () => $('#rail').classList.toggle('open'));
   $('#project-chip')?.addEventListener('click', () => setView('projects'));
+  if (window.ipc?.postMessage) document.documentElement.classList.add('native');
+  $$('[data-win]').forEach((button) => button.addEventListener('click', (event) => {
+    event.stopPropagation();
+    window.ipc.postMessage(JSON.stringify({ action: button.dataset.win }));
+  }));
+  $('.titlebar')?.addEventListener('mousedown', (event) => {
+    if (event.target.closest('[data-win]')) return;
+    window.ipc?.postMessage(JSON.stringify({ action: 'drag' }));
+  });
   $('#theme-btn').addEventListener('click', toggleTheme);
   $('#help-btn').addEventListener('click', () => $('#help-overlay').classList.add('open'));
   $('[data-close-help]').addEventListener('click', () => $('#help-overlay').classList.remove('open'));
@@ -786,6 +804,8 @@ function bindProjects(stage) {
     rememberProject(state.projectPath);
     const label = $('#project-label');
     if (label) label.textContent = state.projectPath;
+    const title = $('.title-name');
+    if (title) title.textContent = `Aether · ${state.projectPath.split('/').filter(Boolean).pop() || 'local console'}`;
     await refreshDerived();
     toast(`Opened ${state.projectPath}`);
     setView('pulse');

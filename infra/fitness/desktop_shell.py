@@ -42,6 +42,7 @@ def check(repo_root: Path = REPO_ROOT):
     for marker in (
         "MenuItem::with_id", "Accelerator::new", "recent-projects.json",
         "window.json", "/api/project", "Code::KeyO",
+        "with_decorations(false)", "with_ipc_handler",
     ):
         if marker not in source_text:
             problems.append(f"desktop shell is missing native affordance {marker}")

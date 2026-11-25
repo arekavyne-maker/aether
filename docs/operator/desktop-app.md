@@ -33,6 +33,15 @@ cargo build --manifest-path apps/desktop/Cargo.toml
   `--offline` and by default `--json`.
 - There is no token file, no service, and no network egress.
 
+## Window
+
+The window is undecorated and carries a custom dark titlebar with macOS
+traffic-light buttons, the project name and a drag region. Buttons and dragging
+are forwarded to native actions over wry IPC; the native menu and its
+accelerators remain available. Window geometry and recent projects are stored
+under `~/Library/Application Support/Aether/`. The content uses the same
+locally bundled AIXOR-inspired typography and palette as the browser console.
+
 ## Native workflow
 
 The menu bar uses stable ids and real accelerators:

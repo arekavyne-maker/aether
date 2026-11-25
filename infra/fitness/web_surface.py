@@ -59,7 +59,7 @@ def check(repo_root: Path = REPO_ROOT):
     # --- air gap: static assets must not reach outside the binary ---
     app = repo_root / "site/app"
     for path in sorted(app.rglob("*")):
-        if not path.is_file() or path.suffix == ".mjs":
+        if not path.is_file() or path.suffix in (".mjs", ".woff2"):
             continue
         text = path.read_text(errors="ignore")
         for token in ("http://", "https://", "@import", "src=\"//"):
@@ -99,6 +99,11 @@ def check(repo_root: Path = REPO_ROOT):
             problems.append(f"CSP allows {forbidden}")
     if '"jobs.js"' not in assets:
         problems.append("embedded assets do not include jobs.js")
+    if 'route("/assets/fonts/*file"' not in api_source or "FONT_ASSETS" not in assets:
+        problems.append("local fonts are not embedded and served from the same origin")
+    for font in ("urbanist-latin.woff2", "arapey-italic-latin.woff2"):
+        if not (app / "fonts" / font).is_file():
+            problems.append(f"missing bundled font {font}")
     index = (app / "index.html").read_text()
     if "/assets/js/main.js" not in index or "/assets/app.css" not in index:
         problems.append("index.html does not reference the embedded local assets")

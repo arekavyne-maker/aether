@@ -8,6 +8,7 @@
 
 #![deny(unsafe_code)]
 
+use std::cell::RefCell;
 use std::io::{Read, Write};
 use std::net::{SocketAddr, TcpListener, TcpStream};
 use std::path::PathBuf;
@@ -19,9 +20,10 @@ use aether_web::{CliRunner, TokenAuth};
 use muda::accelerator::{Accelerator, Code, Modifiers};
 use muda::{Menu, MenuEvent, MenuItem, PredefinedMenuItem, Submenu};
 use serde::{Deserialize, Serialize};
-use tao::dpi::{LogicalSize, PhysicalPosition, PhysicalSize};
+use serde_json::Value;
+use tao::dpi::{LogicalSize, PhysicalPosition};
 use tao::event_loop::{ControlFlow, EventLoop};
-use tao::window::WindowBuilder;
+use tao::window::{Window, WindowBuilder};
 use tokio::sync::oneshot;
 use wry::WebViewBuilder;
 
@@ -73,6 +75,19 @@ fn write_state<T: Serialize>(name: &str, value: &T) {
             let _ = std::fs::write(path, text);
         }
     }
+}
+
+fn save_window_state(window_cell: &Rc<RefCell<Option<Window>>>) {
+    let borrow = window_cell.borrow();
+    let Some(window) = borrow.as_ref() else { return };
+    let size = window.inner_size();
+    let position = window.outer_position().ok();
+    write_state("window.json", &WindowState {
+        width: size.width,
+        height: size.height,
+        x: position.map(|point| point.x),
+        y: position.map(|point| point.y),
+    });
 }
 
 fn recent_projects() -> Vec<String> {
@@ -298,24 +313,59 @@ fn main() -> Result<()> {
 
     let saved: WindowState = read_state("window.json").unwrap_or_default();
     let event_loop = EventLoop::new();
-    let window = Rc::new(
+    let close_proxy = event_loop.create_proxy();
+    let window_cell: Rc<RefCell<Option<Window>>> = Rc::new(RefCell::new(None));
+    *window_cell.borrow_mut() = Some(
         WindowBuilder::new()
             .with_title(format!("Aether — {}", project.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_else(|| "local".into())))
             .with_inner_size(LogicalSize::new(
                 if saved.width > 0 { saved.width } else { 1440 },
                 if saved.height > 0 { saved.height } else { 900 },
             ))
+            .with_decorations(false)
             .build(&event_loop)?,
     );
-    if let (Some(x), Some(y)) = (saved.x, saved.y) {
-        window.set_outer_position(PhysicalPosition::new(x, y));
+    {
+        let borrow = window_cell.borrow();
+        if let (Some(window), (Some(x), Some(y))) = (borrow.as_ref(), (saved.x, saved.y)) {
+            window.set_outer_position(PhysicalPosition::new(x, y));
+        }
     }
-    let webview = Rc::new(
-        WebViewBuilder::new()
-            .with_url(&url)
-            .with_navigation_handler(move |candidate| candidate.starts_with(&allowed))
-            .build(&window)?,
-    );
+    let ipc_window = window_cell.clone();
+    let ipc_proxy = close_proxy.clone();
+    let webview = {
+        let borrow = window_cell.borrow();
+        let window = borrow.as_ref().expect("window was built");
+        Rc::new(
+            WebViewBuilder::new()
+                .with_url(&url)
+                .with_navigation_handler(move |candidate| candidate.starts_with(&allowed))
+                .with_ipc_handler(move |request| {
+                    let message: Value = serde_json::from_str(request.body()).unwrap_or(Value::Null);
+                    match message.get("action").and_then(Value::as_str) {
+                        Some("drag") => {
+                            if let Some(window) = ipc_window.borrow().as_ref() {
+                                let _ = window.drag_window();
+                            }
+                        }
+                        Some("min") => {
+                            if let Some(window) = ipc_window.borrow().as_ref() {
+                                window.set_minimized(true);
+                            }
+                        }
+                        Some("zoom") => {
+                            if let Some(window) = ipc_window.borrow().as_ref() {
+                                let maximized = window.is_maximized();
+                                window.set_maximized(!maximized);
+                            }
+                        }
+                        Some("close") => { let _ = ipc_proxy.send_event(()); }
+                        _ => {}
+                    }
+                })
+                .build(window)?,
+        )
+    };
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Wait;
@@ -325,7 +375,7 @@ fn main() -> Result<()> {
                 "diagnostics" => navigate(&webview, "build"),
                 "reload" => { let _ = webview.load_url(&url); }
                 "theme" => { let _ = webview.evaluate_script("document.getElementById('theme-btn')?.click();"); }
-                "quit" => *control_flow = ControlFlow::Exit,
+                "quit" => { save_window_state(&window_cell); *control_flow = ControlFlow::Exit; }
                 "open-project" | "show-project" => navigate(&webview, "projects"),
                 id if id.starts_with("recent:") => {
                     if let Some(index) = id.strip_prefix("recent:").and_then(|value| value.parse::<usize>().ok()) {
@@ -351,20 +401,19 @@ fn main() -> Result<()> {
                 _ => {}
             }
         }
-        if let tao::event::Event::WindowEvent {
-            event: tao::event::WindowEvent::CloseRequested,
-            ..
-        } = event
-        {
-            let size: PhysicalSize<u32> = window.inner_size();
-            let position: Option<PhysicalPosition<i32>> = window.outer_position().ok();
-            write_state("window.json", &WindowState {
-                width: size.width,
-                height: size.height,
-                x: position.map(|p| p.x),
-                y: position.map(|p| p.y),
-            });
-            *control_flow = ControlFlow::Exit;
+        match event {
+            tao::event::Event::UserEvent(_) => {
+                save_window_state(&window_cell);
+                *control_flow = ControlFlow::Exit;
+            }
+            tao::event::Event::WindowEvent {
+                event: tao::event::WindowEvent::CloseRequested,
+                ..
+            } => {
+                save_window_state(&window_cell);
+                *control_flow = ControlFlow::Exit;
+            }
+            _ => {}
         }
     });
 }

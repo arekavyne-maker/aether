@@ -334,6 +334,7 @@ pub fn router(token: TokenAuth, runner: CliRunner) -> Router {
         .route("/", get(assets::index))
         .route("/assets/app.css", get(assets::css))
         .route("/assets/js/*file", get(assets::javascript_module))
+        .route("/assets/fonts/*file", get(assets::font))
         .nest("/api", api)
         .with_state(state)
 }

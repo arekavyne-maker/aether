@@ -35,7 +35,9 @@ code=$(curl -s -o /dev/null -w "%{http_code}" "$API/status")
 csp=$(curl -sI "http://127.0.0.1:$PORT/" | tr -d '\r' | grep -i '^content-security-policy:' || true)
 echo "$csp" | grep -q "default-src 'self'" || fail "CSP does not pin self"
 if echo "$csp" | grep -qi "unsafe-inline\|unsafe-eval"; then fail "CSP has an inline escape hatch"; fi
-pass "loopback server, bearer auth and strict CSP"
+curl -sf "http://127.0.0.1:$PORT/assets/fonts/urbanist-latin.woff2" -o /dev/null || fail "local font not served"
+curl -sf "http://127.0.0.1:$PORT/assets/fonts/arapey-italic-latin.woff2" -o /dev/null || fail "local serif not served"
+pass "loopback server, bearer auth, strict CSP and local fonts"
 
 echo "== 3. discovery, catalog and status =="
 curl -sf -H "$AUTH" "$API/commands" \

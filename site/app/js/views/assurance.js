@@ -19,9 +19,9 @@ export function renderAssurance(host, context = {}) {
       <div><span>Coverage</span><b>${coverage ? `${coverage.percent}%` : '—'}</b></div>
       <div><span>Gaps</span><b>${coverage?.gaps ?? '—'}</b></div>
     </section>
-    <h2 class="section-title">Verification coverage</h2>
+    <h2 class="section-title"><span class="roman">I.</span> Verification coverage</h2>
     <div id="assurance-coverage"></div>
-    <h2 class="section-title">Evidence census</h2>
+    <h2 class="section-title"><span class="roman">II.</span> Evidence census</h2>
     <div class="census">${evidence.length ? evidence.map(([type, count]) => `<div><b>${count}</b><span>${esc(type)}</span></div>`).join('') : '<div class="empty small">No evidence nodes in the current graph snapshot.</div>'}</div>
     <div class="notice">${esc(coverage?.claim || 'coverage only; this is not certification and does not imply airworthiness')}</div>`;
 

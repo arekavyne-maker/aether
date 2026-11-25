@@ -28,9 +28,9 @@ export function renderPulse(host, context = {}) {
   host.innerHTML = `
     <div class="overview">
       <section class="hero">
-        <div class="eyebrow">Local control surface · ${esc(status.version || surface.version || '')}</div>
-        <h1>Aether</h1>
-        <p class="hero-serif">One graph.<br><em>Every discipline.</em></p>
+        <div class="eyebrow">The engineering control surface · ${esc(status.version || surface.version || '')}</div>
+        <h1>Engineering</h1>
+        <p class="hero-serif">Meets <em>Evidence.</em></p>
         <div class="thread-rule"><span></span><i>${icon('overview', 14)}</i><span></span></div>
         <p class="lead">${esc(atlas.project?.root || '')} · ${atlas.project?.initialized ? 'Project ready' : 'No project initialised'}. Every view below reads the canonical CLI; nothing is inferred.</p>
         <div class="hero-actions">
@@ -45,16 +45,16 @@ export function renderPulse(host, context = {}) {
         <div><b>${esc(graph.nodeCount ?? 0)}</b><span>graph nodes</span></div>
         <div><b>${esc(graph.edgeCount ?? 0)}</b><span>graph edges</span></div>
       </section>
-      <h2 class="section-title">Requires attention</h2>
+      <h2 class="section-title"><span class="roman">I.</span> Requires attention</h2>
       <div class="attention-list">${attention.map((item) => `
         <button class="attention-row ${item.tone}" data-nav="${item.action}">
           <span class="pill ${item.tone}">${esc(item.tone)}</span>
           <span><b>${esc(item.title)}</b><small>${esc(item.text)}</small></span>${icon('arrow', 14)}
         </button>`).join('')}</div>
-      <h2 class="section-title">Graph census</h2>
+      <h2 class="section-title"><span class="roman">II.</span> Graph census</h2>
       <div class="census">${counts.length ? counts.slice(0, 8).map(([type, count]) => `<div><b>${count}</b><span>${esc(type)}</span></div>`).join('') : '<div class="empty small">No nodes in this project yet.</div>'}</div>
-      <h2 class="section-title">Workspaces</h2><div class="workspace-map">${tiles}</div>
-      <h2 class="section-title">Recent thread</h2>${context.ledgerHtml || ''}
+      <h2 class="section-title"><span class="roman">III.</span> Workspaces</h2><div class="workspace-map">${tiles}</div>
+      <h2 class="section-title"><span class="roman">IV.</span> Recent thread</h2>${context.ledgerHtml || ''}
       <div class="notice">Certification claim: false. This console reports what the platform can prove, nothing more.</div>
     </div>`;
 

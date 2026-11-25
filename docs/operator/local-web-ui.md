@@ -26,13 +26,14 @@ reference to `~/.aether/web.token` instead — logs never contain the secret.
 
 ## Navigation
 
-The rail has four primary destinations: **Home** (project health and
-attention items), **Run** (task recipes plus the full command index), **Atlas**
-(graph, schema, coverage and command map) and **Verify** (assurance and
-evidence). The command index, CLI terminal (`⌘J`), session ledger and project
-switcher sit in the Library section. `⌘K` opens the launcher across commands,
-workspaces, graph nodes and actions. The project chip at the foot of the rail
-opens the project switcher.
+The console uses the AIXOR-inspired visual language of ADR-0046: a black
+canvas, gradient cards, Urbanist and Arapey type bundled locally, pill
+navigation and Roman-numbered sections. A sticky top bar carries four
+primary destinations — **Home** (project health and attention items), **Run**
+(task recipes plus the full command index), **Atlas** and **Verify** — with
+the command index, CLI terminal (`⌘J`), session ledger and project switcher in
+the Library group. `⌘K` opens the launcher across commands, workspaces, graph
+nodes and actions. The project chip in the top bar opens the project switcher.
 
 ## Two surfaces, one session
 

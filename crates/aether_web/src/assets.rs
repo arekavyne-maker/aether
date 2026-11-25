@@ -41,6 +41,14 @@ pub const JS_MODULES: &[(&str, &str)] = &[
     ("views/capability.js", include_str!("../../../site/app/js/views/capability.js")),
 ];
 
+/// Locally bundled typefaces, embedded and served only from `/assets/fonts/`.
+pub const FONT_ASSETS: &[(&str, &[u8])] = &[
+    ("urbanist-latin.woff2", include_bytes!("../../../site/app/fonts/urbanist-latin.woff2")),
+    ("urbanist-italic-latin.woff2", include_bytes!("../../../site/app/fonts/urbanist-italic-latin.woff2")),
+    ("urbanist-black-latin.woff2", include_bytes!("../../../site/app/fonts/urbanist-black-latin.woff2")),
+    ("arapey-italic-latin.woff2", include_bytes!("../../../site/app/fonts/arapey-italic-latin.woff2")),
+];
+
 /// Security headers applied to every response.
 pub fn security_headers(headers: &mut HeaderMap) {
     headers.insert(
@@ -102,6 +110,20 @@ pub async fn javascript_module(Path(name): Path<String>) -> Response {
     (headers, *source).into_response()
 }
 
+/// Serve one embedded font. Unknown names are rejected.
+pub async fn font(Path(name): Path<String>) -> Response {
+    let Some((_, bytes)) = FONT_ASSETS.iter().find(|(file, _)| *file == name) else {
+        return (StatusCode::NOT_FOUND, "not found").into_response();
+    };
+    let mut headers = HeaderMap::new();
+    security_headers(&mut headers);
+    headers.insert(
+        header::CONTENT_TYPE,
+        HeaderValue::from_static("font/woff2"),
+    );
+    (headers, *bytes).into_response()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -112,6 +134,8 @@ mod tests {
         assert!(CSS.contains("--bg"));
         assert!(JS_MODULES.len() >= 8);
         assert!(JS_MODULES.iter().all(|(_, source)| !source.is_empty()));
+        assert_eq!(FONT_ASSETS.len(), 4);
+        assert!(FONT_ASSETS.iter().all(|(_, bytes)| bytes.len() > 1000));
     }
 
     #[test]

@@ -24,9 +24,9 @@ export function renderCapability(host, context = {}) {
     <div class="health-grid">${checks.map((check) => `
       <div class="health-row"><span class="pill ${check.state === 'ok' ? 'ok' : check.optional ? 'warn' : 'bad'}">${esc(check.state)}</span>
         <b>${esc(check.name)}</b><small>${esc(check.detail || '')}</small>${check.optional ? '<span class="dim">optional</span>' : ''}</div>`).join('') || '<div class="empty small">Run <code>aether doctor</code> to populate health checks.</div>'}</div>
-    <h2 class="section-title">Graph census</h2>
+    <h2 class="section-title"><span class="roman">I.</span> Graph census</h2>
     <div class="census">${counts.length ? counts.slice(0, 10).map(([type, count]) => `<div><b>${count}</b><span>${esc(type)}</span></div>`).join('') : '<div class="empty small">No nodes of this domain in the current snapshot.</div>'}</div>
-    <h2 class="section-title">Related commands</h2>
+    <h2 class="section-title"><span class="roman">II.</span> Related commands</h2>
     <div class="cap-grid">${commands.slice(0, 24).map((command) => `<button class="cap link-cap" data-cmd="${esc(command.name)}"><span>${esc(command.family)}</span><b>aether ${esc(command.name)}</b><small>${esc(command.about)}</small></button>`).join('')}</div>`;
 
   host.querySelectorAll('[data-cmd]').forEach((button) => button.addEventListener('click', () => context.onCommand?.(button.dataset.cmd)));
