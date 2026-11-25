@@ -18,13 +18,10 @@ echo "==> building desktop shell (release)"
 
 echo "==> assembling $APP"
 rm -rf "$APP"
-mkdir -p "$CONTENTS/MacOS" "$RES/aether" "$RES/bin"
+mkdir -p "$CONTENTS/MacOS"
 cp "$ROOT/apps/desktop/target/release/aether-desktop" "$CONTENTS/MacOS/Aether"
-cp "$ROOT/target/release/aether" "$RES/bin/aether"
-chmod +x "$CONTENTS/MacOS/Aether" "$RES/bin/aether"
-for item in contracts reference_plugins python examples; do
-  [ -e "$ROOT/$item" ] && cp -R "$ROOT/$item" "$RES/aether/$item"
-done
+chmod +x "$CONTENTS/MacOS/Aether"
+bash "$ROOT/scripts/package/stage-resources.sh" "$RES" "$ROOT/target/release/aether"
 
 if [ "$SKIP_PYTHON" != "1" ]; then
   echo "==> installing bundled Python runtime"
@@ -40,11 +37,6 @@ if [ "$SKIP_PYTHON" != "1" ]; then
 else
   echo "NOTE: Python bundle skipped (AETHER_SKIP_PYTHON=1)"
 fi
-
-mkdir -p "$RES/licenses"
-for license in LICENSE NOTICE; do
-  [ -f "$ROOT/$license" ] && cp "$ROOT/$license" "$RES/licenses/$license"
-done
 
 ICON_LINE=""
 if [ -f "$ROOT/apps/desktop/AppIcon.png" ]; then
@@ -68,10 +60,22 @@ cat > "$CONTENTS/Info.plist" <<PLIST
 </dict></plist>
 PLIST
 
-echo "==> signing (ad-hoc)"
-codesign --force --deep --sign - "$APP" >/dev/null 2>&1 || echo "NOTE: ad-hoc signing unavailable"
+echo "==> signing"
+if [ -n "${AETHER_SIGNING_IDENTITY:-}" ]; then
+  codesign --force --deep --options runtime --sign "$AETHER_SIGNING_IDENTITY" "$APP" \
+    || { echo "FAIL: Developer ID signing failed" >&2; exit 1; }
+  if [ -n "${AETHER_NOTARY_PROFILE:-}" ]; then
+    xcrun notarytool submit "$APP" --keychain-profile "$AETHER_NOTARY_PROFILE" --wait
+    xcrun stapler staple "$APP"
+  fi
+elif [ "${AETHER_REQUIRE_SIGNED:-0}" = "1" ]; then
+  echo "FAIL: AETHER_SIGNING_IDENTITY is required" >&2; exit 1
+else
+  codesign --force --deep --sign - "$APP" >/dev/null 2>&1 || echo "NOTE: ad-hoc signing unavailable"
+fi
 
 echo "==> verifying bundle"
 "$CONTENTS/MacOS/Aether" --smoke-test --project "$ROOT" | python3 -c \
   "import json,sys; d=json.load(sys.stdin); assert d['schema']['node_types']; print('bundle smoke:', len(d['schema']['node_types']), 'node types')"
+bash "$ROOT/scripts/package/sign-artifacts.sh" "$APP"
 echo "Built $APP"

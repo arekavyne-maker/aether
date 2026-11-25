@@ -1,0 +1,43 @@
+name: portability
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo test --workspace
+      - run: python3 -m pytest -q
+      - run: python3 infra/fitness/run.py
+      - run: AETHER_SKIP_PYTHON=1 bash scripts/package/macos-app.sh
+      - run: bash scripts/acceptance/desktop.sh
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo test --workspace
+      - run: python -m pytest -q
+      - run: python infra/fitness/run.py
+      - run: pwsh -NoProfile -File scripts/package/windows-app.ps1 -SkipPython
+      - run: pwsh -NoProfile -File scripts/acceptance/desktop-windows.ps1
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: WebView build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.0-dev libgtk-3-dev \
+            libayatana-appindicator3-dev librsvg2-dev
+      - run: cargo test --workspace
+      - run: python3 -m pytest -q
+      - run: python3 infra/fitness/run.py
+      - run: AETHER_SKIP_PYTHON=1 bash scripts/package/linux-app.sh
+      - run: bash scripts/acceptance/desktop-linux.sh

@@ -28,3 +28,5 @@ tracing-subscriber = { workspace = true }
 sha2 = { workspace = true }
 tower = { version = "0.4", features = ["util"] }
 libc = "0.2"
+getrandom = "0.2"
+dirs = "7"

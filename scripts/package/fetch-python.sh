@@ -7,11 +7,15 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 OUT="${1:-$ROOT/vendor/python}"
 VERSION="${AETHER_PYTHON_VERSION:-3.12.9}"
 TAG="${AETHER_PYTHON_BUILD_TAG:-20250214}"
+OS="$(uname -s)"
 ARCH="$(uname -m)"
-case "$ARCH" in
-  arm64|aarch64) TARGET="aarch64-apple-darwin" ;;
-  x86_64) TARGET="x86_64-apple-darwin" ;;
-  *) echo "unsupported architecture: $ARCH" >&2; exit 1 ;;
+case "$OS-$ARCH" in
+  Darwin-arm64|Darwin-aarch64) TARGET="aarch64-apple-darwin" ;;
+  Darwin-x86_64) TARGET="x86_64-apple-darwin" ;;
+  Linux-x86_64|Linux-amd64) TARGET="x86_64-unknown-linux-gnu" ;;
+  Linux-arm64|Linux-aarch64) TARGET="aarch64-unknown-linux-gnu" ;;
+  MINGW*-x86_64|MSYS*-x86_64|CYGWIN*-x86_64) TARGET="x86_64-pc-windows-msvc" ;;
+  *) echo "unsupported platform: $OS-$ARCH" >&2; exit 1 ;;
 esac
 NAME="cpython-${VERSION}+${TAG}-${TARGET}-install_only.tar.gz"
 URL="${AETHER_PYTHON_URL:-https://github.com/astral-sh/python-build-standalone/releases/download/${TAG}/${NAME}}"
@@ -33,8 +37,12 @@ else
   (cd "$OUT" && shasum -a 256 "$NAME" > "$SUMS")
 fi
 
-if [ ! -x "$OUT/bin/python3" ]; then
+if [ ! -x "$OUT/bin/python3" ] && [ ! -x "$OUT/python.exe" ]; then
   echo "==> extracting relocatable Python"
   tar -xzf "$ARCHIVE" -C "$OUT" --strip-components=1
 fi
-"$OUT/bin/python3" --version
+if [ -x "$OUT/python.exe" ]; then
+  "$OUT/python.exe" --version
+else
+  "$OUT/bin/python3" --version
+fi

@@ -108,27 +108,35 @@ pub fn find_cli_binary() -> Option<PathBuf> {
     fn absolute(path: PathBuf) -> Option<PathBuf> {
         path.canonicalize().ok().or(Some(path))
     }
+    let suffix = std::env::consts::EXE_SUFFIX;
     if let Ok(path) = std::env::var("AETHER_BIN") {
-        let candidate = PathBuf::from(path);
+        let candidate = PathBuf::from(&path);
         if candidate.is_file() {
             return absolute(candidate);
         }
+        if suffix.is_empty() {
+            let with_suffix = PathBuf::from(format!("{path}{suffix}"));
+            if with_suffix.is_file() {
+                return absolute(with_suffix);
+            }
+        }
     }
     for relative in [
-        "target/debug/aether",
-        "target/release/aether",
-        "../../target/debug/aether",
-        "../../target/release/aether",
+        format!("target/debug/aether{suffix}"),
+        format!("target/release/aether{suffix}"),
+        format!("../../target/debug/aether{suffix}"),
+        format!("../../target/release/aether{suffix}"),
     ] {
         let candidate = PathBuf::from(relative);
         if candidate.is_file() {
             return absolute(candidate);
         }
     }
-    // Search PATH manually so a shell is never involved.
+    // Search PATH manually so a shell is never involved. Windows resolves
+    // PATHEXT through this same explicit suffix check.
     if let Ok(paths) = std::env::var("PATH") {
         for dir in std::env::split_paths(&paths) {
-            let candidate = dir.join("aether");
+            let candidate = dir.join(format!("aether{suffix}"));
             if candidate.is_file() {
                 return absolute(candidate);
             }

@@ -42,7 +42,16 @@ fn terminate_group(pid: u32) {
     unsafe { libc::kill(-(pid as i32), libc::SIGTERM) };
 }
 
-#[cfg(not(unix))]
+#[cfg(windows)]
+fn terminate_group(pid: u32) {
+    if pid == 0 { return; }
+    // taskkill is invoked directly — no shell, no command string parsing.
+    let _ = std::process::Command::new("taskkill")
+        .args(["/PID", &pid.to_string(), "/T", "/F"])
+        .status();
+}
+
+#[cfg(not(any(unix, windows)))]
 fn terminate_group(_pid: u32) {}
 
 /// Terminal states never produce more output events.

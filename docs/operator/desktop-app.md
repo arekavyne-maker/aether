@@ -1,7 +1,20 @@
-# Aether Desktop (macOS)
+# Aether Desktop (macOS, Windows, Linux)
 
-**Status:** deployable native shell (ADR-0044).
+**Status:** deployable native shell (ADR-0044, ADR-0047).
 **Scope:** the embedded console in a system WebView, backed by the same CLI.
+
+## Platforms
+
+| Platform | Build command | Artifact | Signing |
+|---|---|---|---|
+| macOS | `make app` | `dist/Aether.app` | ad-hoc, or Developer ID + notarisation with `AETHER_SIGNING_IDENTITY` / `AETHER_NOTARY_PROFILE` |
+| Windows | `pwsh scripts/package/windows-app.ps1` | `dist/windows/Aether-windows.zip`, `Aether.msi` (WiX) | `signtool` with `AETHER_SIGNING_CERT` |
+| Linux | `make app-linux` | `dist/linux/Aether-linux.tar.gz`, `.deb`, optional AppImage | GPG detached signature with `AETHER_GPG_KEY` |
+
+Set `AETHER_REQUIRE_SIGNED=1` for release builds to fail when credentials are
+missing. SHA-256 sums accompany every artifact. Windows needs the WebView2
+runtime; Linux needs `libwebkit2gtk-4.0-dev`, `libgtk-3-dev` and
+`libayatana-appindicator3-dev` at build time.
 
 ## Build
 

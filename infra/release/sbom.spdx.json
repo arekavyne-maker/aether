@@ -1,7 +1,7 @@
 {
   "SPDXID": "SPDXRef-DOCUMENT",
   "creationInfo": {
-    "created": "2026-11-25T21:47:27.396474+00:00",
+    "created": "2026-11-25T22:08:11.993489+00:00",
     "creators": [
       "Tool: aether-fitness-pipeline-0.1.0"
     ]
@@ -457,6 +457,16 @@
     },
     {
       "downloadLocation": "NOASSERTION",
+      "name": "dirs",
+      "versionInfo": "7.0.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "dirs-sys",
+      "versionInfo": "0.5.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
       "name": "displaydoc",
       "versionInfo": "0.2.7"
     },
@@ -867,6 +877,11 @@
     },
     {
       "downloadLocation": "NOASSERTION",
+      "name": "option-ext",
+      "versionInfo": "0.2.0"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
       "name": "outref",
       "versionInfo": "0.5.2"
     },
@@ -989,6 +1004,11 @@
       "downloadLocation": "NOASSERTION",
       "name": "redox_syscall",
       "versionInfo": "0.5.18"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "redox_users",
+      "versionInfo": "0.5.3"
     },
     {
       "downloadLocation": "NOASSERTION",
@@ -1197,8 +1217,18 @@
     },
     {
       "downloadLocation": "NOASSERTION",
+      "name": "thiserror",
+      "versionInfo": "2.0.21"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
       "name": "thiserror-impl",
       "versionInfo": "1.0.69"
+    },
+    {
+      "downloadLocation": "NOASSERTION",
+      "name": "thiserror-impl",
+      "versionInfo": "2.0.21"
     },
     {
       "downloadLocation": "NOASSERTION",

@@ -10,7 +10,6 @@
 #![deny(unsafe_code)]
 #![warn(missing_docs)]
 
-use std::io::Read;
 use std::path::PathBuf;
 
 use anyhow::{Context, Result, anyhow};
@@ -64,15 +63,13 @@ impl TokenAuth {
 
 /// Path to the local token file.
 pub fn token_path() -> Result<PathBuf> {
-    let home = std::env::var("HOME").context("HOME is not set")?;
-    Ok(PathBuf::from(home).join(".aether").join("web.token"))
+    let home = dirs::home_dir().context("cannot determine the home directory")?;
+    Ok(home.join(".aether").join("web.token"))
 }
 
 fn random_token() -> Result<Vec<u8>> {
-    let mut file = std::fs::File::open("/dev/urandom")
-        .context("cannot read /dev/urandom for token generation")?;
-    let mut bytes = vec![0_u8; 32];
-    file.read_exact(&mut bytes)?;
+    let mut bytes = [0_u8; 32];
+    getrandom::getrandom(&mut bytes).map_err(|error| anyhow!("system random source unavailable: {error}"))?;
     Ok(bytes
         .iter()
         .map(|b| format!("{b:02x}"))
@@ -124,7 +121,17 @@ pub fn load_or_create_token() -> Result<TokenAuth> {
         file.write_all(&token)?;
     }
     #[cfg(not(unix))]
-    std::fs::write(&path, &token)?;
+    {
+        std::fs::write(&path, &token)?;
+        // Windows has no Unix mode bits. Restrict the file with icacls when
+        // it is present; failure is a warning, never a broken token.
+        if let Some(user) = std::env::var("USERNAME").ok().filter(|name| !name.is_empty()) {
+            let _ = std::process::Command::new("icacls")
+                .arg(&path)
+                .args(["/inheritance:r", "/grant", &format!("{user}:R")])
+                .status();
+        }
+    }
     Ok(TokenAuth::new(token))
 }
 

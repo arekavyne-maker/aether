@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import platform
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -19,14 +20,20 @@ def check(repo_root: Path = REPO_ROOT):
     manifest = desktop / "Cargo.toml"
     source = desktop / "src/main.rs"
     packaging = repo_root / "scripts/package/macos-app.sh"
-    for path in (manifest, source, packaging):
+    packagers = (
+        repo_root / "scripts/package/stage-resources.sh",
+        repo_root / "scripts/package/windows-app.ps1",
+        repo_root / "scripts/package/linux-app.sh",
+        repo_root / "scripts/package/sign-artifacts.sh",
+    )
+    for path in (manifest, source, packaging, *packagers):
         if not path.is_file():
             return CheckResult(name="desktop_shell", ok=False,
                                summary=f"missing {path.relative_to(repo_root)}", details=[])
 
     manifest_text = manifest.read_text()
     source_text = source.read_text()
-    script_text = packaging.read_text()
+    script_text = packaging.read_text() + (repo_root / "scripts/package/stage-resources.sh").read_text()
 
     for crate in ("wry", "tao", "muda", "aether_web"):
         if crate not in manifest_text:
@@ -42,7 +49,7 @@ def check(repo_root: Path = REPO_ROOT):
     for marker in (
         "MenuItem::with_id", "Accelerator::new", "recent-projects.json",
         "window.json", "/api/project", "Code::KeyO",
-        "with_decorations(false)", "with_ipc_handler",
+        "with_decorations(", "with_ipc_handler", "dirs::data_dir()",
     ):
         if marker not in source_text:
             problems.append(f"desktop shell is missing native affordance {marker}")
@@ -83,7 +90,32 @@ def check(repo_root: Path = REPO_ROOT):
                 problems.append(f"bundle is missing {path}")
         if (resources / "web.token").exists():
             problems.append("bundle contains a token file")
-        details.append("bundle layout verified")
+        details.append("macOS bundle layout verified")
+
+    # Platform-specific bundles are checked only when present.
+    system = platform.system()
+    if system == "Linux":
+        bundle = repo_root / "dist/linux/Aether"
+        if bundle.is_dir():
+            for path in ("bin/Aether", "share/bin/aether", "share/aether/contracts"):
+                if not (bundle / path).exists():
+                    problems.append(f"Linux bundle is missing {path}")
+            if list(bundle.rglob("*token*")):
+                problems.append("Linux bundle contains token material")
+            details.append("Linux bundle layout verified")
+        else:
+            details.append("no dist/linux/Aether; Linux source invariants only")
+    elif system == "Windows":
+        bundle = repo_root / "dist/windows/Aether"
+        if bundle.is_dir():
+            for path in ("Aether.exe", "bin/aether.exe", "share/aether/contracts"):
+                if not (bundle / path).exists():
+                    problems.append(f"Windows bundle is missing {path}")
+            if list(bundle.rglob("*token*")):
+                problems.append("Windows bundle contains token material")
+            details.append("Windows bundle layout verified")
+        else:
+            details.append("no dist/windows/Aether; Windows source invariants only")
 
     if problems:
         return CheckResult(name="desktop_shell", ok=False,

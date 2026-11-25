@@ -4,7 +4,9 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-PYTHON="${AETHER_BUNDLE_PYTHON:-$ROOT/vendor/python/bin/python3}"
+DEFAULT_PYTHON="$ROOT/vendor/python/bin/python3"
+[ -x "$DEFAULT_PYTHON" ] || DEFAULT_PYTHON="$ROOT/vendor/python/python.exe"
+PYTHON="${AETHER_BUNDLE_PYTHON:-$DEFAULT_PYTHON}"
 WHEELS="${AETHER_WHEELHOUSE:-$ROOT/vendor/wheels}"
 REQUIREMENTS="$ROOT/apps/desktop/python-runtime.txt"
 

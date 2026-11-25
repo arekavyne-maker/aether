@@ -54,11 +54,9 @@ struct WindowState {
 }
 
 fn support_dir() -> Option<PathBuf> {
-    let home = std::env::var("HOME").ok()?;
-    let dir = PathBuf::from(home)
-        .join("Library")
-        .join("Application Support")
-        .join("Aether");
+    // dirs::data_dir() resolves to ~/Library/Application Support on macOS,
+    // %APPDATA% on Windows and $XDG_DATA_HOME on Linux.
+    let dir = dirs::data_dir()?.join("Aether");
     std::fs::create_dir_all(&dir).ok()?;
     Some(dir)
 }
@@ -227,7 +225,12 @@ fn smoke_check(server: &ServerHandle) -> Result<()> {
 }
 
 fn accel(key: Code) -> Option<Accelerator> {
-    Some(Accelerator::new(Modifiers::META, key))
+    let modifiers = if cfg!(target_os = "macos") {
+        Modifiers::META
+    } else {
+        Modifiers::CONTROL
+    };
+    Some(Accelerator::new(modifiers, key))
 }
 
 fn build_menu(project: &PathBuf) -> Result<Menu> {
@@ -314,6 +317,9 @@ fn main() -> Result<()> {
     let saved: WindowState = read_state("window.json").unwrap_or_default();
     let event_loop = EventLoop::new();
     let close_proxy = event_loop.create_proxy();
+    // Wayland/WebKitGTK does not reliably support programmatic window drag;
+    // Linux keeps native decorations and hides the in-app titlebar.
+    let native_chrome = cfg!(target_os = "linux");
     let window_cell: Rc<RefCell<Option<Window>>> = Rc::new(RefCell::new(None));
     *window_cell.borrow_mut() = Some(
         WindowBuilder::new()
@@ -322,7 +328,7 @@ fn main() -> Result<()> {
                 if saved.width > 0 { saved.width } else { 1440 },
                 if saved.height > 0 { saved.height } else { 900 },
             ))
-            .with_decorations(false)
+            .with_decorations(native_chrome)
             .build(&event_loop)?,
     );
     {
@@ -333,12 +339,18 @@ fn main() -> Result<()> {
     }
     let ipc_window = window_cell.clone();
     let ipc_proxy = close_proxy.clone();
+    let init_script = if native_chrome {
+        "(()=>{const add=()=>document.documentElement?.classList.add('native-chrome');add();document.addEventListener('DOMContentLoaded',add)})()"
+    } else {
+        ""
+    };
     let webview = {
         let borrow = window_cell.borrow();
         let window = borrow.as_ref().expect("window was built");
         Rc::new(
             WebViewBuilder::new()
                 .with_url(&url)
+                .with_initialization_script(init_script)
                 .with_navigation_handler(move |candidate| candidate.starts_with(&allowed))
                 .with_ipc_handler(move |request| {
                     let message: Value = serde_json::from_str(request.body()).unwrap_or(Value::Null);
