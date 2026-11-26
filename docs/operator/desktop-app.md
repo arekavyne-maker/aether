@@ -8,7 +8,7 @@
 | Platform | Build command | Artifact | Signing |
 |---|---|---|---|
 | macOS | `make app` | `dist/Aether.app` | ad-hoc, or Developer ID + notarisation with `AETHER_SIGNING_IDENTITY` / `AETHER_NOTARY_PROFILE` |
-| Windows | `pwsh scripts/package/windows-app.ps1` | `dist/windows/Aether-windows.zip`, `Aether.msi` (WiX) | `signtool` with `AETHER_SIGNING_CERT` |
+| Windows | `pwsh experimental/windows/windows-app.ps1` | `dist/windows/Aether-windows.zip`, `Aether.msi` (WiX) | `signtool` with `AETHER_SIGNING_CERT` |
 | Linux | `make app-linux` | `dist/linux/Aether-linux.tar.gz`, `.deb`, optional AppImage | GPG detached signature with `AETHER_GPG_KEY` |
 
 Set `AETHER_REQUIRE_SIGNED=1` for release builds to fail when credentials are
@@ -32,8 +32,8 @@ commands honestly.
 Run from source without packaging:
 
 ```bash
-cargo build --manifest-path apps/desktop/Cargo.toml
-./apps/desktop/target/debug/aether-desktop --project /path/to/project
+cargo build --manifest-path experimental/desktop/Cargo.toml
+./experimental/desktop/target/debug/aether-desktop --project /path/to/project
 ```
 
 ## Runtime model
@@ -48,7 +48,7 @@ cargo build --manifest-path apps/desktop/Cargo.toml
 
 ## Application icon
 
-The product mark lives at `apps/desktop/AppIcon.png`. Packaging converts it to
+The product mark lives at `experimental/desktop/AppIcon.png`. Packaging converts it to
 `AppIcon.icns` for macOS and `AppIcon.ico` for the Windows installer; the same
 PNG is embedded in the console and shown as the brand mark in the top bar.
 

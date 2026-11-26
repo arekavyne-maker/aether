@@ -7,9 +7,9 @@ loads the same assets served by `aether_web`.
 ## Run from source
 
 ```bash
-cargo build --manifest-path apps/desktop/Cargo.toml
-./apps/desktop/target/debug/aether-desktop --project /path/to/project
-./apps/desktop/target/debug/aether-desktop --smoke-test --project /path/to/project
+cargo build --manifest-path experimental/desktop/Cargo.toml
+./experimental/desktop/target/debug/aether-desktop --project /path/to/project
+./experimental/desktop/target/debug/aether-desktop --smoke-test --project /path/to/project
 ```
 
 The server runs **in-process** on `127.0.0.1:0`. A fresh 64-hex token is

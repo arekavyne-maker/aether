@@ -25,7 +25,7 @@ white ink, grey `#a7a7ad / #71717a`, periwinkle `#959efe` accent, deep navy
 uppercase micro-labels with wide tracking, Roman numeral section indices,
 pill controls, 18px cards, hairline dividers and oversized numerals.
 
-Fonts are committed as WOFF2 files under `site/app/fonts/`, embedded in the
+Fonts are committed as WOFF2 files under `experimental/web/app/fonts/`, embedded in the
 binary and served only from `/assets/fonts/*file`. There is no runtime font
 fetch and no CDN. Licences and SHA-256 sums are recorded beside them.
 
@@ -70,5 +70,5 @@ registry are unchanged.
 `cargo test -p aether_web` (font embedding and asset tests), Node tests,
 `python3 infra/fitness/run.py` (font embedding, air-gap, custom titlebar),
 `bash scripts/acceptance/web-ui.sh`, browser pass over all destinations and
-both themes with no console errors, `cargo build --manifest-path apps/desktop/Cargo.toml`
+both themes with no console errors, `cargo build --manifest-path experimental/desktop/Cargo.toml`
 and `make app-smoke`.

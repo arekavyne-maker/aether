@@ -41,16 +41,16 @@ docs-check:
 	python3 infra/fitness/docs_links.py
 
 app:
-	bash scripts/package/macos-app.sh
+	bash experimental/macos/macos-app.sh
 
 app-smoke:
 	./dist/Aether.app/Contents/MacOS/Aether --smoke-test --project .
 
 app-windows:
-	pwsh -NoProfile -File scripts/package/windows-app.ps1
+	pwsh -NoProfile -File experimental/windows/windows-app.ps1
 
 app-linux:
-	bash scripts/package/linux-app.sh
+	bash experimental/linux/linux-app.sh
 
 app-all: app app-windows app-linux
 

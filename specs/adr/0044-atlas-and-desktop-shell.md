@@ -46,7 +46,7 @@ cached briefly, capped at 5000 nodes and 10000 edges, and report truncation.
 
 ### Desktop shell
 
-A separate Cargo workspace, `apps/desktop`, provides a native shell using
+A separate Cargo workspace, `experimental/desktop`, provides a native shell using
 `wry`, `tao` and `muda`. The Axum server runs **in-process** on an ephemeral
 loopback port with a per-launch in-memory token. WebView navigation is
 restricted to that exact origin. The bundled `aether` CLI remains the only
@@ -72,5 +72,5 @@ recorded with SHA-256 sums.
 `cargo test -p aether_web`, Node tests for layouts/treemap/atlas data,
 `python3 infra/fitness/run.py` (including `web_surface` and `desktop_shell`),
 `bash scripts/acceptance/web-ui.sh`, `bash scripts/acceptance/desktop.sh`,
-`make app-smoke`, and a browser pass over Pulse, Atlas, Assurance, Build,
-Govern, command index and terminal.
+`make app-smoke`, and a browser pass over Home, Run, Atlas, Verify, the command
+library and terminal.

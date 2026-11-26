@@ -8,7 +8,7 @@ DEFAULT_PYTHON="$ROOT/vendor/python/bin/python3"
 [ -x "$DEFAULT_PYTHON" ] || DEFAULT_PYTHON="$ROOT/vendor/python/python.exe"
 PYTHON="${AETHER_BUNDLE_PYTHON:-$DEFAULT_PYTHON}"
 WHEELS="${AETHER_WHEELHOUSE:-$ROOT/vendor/wheels}"
-REQUIREMENTS="$ROOT/apps/desktop/python-runtime.txt"
+REQUIREMENTS="$ROOT/experimental/desktop/python-runtime.txt"
 
 [ -x "$PYTHON" ] || { echo "run scripts/package/fetch-python.sh first" >&2; exit 1; }
 mkdir -p "$WHEELS"

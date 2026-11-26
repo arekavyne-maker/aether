@@ -14,12 +14,12 @@ echo "==> building canonical CLI (release)"
 (cd "$ROOT" && cargo build --release -p aether_cli >/dev/null)
 
 echo "==> building desktop shell (release)"
-(cd "$ROOT" && cargo build --release --manifest-path apps/desktop/Cargo.toml >/dev/null)
+(cd "$ROOT" && cargo build --release --manifest-path experimental/desktop/Cargo.toml >/dev/null)
 
 echo "==> assembling $APP"
 rm -rf "$APP"
 mkdir -p "$CONTENTS/MacOS"
-cp "$ROOT/apps/desktop/target/release/aether-desktop" "$CONTENTS/MacOS/Aether"
+cp "$ROOT/experimental/desktop/target/release/aether-desktop" "$CONTENTS/MacOS/Aether"
 chmod +x "$CONTENTS/MacOS/Aether"
 bash "$ROOT/scripts/package/stage-resources.sh" "$RES" "$ROOT/target/release/aether"
 
@@ -30,7 +30,7 @@ if [ "$SKIP_PYTHON" != "1" ]; then
     SITE="$RES/python/lib/python3.12/site-packages"
     mkdir -p "$SITE"
     "$RES/python/bin/python3" -m pip install --no-index --find-links "$ROOT/vendor/wheels" \
-      --target "$SITE" --requirement "$ROOT/apps/desktop/python-runtime.txt"
+      --target "$SITE" --requirement "$ROOT/experimental/desktop/python-runtime.txt"
   else
     echo "NOTE: vendor/wheels absent; run scripts/package/fetch-wheels.sh for full offline support"
   fi
@@ -39,18 +39,18 @@ else
 fi
 
 ICON_LINE=""
-if [ -f "$ROOT/apps/desktop/AppIcon.png" ]; then
+if [ -f "$ROOT/experimental/desktop/AppIcon.png" ]; then
   echo "==> converting app icon to icns"
   ICON_TMP="$(mktemp -d)"
   ICONSET="$ICON_TMP/Aether.iconset"
   mkdir -p "$ICONSET"
   for size in 16 32 128 256 512; do
-    sips -z "$size" "$size" "$ROOT/apps/desktop/AppIcon.png" --out "$ICONSET/icon_${size}x${size}.png" >/dev/null
+    sips -z "$size" "$size" "$ROOT/experimental/desktop/AppIcon.png" --out "$ICONSET/icon_${size}x${size}.png" >/dev/null
   done
-  sips -z 32 32 "$ROOT/apps/desktop/AppIcon.png" --out "$ICONSET/icon_16x16@2x.png" >/dev/null
-  sips -z 256 256 "$ROOT/apps/desktop/AppIcon.png" --out "$ICONSET/icon_128x128@2x.png" >/dev/null
-  sips -z 512 512 "$ROOT/apps/desktop/AppIcon.png" --out "$ICONSET/icon_256x256@2x.png" >/dev/null
-  sips -z 1024 1024 "$ROOT/apps/desktop/AppIcon.png" --out "$ICONSET/icon_512x512@2x.png" >/dev/null
+  sips -z 32 32 "$ROOT/experimental/desktop/AppIcon.png" --out "$ICONSET/icon_16x16@2x.png" >/dev/null
+  sips -z 256 256 "$ROOT/experimental/desktop/AppIcon.png" --out "$ICONSET/icon_128x128@2x.png" >/dev/null
+  sips -z 512 512 "$ROOT/experimental/desktop/AppIcon.png" --out "$ICONSET/icon_256x256@2x.png" >/dev/null
+  sips -z 1024 1024 "$ROOT/experimental/desktop/AppIcon.png" --out "$ICONSET/icon_512x512@2x.png" >/dev/null
   iconutil -c icns "$ICONSET" --out "$RES/AppIcon.icns"
   rm -rf "$ICON_TMP"
   ICON_LINE="    <key>CFBundleIconFile</key><string>AppIcon.icns</string>"

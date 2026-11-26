@@ -14,7 +14,7 @@ jobs:
       - run: cargo test --workspace
       - run: python3 -m pytest -q
       - run: python3 infra/fitness/run.py
-      - run: AETHER_SKIP_PYTHON=1 bash scripts/package/macos-app.sh
+      - run: AETHER_SKIP_PYTHON=1 bash experimental/macos/macos-app.sh
       - run: bash scripts/acceptance/desktop.sh
 
   windows:
@@ -24,7 +24,7 @@ jobs:
       - run: cargo test --workspace
       - run: python -m pytest -q
       - run: python infra/fitness/run.py
-      - run: pwsh -NoProfile -File scripts/package/windows-app.ps1 -SkipPython
+      - run: pwsh -NoProfile -File experimental/windows/windows-app.ps1 -SkipPython
       - run: pwsh -NoProfile -File scripts/acceptance/desktop-windows.ps1
 
   linux:
@@ -39,5 +39,5 @@ jobs:
       - run: cargo test --workspace
       - run: python3 -m pytest -q
       - run: python3 infra/fitness/run.py
-      - run: AETHER_SKIP_PYTHON=1 bash scripts/package/linux-app.sh
+      - run: AETHER_SKIP_PYTHON=1 bash experimental/linux/linux-app.sh
       - run: bash scripts/acceptance/desktop-linux.sh

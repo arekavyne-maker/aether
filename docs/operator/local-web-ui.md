@@ -1,7 +1,7 @@
 # Aether — Local Web Console
 
 **Status:** deployable local console (ADR-0042, ADR-0043).
-**Scope:** an Obsidian-editorial local interface over the untouched CLI.
+**Scope:** an AIXOR-inspired local interface over the untouched CLI.
 
 ## Start
 
@@ -109,14 +109,14 @@ After each run the console re-reads status, Atlas and health; an idle watcher
 compares the chain head so external CLI runs also refresh the views. Jobs are
 in-memory and do not survive a server restart.
 
-A native macOS application is built from `apps/desktop`. See
+A native macOS application is built from `experimental/desktop`. See
 [`desktop-app.md`](desktop-app.md).
 
 ## Verification
 
 ```bash
 cargo test -p aether_web
-node --test site/app/js/*.test.mjs site/app/js/viz/*.test.mjs site/app/js/data/*.test.mjs
+node --test experimental/web/app/js/*.test.mjs experimental/web/app/js/viz/*.test.mjs experimental/web/app/js/data/*.test.mjs
 python3 infra/fitness/run.py web_surface desktop_shell
 bash scripts/acceptance/web-ui.sh
 ```
@@ -132,5 +132,5 @@ merged surface, help parsing, positional argv execution, fail-closed exit
 | `crates/aether_web/src/api.rs` | Routes, auth, surface, describe, exec, files |
 | `crates/aether_web/src/help.rs` | Defensive parser for clap help text |
 | `crates/aether_web/catalog.json` | Workspaces, family map, curated presentation metadata |
-| `site/app/js/` | Zero-build ES modules for shell, composer, terminal and palette |
-| `site/app/app.css` | Obsidian night / Paper design system |
+| `experimental/web/app/js/` | Zero-build ES modules for shell, composer, terminal and palette |
+| `experimental/web/app/app.css` | AIXOR-inspired night / Paper design system |

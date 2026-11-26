@@ -65,7 +65,7 @@ deadline. SSE streaming is deferred.
 
 ## Verification
 
-`cargo test -p aether_web`, `node --test site/app/js/argv.test.mjs`,
+`cargo test -p aether_web`, `node --test experimental/web/app/js/argv.test.mjs`,
 `python3 infra/fitness/run.py`, `bash scripts/acceptance/web-ui.sh`, and a
 browser smoke pass covering overview, composer, terminal, palette, file
 picker, themes and the session ledger.

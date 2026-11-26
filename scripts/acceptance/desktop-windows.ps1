@@ -9,7 +9,7 @@ function Pass($message) { Write-Host "PASS: $message" }
 
 Write-Host '== 1. Windows bundle exists =='
 if (-not (Test-Path (Join-Path $BUNDLE 'Aether.exe'))) {
-  pwsh -NoProfile -File (Join-Path $ROOT 'scripts/package/windows-app.ps1') -SkipPython | Out-Null
+  pwsh -NoProfile -File (Join-Path $ROOT 'experimental/windows/windows-app.ps1') -SkipPython | Out-Null
 }
 foreach ($path in @('Aether.exe', 'bin/aether.exe', 'share/aether/contracts')) {
   if (-not (Test-Path (Join-Path $BUNDLE $path))) { Fail "missing $path" }

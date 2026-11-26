@@ -1,6 +1,8 @@
 # Aether 3.0 — Research Register
 
 **Status:** source register, 2026-11-24.
+**Source brief:** [`AETHER-3.0-ADAPTIVE-AEROSTRUCTURES.md`](AETHER-3.0-ADAPTIVE-AEROSTRUCTURES.md)
+is the archived target-architecture document this register was extracted from.
 **Rule:** a source informs a research direction; it does not by itself prove
 production fitness. Bibliographic metadata must be re-verified before a
 citation is used in an engineering claim. Entries marked *metadata pending*

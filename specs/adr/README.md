@@ -76,3 +76,4 @@ This directory contains **Architecture Decision Records** for the Aether platfor
 | [0045](0045-live-runs-and-native-workflow.md) | Live runs, project switching and native desktop workflow | Accepted |
 | [0046](0046-aixor-inspired-interface.md) | AIXOR-inspired console and native window | Accepted |
 | [0047](0047-cross-platform-desktop.md) | Cross-platform desktop and signed distributables | Accepted |
+| [0048](0048-experimental-application-layout.md) | Experimental application layout and repository cleanup | Accepted |

@@ -127,6 +127,11 @@ def run_desktop_shell() -> CheckResult:
     return check(REPO_ROOT)
 
 
+def run_repo_layout() -> CheckResult:
+    from repo_layout import check
+    return check(REPO_ROOT)
+
+
 CHECKS = {
     "loc_budget": run_loc_budget,
     "token_scan": run_token_scan,
@@ -146,6 +151,7 @@ CHECKS = {
     "benchmark_coverage": run_benchmark_coverage,
     "web_surface": run_web_surface,
     "desktop_shell": run_desktop_shell,
+    "repo_layout": run_repo_layout,
 }
 
 

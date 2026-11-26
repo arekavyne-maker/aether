@@ -13,41 +13,41 @@ use axum::extract::Path;
 use axum::http::{HeaderMap, HeaderValue, StatusCode, header};
 use axum::response::{Html, IntoResponse, Response};
 
-const INDEX: &str = include_str!("../../../site/app/index.html");
-const CSS: &str = include_str!("../../../site/app/app.css");
-const APP_ICON: &[u8] = include_bytes!("../../../apps/desktop/AppIcon.png");
+const INDEX: &str = include_str!("../../../experimental/web/app/index.html");
+const CSS: &str = include_str!("../../../experimental/web/app/app.css");
+const APP_ICON: &[u8] = include_bytes!("../../../experimental/desktop/AppIcon.png");
 
 /// Frontend ES modules, embedded and served only from `/assets/js/`.
 pub const JS_MODULES: &[(&str, &str)] = &[
-    ("main.js", include_str!("../../../site/app/js/main.js")),
-    ("api.js", include_str!("../../../site/app/js/api.js")),
-    ("argv.js", include_str!("../../../site/app/js/argv.js")),
-    ("icons.js", include_str!("../../../site/app/js/icons.js")),
-    ("format.js", include_str!("../../../site/app/js/format.js")),
-    ("surface.js", include_str!("../../../site/app/js/surface.js")),
-    ("terminal.js", include_str!("../../../site/app/js/terminal.js")),
-    ("ledger.js", include_str!("../../../site/app/js/ledger.js")),
-    ("jobs.js", include_str!("../../../site/app/js/jobs.js")),
-    ("palette.js", include_str!("../../../site/app/js/palette.js")),
-    ("data/atlas.js", include_str!("../../../site/app/js/data/atlas.js")),
-    ("state/store.js", include_str!("../../../site/app/js/state/store.js")),
-    ("state/router.js", include_str!("../../../site/app/js/state/router.js")),
-    ("viz/layout.js", include_str!("../../../site/app/js/viz/layout.js")),
-    ("viz/graph.js", include_str!("../../../site/app/js/viz/graph.js")),
-    ("viz/treemap.js", include_str!("../../../site/app/js/viz/treemap.js")),
-    ("viz/coverage.js", include_str!("../../../site/app/js/viz/coverage.js")),
-    ("views/pulse.js", include_str!("../../../site/app/js/views/pulse.js")),
-    ("views/atlas.js", include_str!("../../../site/app/js/views/atlas.js")),
-    ("views/assurance.js", include_str!("../../../site/app/js/views/assurance.js")),
-    ("views/capability.js", include_str!("../../../site/app/js/views/capability.js")),
+    ("main.js", include_str!("../../../experimental/web/app/js/main.js")),
+    ("api.js", include_str!("../../../experimental/web/app/js/api.js")),
+    ("argv.js", include_str!("../../../experimental/web/app/js/argv.js")),
+    ("icons.js", include_str!("../../../experimental/web/app/js/icons.js")),
+    ("format.js", include_str!("../../../experimental/web/app/js/format.js")),
+    ("surface.js", include_str!("../../../experimental/web/app/js/surface.js")),
+    ("terminal.js", include_str!("../../../experimental/web/app/js/terminal.js")),
+    ("ledger.js", include_str!("../../../experimental/web/app/js/ledger.js")),
+    ("jobs.js", include_str!("../../../experimental/web/app/js/jobs.js")),
+    ("palette.js", include_str!("../../../experimental/web/app/js/palette.js")),
+    ("data/atlas.js", include_str!("../../../experimental/web/app/js/data/atlas.js")),
+    ("state/store.js", include_str!("../../../experimental/web/app/js/state/store.js")),
+    ("state/router.js", include_str!("../../../experimental/web/app/js/state/router.js")),
+    ("viz/layout.js", include_str!("../../../experimental/web/app/js/viz/layout.js")),
+    ("viz/graph.js", include_str!("../../../experimental/web/app/js/viz/graph.js")),
+    ("viz/treemap.js", include_str!("../../../experimental/web/app/js/viz/treemap.js")),
+    ("viz/coverage.js", include_str!("../../../experimental/web/app/js/viz/coverage.js")),
+    ("views/pulse.js", include_str!("../../../experimental/web/app/js/views/pulse.js")),
+    ("views/atlas.js", include_str!("../../../experimental/web/app/js/views/atlas.js")),
+    ("views/assurance.js", include_str!("../../../experimental/web/app/js/views/assurance.js")),
+    ("views/capability.js", include_str!("../../../experimental/web/app/js/views/capability.js")),
 ];
 
 /// Locally bundled typefaces, embedded and served only from `/assets/fonts/`.
 pub const FONT_ASSETS: &[(&str, &[u8])] = &[
-    ("urbanist-latin.woff2", include_bytes!("../../../site/app/fonts/urbanist-latin.woff2")),
-    ("urbanist-italic-latin.woff2", include_bytes!("../../../site/app/fonts/urbanist-italic-latin.woff2")),
-    ("urbanist-black-latin.woff2", include_bytes!("../../../site/app/fonts/urbanist-black-latin.woff2")),
-    ("arapey-italic-latin.woff2", include_bytes!("../../../site/app/fonts/arapey-italic-latin.woff2")),
+    ("urbanist-latin.woff2", include_bytes!("../../../experimental/web/app/fonts/urbanist-latin.woff2")),
+    ("urbanist-italic-latin.woff2", include_bytes!("../../../experimental/web/app/fonts/urbanist-italic-latin.woff2")),
+    ("urbanist-black-latin.woff2", include_bytes!("../../../experimental/web/app/fonts/urbanist-black-latin.woff2")),
+    ("arapey-italic-latin.woff2", include_bytes!("../../../experimental/web/app/fonts/arapey-italic-latin.woff2")),
 ];
 
 /// Security headers applied to every response.

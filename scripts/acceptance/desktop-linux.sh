@@ -15,7 +15,7 @@ fi
 BUNDLE="$ROOT/dist/linux/Aether"
 echo "== 1. Linux bundle exists =="
 if [ ! -x "$BUNDLE/bin/Aether" ]; then
-  AETHER_SKIP_PYTHON=1 bash "$ROOT/scripts/package/linux-app.sh" >/dev/null 2>&1 \
+  AETHER_SKIP_PYTHON=1 bash "$ROOT/experimental/linux/linux-app.sh" >/dev/null 2>&1 \
     || fail "cannot build Linux bundle"
 fi
 [ -x "$BUNDLE/bin/Aether" ] || fail "desktop shell missing"

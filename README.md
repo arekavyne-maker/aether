@@ -51,6 +51,22 @@ The target architecture is now [`docs/architecture/AETHER-3.0.md`](docs/architec
 
 What exists today is the foundation: a working kernel, graph, plugin/contract substrate, real reference physics, provenance and signing, and an honest CI discipline — plus the user-facing spine and scientific loop (golden path, adaptive-fidelity escalation, surrogate-assisted optimization with real-model verification, executable experiments, and scalar/vector-state digital twins). Current counts and gate verdicts live in [`docs/verification/STATUS.md`](docs/verification/STATUS.md); historical evaluations are under [`docs/history/`](docs/history/). `workflows/paper-run/gaps.md` remains the living open-items log, and `specs/adr/` holds the decision record set.
 
+## Repository layout
+
+| Path | Purpose |
+|---|---|
+| `crates/` | Canonical CLI and the Rust engineering substrate, including the local web server |
+| `contracts/` | Versioned JSON Schema contracts and conformance suites |
+| `experimental/web/` | Marketing preview and the embedded zero-build browser console |
+| `experimental/desktop/` | Shared native shell used by the macOS and Windows/Linux apps |
+| `experimental/macos/`, `experimental/windows/`, `experimental/linux/` | Platform packaging, icons and installers |
+| `scripts/acceptance/` | End-to-end gates for every phase and every application surface |
+| `docs/`, `specs/adr/`, `audit/` | Operator docs, decisions and the independent audit |
+| `infra/fitness/`, `infra/ci/` | Architecture fitness checks and the egress-free dark build |
+
+The CLI remains canonical. Application folders only present and drive it; they
+never reimplement engineering logic.
+
 ## Quick start (the golden path)
 
 The shortest honest path from nothing to a reproducible engineering result:

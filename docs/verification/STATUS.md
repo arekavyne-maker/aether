@@ -44,13 +44,13 @@ qualification.
 | Classification | data handling policy, unclassified denied | `crates/aether_classification` |
 | Identity | short-lived signed tokens, expiry, revocation | `crates/aether_identity` |
 | Observability | local metrics with no-leak labels | `crates/aether_observability` |
-| Local console | AIXOR-inspired console with locally bundled Urbanist/Arapey, embedded argv CLI, Atlas, live jobs with cancel, project switching, 124-command surface, CLI untouched | `crates/aether_web`, `site/app`, `scripts/acceptance/web-ui.sh` |
-| Desktop shell | Native `wry` app for macOS/Windows/Linux with custom titlebar, in-process loopback server, native menus, recents, window state and bundled Python | `apps/desktop`, `scripts/package`, `scripts/acceptance/desktop*.sh`, `.github/workflows/portability.yml` |
+| Local console | AIXOR-inspired console with locally bundled Urbanist/Arapey, embedded argv CLI, Atlas, live jobs with cancel, project switching, 124-command surface, CLI untouched | `crates/aether_web`, `experimental/web/app`, `scripts/acceptance/web-ui.sh` |
+| Desktop shell | Native `wry` app for macOS/Windows/Linux with custom titlebar, in-process loopback server, native menus, recents, window state and bundled Python | `experimental/desktop`, `scripts/package`, `scripts/acceptance/desktop*.sh`, `.github/workflows/portability.yml` |
 | Audit | Independent findings register and 82-row task coverage matrix | `audit/REPORT.md`, `audit/task-coverage.md` |
 | Interop | STEP/IGES/STL/HDF5/CSV/JSON + QIF, declared semantic loss | `python/aether_standards` |
 | Benchmarks | 11 benchmarks; absent optional tooling is `SKIP`, not `FAIL` | `benchmarks/` |
 | Dark-build | 24 steps, egress-free by policy | `infra/ci/dark-build.sh` |
-| Fitness | 18 checks; 1 optional-tool skip on this machine | `infra/fitness/run.py` |
+| Fitness | 19 checks; 1 optional-tool skip on this machine | `infra/fitness/run.py` |
 
 ## Honest boundaries
 

@@ -157,8 +157,8 @@ code=$(curl -s -o /dev/null -w "%{http_code}" -H "$AUTH" -H 'Content-Type: appli
     -d '{"command":["rm","-rf","/"],"flags":[]}' "$API/raw")
 [ "$code" = "400" ] || fail "raw accepted undiscovered command with $code"
 if command -v node >/dev/null 2>&1; then
-    node --test "$ROOT/site/app/js/argv.test.mjs" >/dev/null || fail "argv tokenizer tests"
-    for file in "$ROOT"/site/app/js/*.js; do
+    node --test "$ROOT/experimental/web/app/js/argv.test.mjs" >/dev/null || fail "argv tokenizer tests"
+    for file in "$ROOT"/experimental/web/app/js/*.js; do
         node --input-type=module --check < "$file" || fail "syntax: $file"
     done
 fi

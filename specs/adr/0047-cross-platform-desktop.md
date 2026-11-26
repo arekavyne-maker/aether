@@ -32,7 +32,7 @@ must remain identical on every platform.
   `AETHER_SIGNING_IDENTITY` / `AETHER_NOTARY_PROFILE` are set; ad-hoc by default
   for local development.
 - **Windows:** portable directory + ZIP + WiX MSI, built by
-  `scripts/package/windows-app.ps1`; Authenticode signing via `signtool` when
+  `experimental/windows/windows-app.ps1`; Authenticode signing via `signtool` when
   `AETHER_SIGNING_CERT` is set.
 - **Linux:** portable tree + tar.gz + `.deb`, with AppImage when `appimagetool`
   exists; GPG detached signature when `AETHER_GPG_KEY` is set.

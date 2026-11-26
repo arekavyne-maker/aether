@@ -36,7 +36,7 @@ packaging, acceptance, fitness, docs and cross-platform portability.
 | B-02 | P0 | Token path required `$HOME`, absent on Windows. | `auth.rs:67` | **Fixed** — `dirs::home_dir()` plus best-effort `icacls`. |
 | B-03 | P0 | CLI discovery ignored `.exe`, so Windows could not find the binary. | `cli.rs:112-124` | **Fixed** — `EXE_SUFFIX` candidates and explicit PATH search. |
 | B-04 | P0 | Desktop state dir hardcoded to macOS Application Support. | `desktop/src/main.rs:57` | **Fixed** — `dirs::data_dir()/Aether`. |
-| B-05 | P0 | Packaging produced only a macOS `.app`; no Windows/Linux artifact. | `scripts/package/macos-app.sh` | **Fixed** — shared staging, Windows ZIP + WiX MSI, Linux tar.gz + .deb + AppImage. |
+| B-05 | P0 | Packaging produced only a macOS `.app`; no Windows/Linux artifact. | `experimental/macos/macos-app.sh` | **Fixed** — shared staging, Windows ZIP + WiX MSI, Linux tar.gz + .deb + AppImage. |
 | B-06 | P0 | Python runtime fetch supported only Apple targets. | `fetch-python.sh:12-13` | **Fixed** — Apple, Windows and Linux targets with platform wheelhouses. |
 | B-07 | P1 | Desktop acceptance skipped non-Darwin hosts. | `acceptance/desktop.sh:11` | **Fixed** — `desktop-linux.sh` and `desktop-windows.ps1`. |
 | B-08 | P1 | Fitness only checked the macOS bundle layout. | `fitness/desktop_shell.py` | **Fixed** — platform-aware bundle checks. |

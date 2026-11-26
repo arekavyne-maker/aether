@@ -57,7 +57,7 @@ def check(repo_root: Path = REPO_ROOT):
             problems.append(f"curated command {command['name']} has unknown workspace")
 
     # --- air gap: static assets must not reach outside the binary ---
-    app = repo_root / "site/app"
+    app = repo_root / "experimental/web/app"
     for path in sorted(app.rglob("*")):
         if not path.is_file() or path.suffix in (".mjs", ".woff2"):
             continue

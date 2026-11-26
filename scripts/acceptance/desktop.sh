@@ -15,7 +15,7 @@ fi
 
 echo "== 1. bundle exists =="
 if [ ! -x "$ROOT/dist/Aether.app/Contents/MacOS/Aether" ]; then
-  AETHER_SKIP_PYTHON=1 bash "$ROOT/scripts/package/macos-app.sh" >/dev/null 2>&1 \
+  AETHER_SKIP_PYTHON=1 bash "$ROOT/experimental/macos/macos-app.sh" >/dev/null 2>&1 \
     || fail "cannot build desktop bundle"
 fi
 [ -f "$ROOT/dist/Aether.app/Contents/Resources/bin/aether" ] || fail "bundled CLI missing"

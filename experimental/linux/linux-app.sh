@@ -11,12 +11,12 @@ SKIP_PYTHON="${AETHER_SKIP_PYTHON:-0}"
 echo "==> building canonical CLI (release)"
 (cd "$ROOT" && cargo build --release -p aether_cli >/dev/null)
 echo "==> building desktop shell (release)"
-(cd "$ROOT" && cargo build --release --manifest-path apps/desktop/Cargo.toml >/dev/null)
+(cd "$ROOT" && cargo build --release --manifest-path experimental/desktop/Cargo.toml >/dev/null)
 
 rm -rf "$OUT"
 mkdir -p "$BUNDLE/bin" "$OUT/deb/DEBIAN" "$OUT/deb/opt/aether/bin"
 bash "$ROOT/scripts/package/stage-resources.sh" "$BUNDLE/share" "$ROOT/target/release/aether"
-cp "$ROOT/apps/desktop/target/release/aether-desktop" "$BUNDLE/bin/Aether"
+cp "$ROOT/experimental/desktop/target/release/aether-desktop" "$BUNDLE/bin/Aether"
 chmod +x "$BUNDLE/bin/Aether"
 
 if [ "$SKIP_PYTHON" != "1" ]; then
@@ -29,13 +29,13 @@ if [ "$SKIP_PYTHON" != "1" ]; then
     mkdir -p "$SITE"
     "$BUNDLE/share/python/bin/python3" -m pip install --no-index \
       --find-links "$ROOT/vendor/wheels" --target "$SITE" \
-      --requirement "$ROOT/apps/desktop/python-runtime.txt" || true
+      --requirement "$ROOT/experimental/desktop/python-runtime.txt" || true
   fi
 else
   echo "NOTE: Python bundle skipped"
 fi
 
-ICON="$ROOT/apps/desktop/AppIcon.png"
+ICON="$ROOT/experimental/desktop/AppIcon.png"
 [ -f "$ICON" ] && cp "$ICON" "$BUNDLE/share/aether.png"
 cat > "$BUNDLE/share/Aether.desktop" <<DESKTOP
 [Desktop Entry]

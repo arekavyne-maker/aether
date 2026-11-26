@@ -144,8 +144,8 @@ spawn the canonical `aether` binary with discrete argv, always `--offline`
 and by default `--json`. Exit 30 is shown as `blocked`; the CLI remains the
 policy authority. Every run is recorded in a browser-local session ledger.
 
-The project-first navigation includes Pulse, Atlas, Assurance, Build, Govern,
-Commands, terminal and ledger. Atlas renders the real `graph as-of` snapshot,
+The project-first navigation includes Home, Run, Atlas, Verify, the command
+library, terminal and ledger. Atlas renders the real `graph as-of` snapshot,
 the 78/38 type catalog, coverage gaps and a command treemap; every view shows
 its CLI source. See `docs/operator/local-web-ui.md`.
 

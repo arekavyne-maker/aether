@@ -38,4 +38,4 @@ The rail has four primary destinations — Home, Run, Atlas, Verify — with the
 
 ## Verification
 
-`cargo test -p aether_web` (38 lib tests including a real streaming job), Node tests including `jobs.test.mjs`, `python3 infra/fitness/run.py` with live-job and native-menu invariants, `bash scripts/acceptance/web-ui.sh` with a job lifecycle assertion, browser passes over Run, recipes, live dock, terminal, project switching and populated Atlas, and `cargo build --manifest-path apps/desktop/Cargo.toml`.
+`cargo test -p aether_web` (38 lib tests including a real streaming job), Node tests including `jobs.test.mjs`, `python3 infra/fitness/run.py` with live-job and native-menu invariants, `bash scripts/acceptance/web-ui.sh` with a job lifecycle assertion, browser passes over Run, recipes, live dock, terminal, project switching and populated Atlas, and `cargo build --manifest-path experimental/desktop/Cargo.toml`.

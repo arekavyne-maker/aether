@@ -12,7 +12,7 @@ This folder contains the website narrative and a working one-page design preview
 ## Preview locally
 
 ```bash
-cd site
+cd experimental/web
 python3 -m http.server 8765
 ```
 
@@ -32,7 +32,7 @@ Open `http://localhost:8765/index.html`.
 3. **Self-host the fonts.** The page currently loads Inter and Instrument Serif from Google Fonts. For an air-gapped or offline-first deployment, self-host the WOFF2 files and remove the Google Fonts links.
 4. **Add real documentation links.** The footer's Architecture, Contracts, Benchmarks, and License links currently point to on-page anchors.
 5. **Supply team details.** Add names, portraits, and real affiliations when approved.
-6. **Confirm claims at launch.** Benchmark counts and test counts are build-specific; re-check them against [`docs/verification/STATUS.md`](../docs/verification/STATUS.md) and [`workflows/paper-run/gaps.md`](../workflows/paper-run/gaps.md).
+6. **Confirm claims at launch.** Benchmark counts and test counts are build-specific; re-check them against [`docs/verification/STATUS.md`](../../docs/verification/STATUS.md) and [`workflows/paper-run/gaps.md`](../../workflows/paper-run/gaps.md).
 7. **Legal review.** Confirm the proprietary-license footer line and any funding/affiliation language.
 8. **Keep the page and the status document in sync.** The page is a narrative; `docs/verification/STATUS.md` is the source of truth for counts.
 

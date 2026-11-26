@@ -1,5 +1,5 @@
 # Build a portable Windows bundle, ZIP and WiX MSI for Aether.
-# Run from any shell with PowerShell 7+: pwsh scripts/package/windows-app.ps1
+# Run from any shell with PowerShell 7+: pwsh experimental/windows/windows-app.ps1
 param(
   [switch]$SkipPython,
   [switch]$RequireSigned
@@ -14,7 +14,7 @@ Write-Host '==> building canonical CLI (release)'
 Push-Location $ROOT
 cargo build --release -p aether_cli | Out-Null
 Write-Host '==> building desktop shell (release)'
-cargo build --release --manifest-path apps/desktop/Cargo.toml | Out-Null
+cargo build --release --manifest-path experimental/desktop/Cargo.toml | Out-Null
 Pop-Location
 
 $OUT = Join-Path $ROOT 'dist/windows'
@@ -37,7 +37,7 @@ if (-not $SkipPython -and $env:AETHER_SKIP_PYTHON -ne '1') {
     if (Test-Path $WHEELS) {
       $SITE = Join-Path $BUNDLE 'python/Lib/site-packages'
       New-Item -ItemType Directory -Force -Path $SITE | Out-Null
-      & $PY -m pip install --no-index --find-links $WHEELS --target $SITE --requirement (Join-Path $ROOT 'apps/desktop/python-runtime.txt')
+      & $PY -m pip install --no-index --find-links $WHEELS --target $SITE --requirement (Join-Path $ROOT 'experimental/desktop/python-runtime.txt')
     } else {
       Write-Host 'NOTE: vendor/wheels absent; runtime wheels are optional'
     }
@@ -46,7 +46,7 @@ if (-not $SkipPython -and $env:AETHER_SKIP_PYTHON -ne '1') {
   Write-Host 'NOTE: Python bundle skipped'
 }
 
-Copy-Item (Join-Path $ROOT 'apps/desktop/target/release/aether-desktop.exe') (Join-Path $BUNDLE 'Aether.exe')
+Copy-Item (Join-Path $ROOT 'experimental/desktop/target/release/aether-desktop.exe') (Join-Path $BUNDLE 'Aether.exe')
 
 Write-Host '==> smoke test'
 $SMOKE = & (Join-Path $BUNDLE 'Aether.exe') --smoke-test --project $ROOT | Out-String
@@ -59,10 +59,10 @@ $ZIP = Join-Path $OUT 'Aether-windows.zip'
 Compress-Archive -Path $BUNDLE -DestinationPath $ZIP -Force
 
 Write-Host '==> building WiX MSI'
-$ICON_PNG = Join-Path $ROOT 'apps/desktop/AppIcon.png'
+$ICON_PNG = Join-Path $ROOT 'experimental/desktop/AppIcon.png'
 $ICON_ICO = Join-Path $OUT 'AppIcon.ico'
 if (Test-Path $ICON_PNG) {
-  python (Join-Path $ROOT 'scripts/package/make-ico.py') $ICON_PNG $ICON_ICO | Out-Null
+  python (Join-Path $ROOT 'experimental/windows/make-ico.py') $ICON_PNG $ICON_ICO | Out-Null
 }
 $WIX = $env:WIX
 $HEAT = if ($WIX) { Join-Path $WIX 'heat.exe' } else { 'heat.exe' }

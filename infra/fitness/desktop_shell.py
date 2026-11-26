@@ -16,14 +16,14 @@ def check(repo_root: Path = REPO_ROOT):
     problems: list[str] = []
     details: list[str] = []
 
-    desktop = repo_root / "apps/desktop"
+    desktop = repo_root / "experimental/desktop"
     manifest = desktop / "Cargo.toml"
     source = desktop / "src/main.rs"
-    packaging = repo_root / "scripts/package/macos-app.sh"
+    packaging = repo_root / "experimental/macos/macos-app.sh"
     packagers = (
         repo_root / "scripts/package/stage-resources.sh",
-        repo_root / "scripts/package/windows-app.ps1",
-        repo_root / "scripts/package/linux-app.sh",
+        repo_root / "experimental/windows/windows-app.ps1",
+        repo_root / "experimental/linux/linux-app.sh",
         repo_root / "scripts/package/sign-artifacts.sh",
     )
     icon = desktop / "AppIcon.png"
